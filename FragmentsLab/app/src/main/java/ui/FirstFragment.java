@@ -52,7 +52,7 @@ public class FirstFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (view == binding.buttonRed) processColor(Color.RED);
+        if (view == binding.buttonRed) processColor(Color.YELLOW);
     }
 
     public void processColor(int color) {
