@@ -10,4 +10,19 @@
         android:name="edu.uw.tcss450.groupchat.ui.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/navigation_contacts"
+        android:name="edu.uw.tcss450.groupchat.ui.contacts.ContactsHomeFragment"
+        android:label="@string/title_contacts"
+        tools:layout="@layout/fragment_contacts_home" />
+    <fragment
+        android:id="@+id/navigation_chats"
+        android:name="edu.uw.tcss450.groupchat.ui.chats.ChatsHomeFragment"
+        android:label="@string/title_chats"
+        tools:layout="@layout/fragment_chats_home" />
+    <fragment
+        android:id="@+id/navigation_weather"
+        android:name="edu.uw.tcss450.groupchat.ui.weather.WeatherHomeFragment"
+        android:label="@string/title_weather"
+        tools:layout="@layout/fragment_weather_home" />
 </navigation>
