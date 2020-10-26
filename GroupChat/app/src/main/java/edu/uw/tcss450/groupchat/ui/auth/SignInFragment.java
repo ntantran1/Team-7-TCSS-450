@@ -5,14 +5,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import edu.uw.tcss450.groupchat.databinding.FragmentSignInBinding;
+import edu.uw.tcss450.R;
+import edu.uw.tcss450.databinding.FragmentSignInBinding;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,8 +33,8 @@ public class SignInFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonRegister.setOnClickListener(button -> register());
-        binding.buttonSignin.setOnClickListener(button -> signin());
+        binding.buttonSigninRegister.setOnClickListener(button -> registerClicked());
+        binding.buttonSigninSignin.setOnClickListener(this::signInClicked);
     }
 
     @Override
@@ -43,16 +43,37 @@ public class SignInFragment extends Fragment {
         binding = null;
     }
 
-    private void register() {
-        NavDirections action = SignInFragmentDirections.actionSignInFragmentToRegisterFragment();
-        Navigation.findNavController(getView()).navigate(action);
+    private void registerClicked() {
+        Navigation.findNavController(getView()).navigate(
+                SignInFragmentDirections.actionSignInFragmentToRegisterFragment());
     }
 
-    private void signin() {
-        String email = binding.textEmail.getText().toString();
-        NavDirections action = SignInFragmentDirections.actionSignInFragmentToMainActivity(email);
-        Navigation.findNavController(getView()).navigate(action);
+    private void signInClicked(View view) {
+        boolean fail = false;
+        if (binding.editTextEmail.getText().toString().equals("")) {
+            binding.editTextEmail.setError("Email is empty!");
+            fail = true;
+        }
 
+        if (binding.editTextPassword.getText().toString().equals("")) {
+            binding.editTextPassword.setError("Password is empty!");
+            fail = true;
+        }
+
+        if (fail) {
+            return;
+        }
+
+        if (binding.editTextEmail.getText().toString().contains("@") == false) {
+            binding.editTextEmail.setError("Not valid email!");
+            return;
+        }
+
+        Navigation.findNavController(getView()).navigate(
+                SignInFragmentDirections.actionSignInFragmentToMainActivity(
+                        binding.editTextEmail.getText().toString(), ""
+                )
+        );
         getActivity().finish();
     }
 }
