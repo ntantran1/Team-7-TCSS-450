@@ -1,26 +1,25 @@
-package edu.uw.tcss450.groupchat.ui.auth;
+package edu.uw.tcss450.groupchat.ui.auth.register;
 
-import static edu.uw.tcss450.utils.PasswordValidator.*;
-import static edu.uw.tcss450.utils.PasswordValidator.checkClientPredicate;
+import static edu.uw.tcss450.groupchat.utils.PasswordValidator.*;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.uw.tcss450.R;
-import edu.uw.tcss450.databinding.FragmentRegisterBinding;
-import edu.uw.tcss450.utils.PasswordValidator;
+import edu.uw.tcss450.groupchat.databinding.FragmentRegisterBinding;
+import edu.uw.tcss450.groupchat.utils.PasswordValidator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,13 +30,13 @@ public class RegisterFragment extends Fragment {
 
     private RegisterViewModel mRegisterModel;
 
-    private PasswordValidator mNameValidator = checkPwdLength(1);
+    private final PasswordValidator mNameValidator = checkPwdLength(1);
 
-    private PasswordValidator mEmailValidator = checkPwdLength(2)
+    private final PasswordValidator mEmailValidator = checkPwdLength(2)
             .and(checkExcludeWhiteSpace())
             .and(checkPwdSpecialChar("@"));
 
-    private PasswordValidator mPassWordValidator =
+    private final PasswordValidator mPasswordValidator =
             checkClientPredicate(pwd -> pwd.equals(binding.editPassword2.getText().toString()))
                     .and(checkPwdLength(7))
                     .and(checkPwdSpecialChar())
@@ -50,10 +49,17 @@ public class RegisterFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mRegisterModel = new ViewModelProvider(getActivity())
+                .get(RegisterViewModel.class);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentRegisterBinding.inflate(inflater, container, false);
+        binding = FragmentRegisterBinding.inflate(inflater);
         return binding.getRoot();
     }
 
@@ -66,24 +72,7 @@ public class RegisterFragment extends Fragment {
                 this::observeResponse);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
-
-    private void register() {
-        String email = binding.textEmail.getText().toString();
-        NavDirections action = RegisterFragmentDirections
-                .actionRegisterFragmentToMainActivity(email);
-        Navigation.findNavController(getView()).navigate(action);
-
-        getActivity().finish();
-    }
-
     private void attemptRegister(final View button) {
-
         validateFirst();
     }
 
@@ -120,8 +109,8 @@ public class RegisterFragment extends Fragment {
     }
 
     private void validatePassword() {
-        mPassWordValidator.processResult(
-                mPassWordValidator.apply(binding.editPassword1.getText().toString()),
+        mPasswordValidator.processResult(
+                mPasswordValidator.apply(binding.editPassword1.getText().toString()),
                 this::verifyAuthWithServer,
                 result -> binding.editPassword1.setError("Please enter a valid Password."));
     }
@@ -132,19 +121,17 @@ public class RegisterFragment extends Fragment {
                 binding.editLast.getText().toString(),
                 binding.editEmail.getText().toString(),
                 binding.editPassword1.getText().toString());
-        //This is an Asynchronous call. No statements after should rely on the
-        // result of connect().
+        //This is an Asynchronous call. No statements after should rely on the result
     }
 
     private void navigateToLogin() {
-        RegisterFragmentDirections.ActionRegisterFragmentToMainActivity directions =
-                RegisterFragmentDirections.actionRegisterFragmentToMainActivity();
+        RegisterFragmentDirections.ActionRegisterFragmentToSignInFragment directions =
+                RegisterFragmentDirections.actionRegisterFragmentToSignInFragment();
 
         directions.setEmail(binding.editEmail.getText().toString());
         directions.setPassword(binding.editPassword1.getText().toString());
 
         Navigation.findNavController(getView()).navigate(directions);
-
     }
 
     /**
@@ -156,9 +143,9 @@ public class RegisterFragment extends Fragment {
     private void observeResponse(final JSONObject response) {
         if (response.length() > 0) {
             if (response.has("code")) {
-                try { binding.editEmail.setError(
-                        "Error Authenticating: " + response.getJSONObject("data")
-                                .getString("message"));
+                try {
+                    binding.editEmail.setError("Error Authenticating: "
+                            + response.getJSONObject("data").getString("message"));
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
                 }

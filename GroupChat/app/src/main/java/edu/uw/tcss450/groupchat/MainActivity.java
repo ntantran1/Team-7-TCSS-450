@@ -24,9 +24,10 @@ public class MainActivity extends AppCompatActivity {
 
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         String email = args.getEmail();
+        String jwt = args.getJwt();
 
         new ViewModelProvider(this,
-                new UserInfoViewModel.UserInfoViewModelFactory(email)).get(UserInfoViewModel.class);
+                new UserInfoViewModel.UserInfoViewModelFactory(email, jwt)).get(UserInfoViewModel.class);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_contacts,

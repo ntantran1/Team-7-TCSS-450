@@ -5,10 +5,10 @@
     <string name="action_signin">Sign In</string>
 
     <string name="hint_email">Email</string>
+    <string name="hint_first">First Name</string>
+    <string name="hint_last">Last Name</string>
     <string name="hint_password">Password</string>
-    <string name="hint_firstname">First Name</string>
-    <string name="hint_lastname">Last Name</string>
-    <string name="hint_retypepw">Retype Password</string>
+    <string name="hint_password_again">Retype Password</string>
 
     <string name="title_home">Home</string>
     <string name="title_contacts">Contacts</string>
@@ -16,6 +16,4 @@
     <string name="title_weather">Weather</string>
 
     <string name="text_blank">Blank Text</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

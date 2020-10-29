@@ -17,7 +17,7 @@ public interface PasswordValidator
     /**
      * Returns a validator that when applied will validate the length of the String as greater
      * than 6.
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s.length() > 6, otherwise
      * ValidationResult.PWD_INVALID_LENGTH.
@@ -31,7 +31,7 @@ public interface PasswordValidator
     /**
      * Returns a validator that when applied will validate the length of the String as greater
      * than 6.
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s.length() > length, otherwise
      * ValidationResult.PWD_INVALID_LENGTH.
@@ -48,7 +48,7 @@ public interface PasswordValidator
     /**
      * Returns a validator that when applied will validate that the String contains at least
      * one digit.
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s contains at least one digit, otherwise
      * ValidationResult.PWD_MISSING_DIGIT.
@@ -64,7 +64,7 @@ public interface PasswordValidator
     /**
      * Returns a validator that when applied will validate that the String contains at least
      * one uppercase letter.
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s contains at least one uppercase letter,
      * otherwise ValidationResult.PWD_MISSING_UPPER.
@@ -80,7 +80,7 @@ public interface PasswordValidator
     /**
      * Returns a validator that when applied will validate that the String contains at least
      * one lowercase letter.
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s contains at least one lowercase letter,
      * otherwise ValidationResult.PWD_MISSING_LOWER.
@@ -96,7 +96,7 @@ public interface PasswordValidator
     /**
      * Returns a validator that when applied will validate that the String contains at least
      * one of these special characters: "@#$%&*!?".
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s contains at least one of these special
      * characters: "@#$%&*!?", otherwise ValidationResult.PWD_MISSING_SPECIAL.
@@ -110,7 +110,7 @@ public interface PasswordValidator
     /**
      * Returns a validator that when applied will validate that the String contains at least
      * one of the characters found in specialChars.
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s contains at least one of the
      * characters found in specialChars, otherwise ValidationResult.PWD_MISSING_SPECIAL.
@@ -128,7 +128,7 @@ public interface PasswordValidator
     /**
      * Returns a validator that when applied will validate that the String does NOT contain ANY
      * of the characters found in excludeChars.
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s does NOT contain ANY of the
      * characters found in exludeChars, otherwise ValidationResult.PWD_INCLUDES_EXCLUDED.
@@ -147,7 +147,7 @@ public interface PasswordValidator
     /**
      * Returns a validator that when applied will validate that the String does NOT contain ANY
      * whitespace as defined by Character.isWhiteSpace().
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s does NOT contain ANY whitespace, otherwise
      * ValidationResult.PWD_INCLUDES_WHITESPACE.
@@ -163,7 +163,7 @@ public interface PasswordValidator
 
     /**
      * Returns a validator that when applied will validate a String based on theTest Predicate.
-     *
+     * <p>
      * When a String s is applied to the returning validator, it will evaluate to an Optional
      * containing ValidationResult.SUCCESS when s passes theTest predicate, otherwise
      * ValidationResult.PWD_CLIENT_ERROR.
@@ -182,7 +182,7 @@ public interface PasswordValidator
      * evaluates true for.
      *
      * @param check The String to test
-     * @param test the character test
+     * @param test  the character test
      * @return true if check contains at least one character that test evaluates true for,
      * false otherwise
      */
@@ -195,13 +195,13 @@ public interface PasswordValidator
      * this PasswordValidator and another.  When evaluating the composed PasswordValidator,
      * if this PasswordValidator in not successful, then the other PasswordValidator is not
      * evaluated.
-     *
+     * <p>
      * NOTE: THIS is the Combinator!
      *
      * @param other a PasswordValidator that will be logically-ANDed with this
-     *      PasswordValidator
+     *              PasswordValidator
      * @return a composed PasswordValidator that represents a short-circuiting logical AND of
-     *      this PasswordValidator and another
+     * this PasswordValidator and another
      */
     default PasswordValidator and(PasswordValidator other) {
         return password -> this.apply(password)
@@ -223,27 +223,28 @@ public interface PasswordValidator
      * this PasswordValidator and another.  When evaluating the composed PasswordValidator,
      * if this PasswordValidator is successful, then the other PasswordValidator is not
      * evaluated.
-     *
+     * <p>
      * NOTE: THIS is the Combinator!
      *
      * @param other a PasswordValidator that will be logically-ORed with this
-     *      PasswordValidator
+     *              PasswordValidator
      * @return a composed PasswordValidator that represents a short-circuiting logical OR of
-     *      this PasswordValidator and another
+     * this PasswordValidator and another
      */
     default PasswordValidator or(PasswordValidator other) {
         return password -> this.apply(password)
                 .flatMap(result -> result == ValidationResult.SUCCESS ?
-                        Optional.of(result): other.apply(password));
+                        Optional.of(result) : other.apply(password));
     }
 
     /**
      * This helper method is a work around used since Android does not support java language
      * features introduced after Java 1.8. The Optional class introduced several helpful methods
      * in Java 1.9 that should be used here instead of this.
-     * @param result the result of a validation action
+     *
+     * @param result    the result of a validation action
      * @param onSuccess the action to take when the password successfully validates
-     * @param onError the action to take when the password unsuccessfully validates
+     * @param onError   the action to take when the password unsuccessfully validates
      */
     default void processResult(Optional<ValidationResult> result,
                                Runnable onSuccess,
@@ -260,7 +261,6 @@ public interface PasswordValidator
     }
 
     /**
-     *
      * @author Charles Bryan
      * @version Spring 2020
      */
@@ -275,4 +275,5 @@ public interface PasswordValidator
         PWD_INCLUDES_WHITESPACE,
         PWD_CLIENT_ERROR
     }
+
 }
