@@ -19,16 +19,11 @@
         android:hint="@string/hint_email"
         android:inputType="textEmailAddress"
         android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/guideline_fifty"
+        app:layout_constraintBottom_toTopOf="@+id/edit_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_fifty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+
 
     <EditText
         android:id="@+id/edit_password"
@@ -44,7 +39,14 @@
         android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline_fifty" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline_fifty" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_fifty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
 
     <Button
         android:id="@+id/button_sign_in"
@@ -64,7 +66,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/action_register"
-        android:textColor="@color/teal_200"
+        android:textColor="?attr/colorSecondaryVariant"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_password" />
 
