@@ -1,7 +1,9 @@
 package edu.uw.tcss450.groupchat.ui.contacts;
 
 /**
- *
+ * Object for storing user contact information.
+ * @author Dylan Hill
+ * @version November 2020
  */
 public class Contact {
 
@@ -33,24 +35,24 @@ public class Contact {
     }
 
     /**
-     * 
-     * @return
+     * Returns the contact's username.
+     * @return the contact username
      */
     public String getUsername() {
         return mUsername;
     }
 
     /**
-     *
-     * @return
+     * Returns the contact's first and last name.
+     * @return the contact first and last name
      */
     public String getName() {
         return mName;
     }
 
     /**
-     *
-     * @return
+     * Returns the contact's email.
+     * @return the contact email
      */
     public String getEmail() {
         return mEmail;
