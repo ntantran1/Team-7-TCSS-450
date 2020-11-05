@@ -22,7 +22,9 @@ import edu.uw.tcss450.groupchat.databinding.FragmentSignInBinding;
 import edu.uw.tcss450.groupchat.utils.PasswordValidator;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for Sign in page.
+ *
+ * @version November 5
  */
 public class SignInFragment extends Fragment {
 
@@ -37,6 +39,9 @@ public class SignInFragment extends Fragment {
     private final PasswordValidator mPasswordValidator = checkPwdLength(1)
             .and(checkExcludeWhiteSpace());
 
+    /**
+     * Default public constructor.
+     */
     public SignInFragment() {
         // Required empty public constructor
     }

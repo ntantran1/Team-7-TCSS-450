@@ -22,7 +22,9 @@ import edu.uw.tcss450.groupchat.databinding.FragmentRegisterBinding;
 import edu.uw.tcss450.groupchat.utils.PasswordValidator;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for Register page.
+ *
+ * @version November 5
  */
 public class RegisterFragment extends Fragment {
 
@@ -47,6 +49,9 @@ public class RegisterFragment extends Fragment {
                     .and(checkPwdDigit())
                     .and(checkPwdLowerCase().or(checkPwdUpperCase()));
 
+    /**
+     * Default constructor.
+     */
     public RegisterFragment() {
         // Required empty public constructor
     }

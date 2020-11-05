@@ -12,11 +12,22 @@ import java.util.List;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentContactCardBinding;
 
+/**
+ * The class describe how each Contact should look on the page and manage
+ * the list of contacts.
+ *
+ * @version November 5
+ */
 public class ContactsRecyclerViewAdapter extends
         RecyclerView.Adapter<ContactsRecyclerViewAdapter.ContactViewHolder> {
 
     private final List<Contact> mContacts;
 
+    /**
+     * Constructor to initialize the list of contacts.
+     *
+     * @param items List of Contact objects
+     */
     public ContactsRecyclerViewAdapter(List<Contact> items) {
         this.mContacts = items;
         System.out.println(mContacts);
@@ -40,20 +51,36 @@ public class ContactsRecyclerViewAdapter extends
         return mContacts.size();
     }
 
+    /**
+     * The class describe how each Contact should look on the page.
+     *
+     * @version November 5
+     */
     public class ContactViewHolder extends RecyclerView.ViewHolder {
-
+        /** The current View object of page. */
         public final View mView;
 
+        /** Binding for view object */
         public FragmentContactCardBinding binding;
 
         private Contact mContact;
 
+        /**
+         * Initialize the ViewHolder.
+         *
+         * @param view current view context for page
+         */
         public ContactViewHolder(View view) {
             super(view);
             mView = view;
             binding = FragmentContactCardBinding.bind(view);
         }
 
+        /**
+         * Initialize Contact object and populate binding.
+         *
+         * @param contact Contact object
+         */
         void setContact(final Contact contact) {
             mContact = contact;
             binding.textUsername.setText(contact.getUsername());
