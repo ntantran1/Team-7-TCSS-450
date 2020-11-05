@@ -21,21 +21,46 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
+/**
+ * View Model for Register page to store latest HTTP response.
+ *
+ * @version November 5
+ */
 public class RegisterViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
 
+    /**
+     * Main default constructor for View Model.
+     *
+     * @param application reference to the current application
+     */
     public RegisterViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
     }
 
+    /**
+     * Add observer for receiving server's responses.
+     *
+     * @param owner The LifeCycle owner that will control the observer
+     * @param observer The observer that will receive the events
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Make an HTTP request for register action.
+     *
+     * @param first First name of user
+     * @param last Last name of user
+     * @param username username of user
+     * @param email email of user
+     * @param password password of user
+     */
     public void connect(final String first,
                         final String last,
                         final String username,

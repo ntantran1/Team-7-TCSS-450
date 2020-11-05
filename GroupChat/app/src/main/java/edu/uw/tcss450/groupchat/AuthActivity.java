@@ -4,6 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+/**
+ * Activity for all User Authentication actions.
+ *
+ */
 public class AuthActivity extends AppCompatActivity {
 
     @Override

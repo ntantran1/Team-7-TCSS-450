@@ -19,7 +19,9 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentContactsHomeBinding;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for default page of Contacts.
+ *
+ * @version November 5
  */
 public class ContactsHomeFragment extends Fragment {
 
