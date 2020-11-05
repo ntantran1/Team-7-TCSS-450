@@ -30,11 +30,11 @@ public class SignInFragment extends Fragment {
 
     private SignInViewModel mSignInModel;
 
-    private PasswordValidator mEmailValidator = checkPwdLength(2)
+    private final PasswordValidator mEmailValidator = checkPwdLength(2)
             .and(checkExcludeWhiteSpace())
             .and(checkPwdSpecialChar("@"));
 
-    private PasswordValidator mPasswordValidator = checkPwdLength(1)
+    private final PasswordValidator mPasswordValidator = checkPwdLength(1)
             .and(checkExcludeWhiteSpace());
 
     public SignInFragment() {
@@ -61,6 +61,10 @@ public class SignInFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mSignInModel.addResponseObserver(
+                getViewLifecycleOwner(),
+                this::observeResponse);
+
         binding.buttonToRegister.setOnClickListener(button ->
                 Navigation.findNavController(getView()).navigate(
                         SignInFragmentDirections.actionSignInFragmentToRegisterFragment()
@@ -68,13 +72,13 @@ public class SignInFragment extends Fragment {
 
         binding.buttonSignIn.setOnClickListener(this::attemptSignIn);
 
-        mSignInModel.addResponseObserver(
-                getViewLifecycleOwner(),
-                this::observeResponse);
-
         SignInFragmentArgs args = SignInFragmentArgs.fromBundle(getArguments());
         binding.editEmail.setText(args.getEmail().equals("default") ? "" : args.getEmail());
         binding.editPassword.setText(args.getPassword().equals("default") ? "" : args.getPassword());
+        binding.labelVerify.setText((args.getVerify().equals("default") ? "" : args.getVerify()));
+
+        binding.editEmail.setError(null);
+        binding.editPassword.setError(null);
     }
 
     private void attemptSignIn(final View button) {

@@ -38,6 +38,7 @@ public class RegisterViewModel extends AndroidViewModel {
 
     public void connect(final String first,
                         final String last,
+                        final String username,
                         final String email,
                         final String password) {
         String url = "https://dhill30-groupchat-backend.herokuapp.com/auth";
@@ -46,6 +47,7 @@ public class RegisterViewModel extends AndroidViewModel {
         try {
             body.put("first", first);
             body.put("last", last);
+            body.put("username", username);
             body.put("email", email);
             body.put("password", password);
         } catch (JSONException e) {

@@ -36,6 +36,9 @@ public class RegisterFragment extends Fragment {
             .and(checkExcludeWhiteSpace())
             .and(checkPwdSpecialChar("@"));
 
+    private final PasswordValidator mUsernameValidator = checkPwdLength(8)
+            .and(checkExcludeWhiteSpace());
+
     private final PasswordValidator mPasswordValidator =
             checkClientPredicate(pwd -> pwd.equals(binding.editPassword2.getText().toString()))
                     .and(checkPwdLength(7))
@@ -86,8 +89,15 @@ public class RegisterFragment extends Fragment {
     private void validateLast() {
         mNameValidator.processResult(
                 mNameValidator.apply(binding.editLast.getText().toString().trim()),
-                this::validateEmail,
+                this::validateUsername,
                 result -> binding.editLast.setError("Please enter a last name."));
+    }
+
+    private void validateUsername() {
+        mUsernameValidator.processResult(
+                mUsernameValidator.apply(binding.editUsername.getText().toString().trim()),
+                this::validateEmail,
+                result -> binding.editUsername.setError("Please enter a valid Username."));
     }
 
     private void validateEmail() {
@@ -119,6 +129,7 @@ public class RegisterFragment extends Fragment {
         mRegisterModel.connect(
                 binding.editFirst.getText().toString(),
                 binding.editLast.getText().toString(),
+                binding.editUsername.getText().toString(),
                 binding.editEmail.getText().toString(),
                 binding.editPassword1.getText().toString());
         //This is an Asynchronous call. No statements after should rely on the result
@@ -130,6 +141,7 @@ public class RegisterFragment extends Fragment {
 
         directions.setEmail(binding.editEmail.getText().toString());
         directions.setPassword(binding.editPassword1.getText().toString());
+        directions.setVerify("Please check your email to verify your account.");
 
         Navigation.findNavController(getView()).navigate(directions);
     }
@@ -144,8 +156,12 @@ public class RegisterFragment extends Fragment {
         if (response.length() > 0) {
             if (response.has("code")) {
                 try {
-                    binding.editEmail.setError("Error Authenticating: "
-                            + response.getJSONObject("data").getString("message"));
+                    String error = response.getJSONObject("data").getString("message");
+                    if (error.equals("Username exists")) {
+                        binding.editUsername.setError("Error Authenticating: " + error);
+                    } else {
+                        binding.editEmail.setError("Error Authenticating: " + error);
+                    }
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
                 }
