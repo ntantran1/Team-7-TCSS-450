@@ -16,6 +16,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 
+/**
+ * Activity after the user is authenticated, for all the features of the application.
+ *
+ * @version November 5
+ */
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;

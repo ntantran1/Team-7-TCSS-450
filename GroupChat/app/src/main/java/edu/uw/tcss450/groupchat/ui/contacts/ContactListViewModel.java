@@ -17,20 +17,30 @@ import com.android.volley.toolbox.Volley;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * View Model for list of Contacts
+ *
+ * @version November 5
+ */
 public class ContactListViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<Contact>> mContactList;
 
+    /**
+     * Main default constructor for View Model.
+     *
+     * @param application reference to the current application
+     */
     public ContactListViewModel(@NonNull Application application) {
         super(application);
         mContactList = new MutableLiveData<>();
         mContactList.setValue(new ArrayList<>());
     }
 
-    public void addContactListObserver(@NonNull LifecycleOwner owner,
-                                       @NonNull Observer<? super List<Contact>> observer) {
-        mContactList.observe(owner, observer);
-    }
+//    public void addContactListObserver(@NonNull LifecycleOwner owner,
+//                                       @NonNull Observer<? super List<Contact>> observer) {
+//        mContactList.observe(owner, observer);
+//    }
 
 //    public void connectGet(final String email) {
 //        String url = "https://dhill30-groupchat-backend.herokuapp.com/contacts?email=" + email;

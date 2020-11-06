@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import edu.uw.tcss450.groupchat.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for Home Page of the application.
+ *
+ * @version November 5
  */
 public class ChatsHomeFragment extends Fragment {
 
