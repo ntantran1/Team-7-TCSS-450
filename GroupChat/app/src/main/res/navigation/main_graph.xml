@@ -17,7 +17,7 @@
         tools:layout="@layout/fragment_contacts_home" />
     <fragment
         android:id="@+id/navigation_chats"
-        android:name="edu.uw.tcss450.groupchat.ui.chats.ChatsHomeFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.chats.ChatListFragment"
         android:label="@string/title_chats"
         tools:layout="@layout/fragment_chats_home" />
     <fragment
