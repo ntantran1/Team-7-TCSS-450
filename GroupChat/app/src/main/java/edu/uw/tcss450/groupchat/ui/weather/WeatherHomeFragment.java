@@ -193,6 +193,7 @@ public class WeatherHomeFragment extends Fragment {
         }
 
         // add listener for search bar
+        binding.searchZip.setSubmitButtonEnabled(true);
         binding.searchZip.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
