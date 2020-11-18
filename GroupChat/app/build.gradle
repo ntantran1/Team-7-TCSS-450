@@ -45,4 +45,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     apply plugin: "androidx.navigation.safeargs"
     implementation 'me.pushy:sdk:1.0.54'
+    implementation 'com.auth0.android:jwtdecode:2.0.0'
 }
