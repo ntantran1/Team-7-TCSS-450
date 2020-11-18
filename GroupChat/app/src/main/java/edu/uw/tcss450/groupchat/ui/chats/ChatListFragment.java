@@ -84,13 +84,17 @@ public class ChatListFragment extends Fragment {
                     rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
                     binding.swipeContainer.setRefreshing(false);
                 });
-        //Send button clicke -> send message via SendViewModel
+        //Send button click -> send message via SendViewModel
         binding.buttonChatboxSend.setOnClickListener(button -> {
-            mSendModel.sendMessage(HARD_CODED_CHAT_ID, mUserModel.getJwt(),
+            mSendModel.sendMessage(HARD_CODED_CHAT_ID,
+                    mUserModel.getJwt(),
                     binding.edittextChatbox.getText().toString());
         });
         //when we get response back from server, clear edit text
-        mSendModel.addResponseObserver(getViewLifecycleOwner(), response ->
-                binding.edittextChatbox.setText(""));
+        mSendModel.addResponseObserver(getViewLifecycleOwner(), response -> {
+            binding.edittextChatbox.setText("");
+
+        });
+
     }
 }

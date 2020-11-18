@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -194,7 +195,7 @@ public class ChatViewModel extends AndroidViewModel {
                 );
                 if (!list.contains(cMessage)) {
                     // don't add a duplicate
-                    list.add(0, cMessage);
+                    list.add(cMessage);
                 } else {
                     // this shouldn't happen but could with the asynchronous
                     // nature of the application
@@ -203,6 +204,7 @@ public class ChatViewModel extends AndroidViewModel {
                 }
 
             }
+            Collections.sort(list);
             //inform observers of the change (setValue)
             getOrCreateMapEntry(response.getInt("chatId")).setValue(list);
         }catch (JSONException e) {
