@@ -60,4 +60,5 @@
     <color name="blue_grey_700">#455a64</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="colorPrimaryAlpha">#226200EE</color>
 </resources>
