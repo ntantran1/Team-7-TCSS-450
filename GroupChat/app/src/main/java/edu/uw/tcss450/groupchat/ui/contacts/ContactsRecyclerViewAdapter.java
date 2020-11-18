@@ -30,7 +30,6 @@ public class ContactsRecyclerViewAdapter extends
      */
     public ContactsRecyclerViewAdapter(List<Contact> items) {
         this.mContacts = items;
-        System.out.println(mContacts);
     }
 
     @NonNull

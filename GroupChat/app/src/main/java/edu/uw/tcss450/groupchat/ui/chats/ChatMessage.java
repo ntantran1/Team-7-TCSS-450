@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-public final class ChatMessage implements Serializable {
+public final class ChatMessage implements Serializable, Comparable<ChatMessage> {
 
     private final int mMessageId;
     private final String mMessage;
@@ -64,5 +64,10 @@ public final class ChatMessage implements Serializable {
             result = mMessageId == ((ChatMessage) other).mMessageId;
         }
         return result;
+    }
+
+    @Override
+    public int compareTo(ChatMessage other) {
+        return mTimeStamp.compareToIgnoreCase(other.getTimeStamp());
     }
 }
