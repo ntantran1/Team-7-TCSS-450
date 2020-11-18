@@ -60,37 +60,37 @@ public class ChatListFragment extends Fragment {
         final RecyclerView rv = binding.recyclerviewChatList;
         //Set the Adapter to hold a reference to the list FOR THIS chat ID that the ViewModel
         //holds.
-        rv.setAdapter(new ChatListAdapter(
+        rv.setAdapter(new ChatRecyclerViewAdapter(
                 mChatModel.getMessageListByChatId(HARD_CODED_CHAT_ID),
                 mUserModel.getEmail()));
-//
-//
-//        //When the user scrolls to the top of the RV, the swiper list will "refresh"
-//        //The user is out of messages, go out to the service and get more
-//        binding.swipeContainer.setOnRefreshListener(() -> {
-//            mChatModel.getNextMessages(HARD_CODED_CHAT_ID, mUserModel.getJwt());
-//        });
-//
-//        mChatModel.addMessageObserver(HARD_CODED_CHAT_ID, getViewLifecycleOwner(),
-//                list -> {
-//                    /*
-//                     * This solution needs work on the scroll position. As a group,
-//                     * you will need to come up with some solution to manage the
-//                     * recyclerview scroll position. You also should consider a
-//                     * solution for when the keyboard is on the screen.
-//                     */
-//                    //inform the RV that the underlying list has (possibly) changed
-//                    rv.getAdapter().notifyDataSetChanged();
-//                    rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
-//                    binding.swipeContainer.setRefreshing(false);
-//                });
-//        //Send button clicke -> send message via SendViewModel
-//        binding.button_chatbox_send.setOnClickListener(button -> {
-//            mSendModel.sendMessage(HARD_CODED_CHAT_ID, mUserModel.getJwt(),
-//                    binding.editMessage.getText().toString());
-//        });
-//        //when we get response back from server, clear edit text
-//        mSendModel.addResponseObserver(getViewLifecycleOwner(), response ->
-//                binding.editMessage.setText(""));
+
+
+        //When the user scrolls to the top of the RV, the swiper list will "refresh"
+        //The user is out of messages, go out to the service and get more
+        binding.swipeContainer.setOnRefreshListener(() -> {
+            mChatModel.getNextMessages(HARD_CODED_CHAT_ID, mUserModel.getJwt());
+        });
+
+        mChatModel.addMessageObserver(HARD_CODED_CHAT_ID, getViewLifecycleOwner(),
+                list -> {
+                    /*
+                     * This solution needs work on the scroll position. As a group,
+                     * you will need to come up with some solution to manage the
+                     * recyclerview scroll position. You also should consider a
+                     * solution for when the keyboard is on the screen.
+                     */
+                    //inform the RV that the underlying list has (possibly) changed
+                    rv.getAdapter().notifyDataSetChanged();
+                    rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
+                    binding.swipeContainer.setRefreshing(false);
+                });
+        //Send button clicke -> send message via SendViewModel
+        binding.buttonChatboxSend.setOnClickListener(button -> {
+            mSendModel.sendMessage(HARD_CODED_CHAT_ID, mUserModel.getJwt(),
+                    binding.edittextChatbox.getText().toString());
+        });
+        //when we get response back from server, clear edit text
+        mSendModel.addResponseObserver(getViewLifecycleOwner(), response ->
+                binding.edittextChatbox.setText(""));
     }
 }

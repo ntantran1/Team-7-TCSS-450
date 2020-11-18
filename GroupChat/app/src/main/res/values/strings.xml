@@ -23,7 +23,7 @@
     <string name="title_chats">Chats</string>
     <string name="title_weather">Weather</string>
 
-    <string name="base_url">https://skaur65-lab4-backend.herokuapp.com/</string>
+    <string name="base_url">https://dhill30-groupchat-backend.herokuapp.com/</string>
 
     <string name="text_blank">Blank Text</string>
     <!-- TODO: Remove or change this placeholder text -->

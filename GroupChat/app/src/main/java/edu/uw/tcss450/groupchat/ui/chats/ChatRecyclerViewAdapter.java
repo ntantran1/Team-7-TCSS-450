@@ -14,11 +14,11 @@ import java.util.List;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatMessageBinding;
 
-public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MessageViewHolder> {
+public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerViewAdapter.MessageViewHolder> {
     private final List<ChatMessage> mMessages;
     private final String mEmail;
 
-    public ChatListAdapter(List<ChatMessage> messages, String email) {
+    public ChatRecyclerViewAdapter(List<ChatMessage> messages, String email) {
         this.mMessages = messages;
         mEmail = email;
     }
@@ -56,8 +56,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Messag
             final Resources res = mView.getContext().getResources();
             final MaterialCardView card = binding.cardRoot;
 
-            int standard = 5;
-            int extended = 50;
+            int standard = (int) res.getDimension(R.dimen.chat_margin);
+            int extended = (int) res.getDimension(R.dimen.chat_margin_sided);
 
             if (mEmail.equals(message.getSender())) {
                 //This message is from the user. Format it as such
