@@ -1,122 +1,135 @@
 package edu.uw.tcss450.groupchat.ui.chats;
-
-import android.content.Context;
+import android.content.res.Resources;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.FrameLayout;
+import androidx.annotation.NonNull;
+import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.shape.CornerFamily;
 import java.util.List;
-
 import edu.uw.tcss450.groupchat.R;
+import edu.uw.tcss450.groupchat.databinding.FragmentChatMessageBinding;
 
-public class ChatListAdapter extends RecyclerView.Adapter {
+public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.MessageViewHolder> {
+    private final List<ChatMessage> mMessages;
+    private final String mEmail;
 
-    private static final int VIEW_TYPE_MESSAGE_SENT = 1;
-    private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
+    public ChatListAdapter(List<ChatMessage> messages, String email) {
+        this.mMessages = messages;
+        mEmail = email;
+    }
 
-    private Context mContext;
-    private List<ChatMessage> mChatList;
 
-    public ChatListAdapter(Context context, List<ChatMessage> messageList) {
-        mContext = context;
-        mChatList = messageList;
+    @NonNull
+    @Override
+    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new MessageViewHolder(LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.fragment_chat_message, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+        holder.setMessage(mMessages.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mChatList.size();
+        return mMessages.size();
     }
 
-    // Determines the appropriate ViewType according to the sender of the message.
-    @Override
-    public int getItemViewType(int position) {
-        ChatMessage message = (ChatMessage) mChatList.get(position);
+    class MessageViewHolder extends RecyclerView.ViewHolder {
+        private final View mView;
+        private FragmentChatMessageBinding binding;
 
-        if (message.equals(message.getSender())) {
-            // If the current user is the sender of the message
-            return VIEW_TYPE_MESSAGE_SENT;
-        } else {
-            // If some other user sent the message
-            return VIEW_TYPE_MESSAGE_RECEIVED;
-        }
-    }
-
-    // Inflates the appropriate layout according to the ViewType.
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
-
-        if (viewType == VIEW_TYPE_MESSAGE_SENT) {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.sent_chat, parent, false);
-            return new SentMessageHolder(view);
-        } else if (viewType == VIEW_TYPE_MESSAGE_RECEIVED) {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.received_chat, parent, false);
-            return new ReceivedMessageHolder(view);
+        public MessageViewHolder(@NonNull View view) {
+            super(view);
+            mView = view;
+            binding = FragmentChatMessageBinding.bind(view);
         }
 
-        return null;
-    }
+        void setMessage(final ChatMessage message) {
+            final Resources res = mView.getContext().getResources();
+            final MaterialCardView card = binding.cardRoot;
 
-    // Passes the message object to a ViewHolder so that the contents can be bound to UI.
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ChatMessage message = (ChatMessage) mChatList.get(position);
+            int standard = 5;
+            int extended = 50;
 
-        switch (holder.getItemViewType()) {
-            case VIEW_TYPE_MESSAGE_SENT:
-                ((SentMessageHolder) holder).bind(message);
-                break;
-            case VIEW_TYPE_MESSAGE_RECEIVED:
-                ((ReceivedMessageHolder) holder).bind(message);
-        }
-    }
+            if (mEmail.equals(message.getSender())) {
+                //This message is from the user. Format it as such
+                binding.textMessage.setText(message.getMessage());
+                ViewGroup.MarginLayoutParams layoutParams =
+                        (ViewGroup.MarginLayoutParams) card.getLayoutParams();
+                //Set the left margin
+                layoutParams.setMargins(extended, standard, standard, standard);
+                // Set this View to the right (end) side
+                ((FrameLayout.LayoutParams) card.getLayoutParams()).gravity =
+                        Gravity.END;
 
-    private class SentMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText;
+                card.setCardBackgroundColor(
+                        ColorUtils.setAlphaComponent(
+                                res.getColor(R.color.deep_purple_200, null),
+                                16));
+                binding.textMessage.setTextColor(
+                        res.getColor(R.color.black, null));
 
-        SentMessageHolder(View itemView) {
-            super(itemView);
+                card.setStrokeWidth(standard / 5);
+                card.setStrokeColor(ColorUtils.setAlphaComponent(
+                        res.getColor(R.color.purple_700, null),
+                        200));
 
-            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
-            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
-        }
+                //Round the corners on the left side
+                card.setShapeAppearanceModel(
+                        card.getShapeAppearanceModel()
+                                .toBuilder()
+                                .setTopLeftCorner(CornerFamily.ROUNDED,standard * 2)
+                                .setBottomLeftCorner(CornerFamily.ROUNDED,standard * 2)
+                                .setBottomRightCornerSize(0)
+                                .setTopRightCornerSize(0)
+                                .build());
 
-        void bind(ChatMessage message) {
-            messageText.setText(message.getMessage());
+                card.requestLayout();
+            } else {
+                //This message is from another user. Format it as such
+                binding.textMessage.setText(message.getSender() +
+                        ": " + message.getMessage());
+                ViewGroup.MarginLayoutParams layoutParams =
+                        (ViewGroup.MarginLayoutParams) card.getLayoutParams();
 
-            // Format the stored timestamp into a readable String using method.
-            timeText.setText(message.getTimeStamp());
-        }
-    }
+                //Set the right margin
+                layoutParams.setMargins(standard, standard, extended, standard);
+                // Set this View to the left (start) side
+                ((FrameLayout.LayoutParams) card.getLayoutParams()).gravity =
+                        Gravity.START;
 
-    private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText, nameText;
-        ImageView profileImage;
+                card.setCardBackgroundColor(
+                        ColorUtils.setAlphaComponent(
+                                res.getColor(R.color.purple_700, null),
+                                16));
 
-        ReceivedMessageHolder(View itemView) {
-            super(itemView);
+                card.setStrokeWidth(standard / 5);
+                card.setStrokeColor(ColorUtils.setAlphaComponent(
+                        res.getColor(R.color.pink_200, null),
+                        200));
 
-            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
-            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
-            nameText = (TextView) itemView.findViewById(R.id.text_message_name);
-            profileImage = (ImageView) itemView.findViewById(R.id.image_sender_profile);
-        }
+                binding.textMessage.setTextColor(
+                        res.getColor(R.color.black, null));
 
-        void bind(ChatMessage message) {
-            messageText.setText(message.getMessage());
-
-            // Format the stored timestamp into a readable String using method.
-            timeText.setText(message.getTimeStamp());
-
-            nameText.setText(message.getSender());
-
-            // TODO: Insert the profile image from the URL into the ImageView.
-
+                //Round the corners on the right side
+                card.setShapeAppearanceModel(
+                        card.getShapeAppearanceModel()
+                                .toBuilder()
+                                .setTopRightCorner(CornerFamily.ROUNDED,standard * 2)
+                                .setBottomRightCorner(CornerFamily.ROUNDED,standard * 2)
+                                .setBottomLeftCornerSize(0)
+                                .setTopLeftCornerSize(0)
+                                .build());
+                card.requestLayout();
+            }
         }
     }
 }

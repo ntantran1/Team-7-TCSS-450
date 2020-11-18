@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-public class ChatMessage implements Serializable {
+public final class ChatMessage implements Serializable {
 
     private final int mMessageId;
     private final String mMessage;
