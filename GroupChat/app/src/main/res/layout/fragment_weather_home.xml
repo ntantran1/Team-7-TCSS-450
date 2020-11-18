@@ -2,19 +2,329 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_root"
+    android:id="@+id/weather"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.weather.WeatherHomeFragment" >
+    android:background="@color/white"
+    android:backgroundTint="#C1DDEA"
+    tools:context=".ui.weather.WeatherHomeFragment">
 
     <TextView
-        android:id="@+id/text_label"
+        android:id="@+id/text_city"
+        android:layout_width="323dp"
+        android:layout_height="47dp"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.105"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.097" />
+
+    <TextView
+        android:id="@+id/text_day"
+        android:layout_width="120dp"
+        android:layout_height="38dp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.03"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.18" />
+
+    <TextView
+        android:id="@+id/text_time"
+        android:layout_width="82dp"
+        android:layout_height="34dp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.455"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.185" />
+
+    <TextView
+        android:id="@+id/text_condition"
+        android:layout_width="103dp"
+        android:layout_height="39dp"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.029"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.251" />
+
+    <TextView
+        android:id="@+id/text_degree"
+        android:layout_width="95dp"
+        android:layout_height="69dp"
+        android:textAlignment="center"
+        android:textColor="#050505"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.356" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/button_fahrenheit"
+        android:layout_width="48dp"
+        android:layout_height="44dp"
+        android:textAlignment="center"
+        android:textColor="#3F51B5"
+        android:textColorHint="#0B0A0A"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:chipBackgroundColor="#C1DDEA"
+        app:closeIconTint="#C1DDEA"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.449"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.349" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/button_celsius"
+        android:layout_width="47dp"
+        android:layout_height="41dp"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textColorHint="#040404"
+        android:textColorLink="#040303"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:chipBackgroundColor="#C1DDEA"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.552"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.352" />
+
+    <TextView
+        android:id="@+id/text_slash"
+        android:layout_width="29dp"
+        android:layout_height="35dp"
+        android:textAlignment="center"
+        android:textColor="#0B0A0A"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.357" />
+
+    <TextView
+        android:id="@+id/text_humidity"
+        android:layout_width="200dp"
+        android:layout_height="44dp"
+        android:textColor="#0E0E0E"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.369"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.461" />
+
+    <TextView
+        android:id="@+id/text_wind"
+        android:layout_width="199dp"
+        android:layout_height="44dp"
+        android:textColor="#0E0E0E"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.372"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.525" />
+
+    <ImageButton
+        android:id="@+id/button_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title_weather"
-        android:textAlignment="center"
+        android:background="#8BC34A"
+        android:src="@android:drawable/ic_popup_sync"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.831"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.031" />
+
+    <ImageView
+        android:id="@+id/image_condition"
+        android:layout_width="79dp"
+        android:layout_height="73dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.048"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.352" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_wait"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryAlpha"
+        android:clickable="true"
+        android:elevation="2dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <SearchView
+        android:id="@+id/search_zip"
+        android:layout_width="248dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.134"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.021" />
+
+    <LinearLayout
+        android:layout_width="155dp"
+        android:layout_height="144dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.041"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <TextView
+            android:id="@+id/text_day_one"
+            android:layout_width="92dp"
+            android:layout_height="29dp" />
+
+        <TextView
+            android:id="@+id/text_day_two"
+            android:layout_width="92dp"
+            android:layout_height="29dp" />
+
+        <TextView
+            android:id="@+id/text_day_three"
+            android:layout_width="92dp"
+            android:layout_height="29dp" />
+
+        <TextView
+            android:id="@+id/text_day_four"
+            android:layout_width="92dp"
+            android:layout_height="29dp" />
+
+        <TextView
+            android:id="@+id/text_day_five"
+            android:layout_width="92dp"
+            android:layout_height="29dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="144dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.659"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <ImageView
+            android:id="@+id/image_one"
+            android:layout_width="42dp"
+            android:layout_height="28dp" />
+
+        <ImageView
+            android:id="@+id/image_two"
+            android:layout_width="42dp"
+            android:layout_height="28dp" />
+
+        <ImageView
+            android:id="@+id/image_three"
+            android:layout_width="42dp"
+            android:layout_height="28dp" />
+
+        <ImageView
+            android:id="@+id/image_four"
+            android:layout_width="42dp"
+            android:layout_height="28dp" />
+
+        <ImageView
+            android:id="@+id/image_five"
+            android:layout_width="42dp"
+            android:layout_height="28dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="144dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.992"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <TextView
+            android:id="@+id/text_weather_one"
+            android:layout_width="92dp"
+            android:layout_height="29dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/text_weather_two"
+            android:layout_width="92dp"
+            android:layout_height="29dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/text_weather_three"
+            android:layout_width="92dp"
+            android:layout_height="29dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/text_weather_four"
+            android:layout_width="92dp"
+            android:layout_height="29dp"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/text_weather_five"
+            android:layout_width="92dp"
+            android:layout_height="29dp"
+            android:textAlignment="center" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/hourly_view"
+        android:layout_width="match_parent"
+        android:layout_height="118dp"
+        android:verticalScrollbarPosition="defaultPosition"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.712" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
