@@ -159,10 +159,10 @@
         android:src="@android:drawable/ic_popup_sync"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.831"
+        app:layout_constraintHorizontal_bias="0.934"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.031" />
+        app:layout_constraintVertical_bias="0.15" />
 
     <ImageView
         android:id="@+id/image_condition"
@@ -195,10 +195,10 @@
         android:queryHint="Enter ZipCode"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.134"
+        app:layout_constraintHorizontal_bias="0.901"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.021" />
+        app:layout_constraintVertical_bias="0.023" />
 
     <LinearLayout
         android:layout_width="155dp"
