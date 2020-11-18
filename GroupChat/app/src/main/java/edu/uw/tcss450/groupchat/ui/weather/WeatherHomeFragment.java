@@ -276,6 +276,9 @@ public class WeatherHomeFragment extends Fragment {
             JSONObject c = (JSONObject) w.get(0);
             Calendar rightNow = Calendar.getInstance();
             int time = rightNow.get(Calendar.HOUR_OF_DAY) + i ;
+            if(time >= 24) {
+                time = time - 24;
+            }
             String temp = String.valueOf((int)(hour.getDouble("temp")));
             String id = c.getString("icon");
 

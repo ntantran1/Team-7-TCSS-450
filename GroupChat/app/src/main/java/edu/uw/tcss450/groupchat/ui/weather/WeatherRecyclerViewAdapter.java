@@ -81,7 +81,7 @@ public class WeatherRecyclerViewAdapter extends
             mHour = h;
 
             binding.hourText.setText("    " + String.valueOf(h.getHour()) + ":00");
-            binding.tempText.setText("      " + h.getTemp());
+            binding.tempText.setText("      " + h.getTemp() + "°");
             setImage(mHour.getID(), binding.conditionImage);
 
         }
