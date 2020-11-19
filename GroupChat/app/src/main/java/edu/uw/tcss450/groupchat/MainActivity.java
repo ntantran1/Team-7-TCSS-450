@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         mNewMessageModel.addMessageCountObserver(this, count ->{
             BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
             badge.setMaxCharacterCount(2);
-            if(count > 0){
+            if(count > 0) {
                 //mew messages
                 badge.setNumber(count);
                 badge.setVisible(true);

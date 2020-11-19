@@ -38,9 +38,15 @@ public class ChatViewModel extends AndroidViewModel {
      */
     private Map<Integer, MutableLiveData<List<ChatMessage>>> mMessages;
 
+//    private MutableLiveData<Map<Integer, List<ChatMessage>>> mMessages;
+
+    private MutableLiveData<List<ChatRoom>> mRooms;
+
     public ChatViewModel(@NonNull Application application) {
         super(application);
         mMessages = new HashMap<>();
+        mRooms = new MutableLiveData<>();
+        mRooms.setValue(new ArrayList<>());
     }
 
     /**
@@ -53,6 +59,11 @@ public class ChatViewModel extends AndroidViewModel {
                                    @NonNull LifecycleOwner owner,
                                    @NonNull Observer<? super List<ChatMessage>> observer) {
         getOrCreateMapEntry(chatId).observe(owner, observer);
+    }
+
+    public void addRoomsObserver(@NonNull LifecycleOwner owner,
+                                 @NonNull Observer<? super List<ChatRoom>> observer) {
+        mRooms.observe(owner, observer);
     }
 
     /**
@@ -75,6 +86,35 @@ public class ChatViewModel extends AndroidViewModel {
             mMessages.put(chatId, new MutableLiveData<>(new ArrayList<>()));
         }
         return mMessages.get(chatId);
+    }
+
+    public void connectRooms(final String jwt) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chatrooms";
+
+        Request request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                this::handleRooms,
+                this::handleError) {
+
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> headers = new HashMap<>();
+                    //add headers <key, value>
+                    headers.put("Authorization", jwt);
+                    return headers;
+                }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 
     /**
@@ -211,6 +251,31 @@ public class ChatViewModel extends AndroidViewModel {
             Log.e("JSON PARSE ERROR", "Found in handle Success ChatViewModel");
             Log.e("JSON PARSE ERROR", "Error: " + e.getMessage());
         }
+    }
+
+    private void handleRooms(final JSONObject result) {
+        List<ChatRoom> sorted = new ArrayList<>();
+        try {
+            JSONObject root = result;
+            if (root.has("rows")) {
+                JSONArray rooms = root.getJSONArray("rows");
+
+                for (int i = 0; i < rooms.length(); i++) {
+                    JSONObject jsonRoom = rooms.getJSONObject(i);
+                    ChatRoom room = new ChatRoom(
+                            jsonRoom.getInt("chatid"),
+                            jsonRoom.getString("name"));
+                    sorted.add(room);
+                }
+            } else {
+                Log.e("ERROR", "No rows array");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR", e.getMessage());
+        }
+        Collections.sort(sorted);
+        mRooms.setValue(sorted);
     }
 
     private void handleError(final VolleyError error) {
