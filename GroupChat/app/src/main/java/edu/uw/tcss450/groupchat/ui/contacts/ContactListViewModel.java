@@ -56,7 +56,7 @@ public class ContactListViewModel extends AndroidViewModel {
 
     public void connectGet(final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "viewcontacts";
+                + "contacts";
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
