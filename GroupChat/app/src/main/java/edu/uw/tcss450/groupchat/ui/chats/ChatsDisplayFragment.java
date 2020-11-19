@@ -46,6 +46,8 @@ public class ChatsDisplayFragment extends Fragment {
         mUser = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
 
         mContacts.connectGet(mUser.getJwt());
+       //TODO need to access chatRoomID something like
+       // mChatModel.getChatRoomID
 
 
     }

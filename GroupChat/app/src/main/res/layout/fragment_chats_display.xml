@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.chats.ChatsDisplayFragment">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button_start_chatRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/deep_purple_200"
+        android:clickable="true"
+        android:src="@drawable/ic_chat_add_black_24"
+        app:layout_constraintBottom_toBottomOf="@+id/swipe_container"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
         android:layout_width="0dp"
