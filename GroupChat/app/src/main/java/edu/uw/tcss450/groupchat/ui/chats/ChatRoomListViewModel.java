@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.ui.contacts.Contact;
+
 
 public class ChatRoomListViewModel extends AndroidViewModel {
 
