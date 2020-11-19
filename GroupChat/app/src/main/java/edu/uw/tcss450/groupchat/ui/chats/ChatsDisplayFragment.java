@@ -27,7 +27,7 @@ import edu.uw.tcss450.groupchat.ui.contacts.ContactsRecyclerViewAdapter;
 public class ChatsDisplayFragment extends Fragment {
 
     private ChatViewModel mChatModel;
-    private ContactListViewModel mContacts;
+    private ChatRoomListViewModel mChatRooms;
     private UserInfoViewModel mUser;
 
 
@@ -40,14 +40,12 @@ public class ChatsDisplayFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        mModel.connectGet(mUserModel.getJwt());
         mChatModel = new ViewModelProvider(getActivity()).get(ChatViewModel.class);
-        mContacts = new ViewModelProvider(getActivity()).get(ContactListViewModel.class);
+        mChatRooms = new ViewModelProvider(getActivity()).get(ChatRoomListViewModel.class);
         mUser = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
 
-        mContacts.connectGet(mUser.getJwt());
-       //TODO need to access chatRoomID something like
-       // mChatModel.getChatRoomID
+        mChatRooms.connectGet(mUser.getJwt());
+
 
 
     }
@@ -67,12 +65,12 @@ public class ChatsDisplayFragment extends Fragment {
         binding.swipeContainer.setRefreshing(true);
 
         final RecyclerView rv = binding.listRoot;
-        rv.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>()));
+        rv.setAdapter(new ChatRoomRecylerViewAdapter(new ArrayList<>()));
 
-        binding.swipeContainer.setOnRefreshListener(() -> mContacts.connectGet(mUser.getJwt()));
+        binding.swipeContainer.setOnRefreshListener(() -> mChatRooms.connectGet(mUser.getJwt()));
 
-        mContacts.addContactListObserver(getViewLifecycleOwner(), contactList -> {
-            rv.setAdapter(new ContactsRecyclerViewAdapter(contactList));
+        mChatRooms.addChatRoomListObserver(getViewLifecycleOwner(), chatRoomList -> {
+            rv.setAdapter(new ChatRoomRecylerViewAdapter(chatRoomList));
             binding.swipeContainer.setRefreshing(false);
         });
     }

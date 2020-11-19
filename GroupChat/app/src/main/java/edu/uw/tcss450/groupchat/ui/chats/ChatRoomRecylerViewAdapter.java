@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -38,6 +39,17 @@ public class ChatRoomRecylerViewAdapter extends
     @Override
     public void onBindViewHolder(@NonNull ChatRoomViewHolder holder, int position) {
         holder.setChatRoom(mChatRooms.get(position));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if(v.equals(holder.binding)){
+                    Navigation.findNavController(v).
+                            navigate(ChatsDisplayFragmentDirections.
+                                    actionChatsDisplayFragmentToChatListFragment());
+                }
+            }
+        });
     }
 
     @Override

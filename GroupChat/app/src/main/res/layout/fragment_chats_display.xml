@@ -11,6 +11,7 @@
         android:id="@+id/button_start_chatRoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="@color/deep_purple_200"
         android:clickable="true"
         android:src="@drawable/ic_chat_add_black_24"
