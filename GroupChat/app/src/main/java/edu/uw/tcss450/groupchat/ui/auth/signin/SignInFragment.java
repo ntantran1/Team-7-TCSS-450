@@ -1,23 +1,16 @@
 package edu.uw.tcss450.groupchat.ui.auth.signin;
 
-import static edu.uw.tcss450.groupchat.utils.PasswordValidator.*;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.auth0.android.jwt.JWT;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +19,10 @@ import edu.uw.tcss450.groupchat.databinding.FragmentSignInBinding;
 import edu.uw.tcss450.groupchat.model.PushyTokenViewModel;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.utils.PasswordValidator;
+
+import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkExcludeWhiteSpace;
+import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkPwdLength;
+import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkPwdSpecialChar;
 
 /**
  * Fragment for Sign in page.
@@ -74,6 +71,11 @@ public class SignInFragment extends Fragment {
         binding.buttonToRegister.setOnClickListener(button ->
                 Navigation.findNavController(getView()).navigate(
                         SignInFragmentDirections.actionSignInFragmentToRegisterFragment()
+                ));
+
+        binding.buttonForgotPassword.setOnClickListener(button ->
+                Navigation.findNavController(getView()).navigate(
+                        SignInFragmentDirections.actionSignInFragmentToResetPasswordFragment()
                 ));
 
         binding.buttonSignIn.setOnClickListener(this::attemptSignIn);
