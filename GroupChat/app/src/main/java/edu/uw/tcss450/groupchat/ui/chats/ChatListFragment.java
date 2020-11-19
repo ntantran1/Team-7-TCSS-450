@@ -23,6 +23,7 @@ public class ChatListFragment extends Fragment {
     //The chat ID for "global" chat
     private static final int HARD_CODED_CHAT_ID = 1;
 
+    private ChatMessage mMessage;
     private ChatViewModel mChatModel;
     private ChatSendViewModel mSendModel;
     private UserInfoViewModel mUserModel;
