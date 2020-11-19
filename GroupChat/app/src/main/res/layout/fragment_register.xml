@@ -8,12 +8,35 @@
     android:layout_height="match_parent"
     tools:context=".ui.auth.register.RegisterFragment">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_fifty"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/edit_first"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/hint_first"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/edit_last"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/edit_last"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/hint_last"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/edit_username"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/edit_username"
@@ -45,35 +68,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/edit_last"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_fifty"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:ems="10"
-        android:hint="@string/hint_last"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/edit_username"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:autofillHints="" />
-
-    <EditText
-        android:id="@+id/edit_first"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:ems="10"
-        android:hint="@string/hint_first"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/edit_last"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:autofillHints="" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
 
     <EditText
         android:id="@+id/edit_password_1"

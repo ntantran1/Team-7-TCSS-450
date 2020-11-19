@@ -13,22 +13,24 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 
 /**
- * View Model for Reset Password page to store latest HTTP response.
+ * View Model for Change Password page to store latest HTTP response.
  *
  * @version November 18
  */
-public class ResetPasswordViewModel extends AndroidViewModel {
+public class ChangePasswordViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
 
@@ -37,7 +39,7 @@ public class ResetPasswordViewModel extends AndroidViewModel {
      *
      * @param application reference to the current application
      */
-    public ResetPasswordViewModel(@NonNull Application application) {
+    public ChangePasswordViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
@@ -55,40 +57,44 @@ public class ResetPasswordViewModel extends AndroidViewModel {
     }
 
     /**
-     * Make an HTTP request for reset password action.
-     * @param email email of user
+     * Make an HTTP request for change password action.
+     * @param jwt email of user
      */
-    public void connect(final String email) {
-        String url = getApplication().getResources().getString(R.string.base_url) +
-                "auth";
+    public void connect(final String jwt, final String oldpw, final String newpw) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "changepw";
+
+        JSONObject body = new JSONObject();
+        try {
+            body.put("oldpw", oldpw);
+            body.put("newpw", newpw);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Request request = new JsonObjectRequest(
-                Request.Method.GET,
+                Request.Method.POST,
                 url,
-                null, //no body for this get request
+                body,
                 mResponse::setValue,
                 this::handleError) {
 
-//            @Override
-//            public Map<String, String> getHeaders() {
-//                Map<String, String> headers = new HashMap<>();
-//                // add headers <key,value>
-//                String credentials = email;
-//                String auth = "Basic "
-//                        + Base64.encodeToString(credentials.getBytes(),
-//                        Base64.NO_WRAP);
-//                headers.put("Authorization", auth);
-//                return headers;
-//            }
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> headers = new HashMap<>();
+                    //add headers <key, value>
+                    headers.put("Authorization", jwt);
+                    return headers;
+                }
         };
 
         request.setRetryPolicy(new DefaultRetryPolicy(
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //Instantiate the RequestQueue and add the request to the queue
-        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
-                .addToRequestQueue(request);
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
     private void handleError(final VolleyError error) {

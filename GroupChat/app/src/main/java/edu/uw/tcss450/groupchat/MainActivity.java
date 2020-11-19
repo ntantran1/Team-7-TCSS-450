@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         if (id == R.id.action_settings) {
             //TODO open a settings fragment
@@ -129,10 +130,8 @@ public class MainActivity extends AppCompatActivity {
             //TODO log the user out
             Log.d("SIGNOUT", "Clicked");
             return true;
-        } else if (id == R.id.action_change_password) {
-            //TODO open the change password fragment
-            Log.d("CHANGE PASSWORD", "Clicked");
-            return true;
+        } else if (id == R.id.navigation_change_password){
+            return NavigationUI.onNavDestinationSelected(item, navController);
         }
         return super.onOptionsItemSelected(item);
     }
