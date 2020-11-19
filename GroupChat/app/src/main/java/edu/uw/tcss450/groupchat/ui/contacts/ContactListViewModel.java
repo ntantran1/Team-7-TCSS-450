@@ -95,7 +95,6 @@ public class ContactListViewModel extends AndroidViewModel {
             JSONObject root = result;
             if (root.has("contacts")) {
                 JSONArray contacts = root.getJSONArray("contacts");
-                mContactList.setValue(new ArrayList<>());
 
                 for (int i = 0; i < contacts.length(); i++) {
                     JSONObject jsonContact = contacts.getJSONObject(i);

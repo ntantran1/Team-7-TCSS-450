@@ -93,9 +93,12 @@ public class SignInFragment extends Fragment {
                 this::observePushyPutResponse);
 
         SignInFragmentArgs args = SignInFragmentArgs.fromBundle(getArguments());
-        //TODO: Remove hard-coded email and password
-//        binding.editEmail.setText(args.getEmail().equals("default") ? "test1@test.com" : args.getEmail());
-//        binding.editPassword.setText(args.getPassword().equals("default") ? "test12345" : args.getPassword());
+        binding.editEmail.setText(args.getEmail().equals("default") ? "" : args.getEmail());
+        binding.editPassword.setText(args.getPassword().equals("default") ? "" : args.getPassword());
+        binding.labelVerify.setText(args.getVerify().equals("default") ? "" : args.getVerify());
+
+        binding.editEmail.setError(null);
+        binding.editPassword.setError(null);
     }
 
     @Override
@@ -191,13 +194,7 @@ public class SignInFragment extends Fragment {
                                     binding.editEmail.getText().toString(),
                                     response.getString("token")
                             )).get(UserInfoViewModel.class);
-
                     sendPushyToken();
-
-//                    navigateToSuccess(
-//                            binding.editEmail.getText().toString(),
-//                            response.getString("token")
-//                    );
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
                 }
