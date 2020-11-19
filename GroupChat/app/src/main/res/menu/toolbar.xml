@@ -10,7 +10,7 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_change_password"
+        android:id="@+id/navigation_change_password"
         android:orderInCategory="200"
         android:title="@string/action_change_password"
         app:showAsAction="never" />

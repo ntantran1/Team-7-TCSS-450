@@ -1,6 +1,7 @@
-package edu.uw.tcss450.groupchat.ui.changepassword;
+package edu.uw.tcss450.groupchat.ui.auth.password;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChangePasswordBinding;
+import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.utils.PasswordValidator;
 
 import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkClientPredicate;
@@ -32,6 +39,8 @@ public class ChangePasswordFragment extends Fragment {
     private FragmentChangePasswordBinding binding;
 
     private ChangePasswordViewModel mChangePasswordModel;
+
+    private UserInfoViewModel mUserViewModel;
 
     private final PasswordValidator mOldPasswordValidator =
             checkClientPredicate(pwd -> pwd.equals(binding.editOldPassword.getText().toString()))
@@ -59,8 +68,9 @@ public class ChangePasswordFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mChangePasswordModel = new ViewModelProvider(getActivity())
-                .get(ChangePasswordViewModel.class);
+        ViewModelProvider provider = new ViewModelProvider(getActivity());
+        mChangePasswordModel = provider.get(ChangePasswordViewModel.class);
+        mUserViewModel = provider.get(UserInfoViewModel.class);
     }
 
     @Override
@@ -75,14 +85,10 @@ public class ChangePasswordFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonSave.setOnClickListener(this::attemptSave);
+        binding.buttonConfirm.setOnClickListener(button -> validateOldPassword());
+
         mChangePasswordModel.addResponseObserver(getViewLifecycleOwner(),
                 this::observeResponse);
-    }
-
-    private void attemptSave(final View button) {
-
-        validateOldPassword();
     }
 
     private void validateOldPassword() {
@@ -111,18 +117,42 @@ public class ChangePasswordFragment extends Fragment {
     }
 
     private void verifyAuthWithServer() {
-        mChangePasswordModel.connect(
+        mChangePasswordModel.connect(mUserViewModel.getJwt(),
+                binding.editOldPassword.getText().toString(),
                 binding.editNewPassword1.getText().toString());
         //This is an Asynchronous call. No statements after should rely on the result
     }
 
     /**
      * An observer on the HTTP Response from the web server. This observer should be
-     * attached to ResetPasswordViewModel.
+     * attached to ChangePasswordViewModel.
      *
      * @param response the Response from the server
      */
     private void observeResponse(final JSONObject response) {
+        if (response.length() > 0) {
+            if (response.has("code")) {
+                try {
+                    binding.editOldPassword.setError("Error Authenticating: "
+                            + response.getJSONObject("data").getString("message"));
+                } catch (JSONException e) {
+                    Log.e("JSON Parse Error", e.getMessage());
+                }
+            } else {
+                String text = "Password Changed Successfully";
+                binding.labelChanged.setText(text);
 
+                binding.editOldPassword.setText("");
+                binding.editNewPassword1.setText("");
+                binding.editNewPassword2.setText("");
+
+                binding.editOldPassword.setError(null);
+                binding.editNewPassword1.setError(null);
+                binding.editNewPassword2.setError(null);
+            }
+        } else {
+            Log.d("JSON Response", "No Response");
+            binding.labelChanged.setText("");
+        }
     }
 }
