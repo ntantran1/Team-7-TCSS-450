@@ -23,6 +23,7 @@ public class ChatListFragment extends Fragment {
     //The chat ID for "global" chat
     private static final int HARD_CODED_CHAT_ID = 1;
 
+    private ChatRoom mChatRoom;
     private ChatViewModel mChatModel;
     private ChatSendViewModel mSendModel;
     private UserInfoViewModel mUserModel;
@@ -37,6 +38,7 @@ public class ChatListFragment extends Fragment {
         ViewModelProvider provider = new ViewModelProvider(getActivity());
         mUserModel = provider.get(UserInfoViewModel.class);
         mChatModel = provider.get(ChatViewModel.class);
+        //TODO check if message.getid() is working
         mChatModel.getFirstMessages(HARD_CODED_CHAT_ID, mUserModel.getJwt());
         mSendModel = provider.get(ChatSendViewModel.class);
     }
