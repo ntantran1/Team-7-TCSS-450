@@ -1,13 +1,5 @@
 package edu.uw.tcss450.groupchat;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -128,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.action_signout) {
             //TODO log the user out
             Log.d("SIGNOUT", "Clicked");
+            return true;
+        } else if (id == R.id.action_change_password) {
+            //TODO open the change password fragment
+            Log.d("CHANGE PASSWORD", "Clicked");
             return true;
         }
         return super.onOptionsItemSelected(item);

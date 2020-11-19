@@ -6,6 +6,10 @@
     <string name="action_settings">Settings</string>
     <string name="action_signout">Log Out</string>
     <string name="action_send">SEND</string>
+    <string name="action_send_reset">Send Reset Link</string>
+    <string name="action_forgot_password">Forgot Password?</string>
+    <string name="action_change_password">Change Password</string>
+    <string name="action_save_password">Save</string>
 
     <string name="hint_username">Username</string>
     <string name="hint_email">Email</string>
@@ -17,14 +21,23 @@
     <string name="hint_message_received">Recieved message</string>
     <string name="hint_message_sent">Sent message</string>
     <string name="hint_message_time">00:00</string>
+    <string name="hint_reset_email">Enter your email</string>
+    <string name="hint_old_password">Enter old password</string>
+    <string name="hint_new_password">Enter new password</string>
+    <string name="hint_new_password_again">Retype new password</string>
 
     <string name="title_home">Home</string>
     <string name="title_contacts">Contacts</string>
     <string name="title_chats">Chats</string>
     <string name="title_weather">Weather</string>
+    <string name="title_reset_email">Reset Password</string>
+    <string name="title_change_password">Change Password</string>
 
     <string name="keys_prefs_jwt">Sharded Prefs JWT</string>
 
+
     <string name="text_blank">Blank Text</string>
     <string name="base_url">https://dhill30-groupchat-backend.herokuapp.com/</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
