@@ -14,10 +14,22 @@ import java.util.List;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatMessageBinding;
 
+/**
+ * The class describes how each Messages should look in a chat room and mange the list
+ * of messages.
+ *
+ * @version November 5, 2020
+ */
 public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerViewAdapter.MessageViewHolder> {
     private final List<ChatMessage> mMessages;
     private final String mEmail;
 
+    /**
+     * Constructor to initialize fields.
+     *
+     * @param messages the List of messages in the chat room
+     * @param email email of the current user
+     */
     public ChatRecyclerViewAdapter(List<ChatMessage> messages, String email) {
         this.mMessages = messages;
         mEmail = email;
@@ -42,16 +54,29 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
         return mMessages.size();
     }
 
+    /**
+     * The class describes how each Message should look in a chat room.
+     */
     class MessageViewHolder extends RecyclerView.ViewHolder {
         private final View mView;
         private FragmentChatMessageBinding binding;
 
+        /**
+         * Initialize the ViewHolder
+         *
+         * @param view the current view context for room
+         */
         public MessageViewHolder(@NonNull View view) {
             super(view);
             mView = view;
             binding = FragmentChatMessageBinding.bind(view);
         }
 
+        /**
+         * Initialize Message object, populate binding, and format the message
+         *
+         * @param message the Message object
+         */
         void setMessage(final ChatMessage message) {
             final Resources res = mView.getContext().getResources();
             final MaterialCardView card = binding.cardRoot;

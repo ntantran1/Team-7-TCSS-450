@@ -38,7 +38,9 @@ import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 import edu.uw.tcss450.groupchat.ui.contacts.ContactsRecyclerViewAdapter;
 
 /**
- * A simple {@link Fragment} subclass.
+ * The Fragment class for Weather home page.
+ *
+ * @version November 19, 2020
  */
 public class WeatherHomeFragment extends Fragment {
 
@@ -61,11 +63,11 @@ public class WeatherHomeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentWeatherHomeBinding.inflate(inflater);
-        // Inflate the layout for this fragment
         return binding.getRoot();
     }
 
@@ -76,7 +78,6 @@ public class WeatherHomeFragment extends Fragment {
 
         // getting response from the weather API
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
-
             try {
                 // Setting layout for the weather fragment
                 binding.buttonCelsius.setTextColor(Color.parseColor("#2196F3"));
@@ -96,7 +97,6 @@ public class WeatherHomeFragment extends Fragment {
 
                 // Set on click listener for celsius button
                 binding.buttonCelsius.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View view) {
                         if(!value[0]) {
@@ -116,7 +116,6 @@ public class WeatherHomeFragment extends Fragment {
 
                 // Set on click listener for fahrenheit button
                 binding.buttonFahrenheit.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View view) {
                         if(value[0]) {
@@ -135,8 +134,8 @@ public class WeatherHomeFragment extends Fragment {
 
                 // Getting weather information and display it
                 binding.textCity.setText(response.getString("name"));
-                binding.textDay.setText(LocalDate.now().getDayOfWeek().name());
-                binding.textTime.setText(new SimpleDateFormat("HH:mm",
+                binding.textDayTime.setText(LocalDate.now().getDayOfWeek().name() + " "
+                        + new SimpleDateFormat("HH:mm",
                         Locale.getDefault()).format(new Date()));
                 binding.textHumidity.setText("Humidity:  "
                         + (int)main.getDouble("humidity") + "%");
@@ -157,15 +156,10 @@ public class WeatherHomeFragment extends Fragment {
                 this.mLat = String.valueOf(cord.getDouble("lat"));
                 this.mLon = String.valueOf(cord.getDouble("lon"));
                 mWeatherSecondModel.connectDaily(binding, mLon, mLat);
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         });
-
 
         // Getting response for daily and hourly weather info
         mWeatherSecondModel.addResponseObserver(getViewLifecycleOwner(), response -> {
@@ -181,8 +175,6 @@ public class WeatherHomeFragment extends Fragment {
                 e.printStackTrace();
             }
         });
-
-
 
         // Set up default location weather
         if(mWeatherModel.getVal()) {
@@ -207,12 +199,10 @@ public class WeatherHomeFragment extends Fragment {
             }
         });
 
-
         binding.buttonRefresh.setOnClickListener(button ->
                 mWeatherModel.connect(binding, mWeatherModel.mZip));
-
-
     }
+
     /**
      * A method to display daily weather info.
      * @param b, the FragmentWeatherHomeBinding.
@@ -356,7 +346,4 @@ public class WeatherHomeFragment extends Fragment {
 
         }
     }
-
-
-
 }

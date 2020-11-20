@@ -19,16 +19,21 @@ import org.json.JSONObject;
 
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherHomeBinding;
 
-/*
- * A class that get the weather api for daily and hourly forcast.
+/**
+ * A class that get the weather api for daily and hourly forecast.
+ *
+ * @version November 19, 2020
  */
 public class WeatherSecondViewModel extends AndroidViewModel {
     private MutableLiveData<JSONObject> mResponse;
+    /** Home weather fragment binding */
     FragmentWeatherHomeBinding binding;
 
 
-    /*
+    /**
      * A constructor
+     *
+     * @param application current reference to the application
      */
     public WeatherSecondViewModel(@NonNull Application application) {
 
@@ -38,6 +43,12 @@ public class WeatherSecondViewModel extends AndroidViewModel {
 
     }
 
+    /**
+     * Add observer for receiving server's responses.
+     *
+     * @param owner The LifeCycle owner that will control the observer
+     * @param observer The observer that will receive the events
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
@@ -52,8 +63,12 @@ public class WeatherSecondViewModel extends AndroidViewModel {
 
     }
 
-    /*
-     * A method that call the api
+    /**
+     * Perform an HTTP request to the weather API to retrieve weather forecast information.
+     *
+     * @param b the binding of the weather fragment home page
+     * @param lo longitude of requesting location
+     * @param lat latitude of requesting location
      */
     public void connectDaily(FragmentWeatherHomeBinding b, String lo, String lat) {
         binding = b;

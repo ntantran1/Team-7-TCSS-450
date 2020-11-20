@@ -18,7 +18,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import edu.uw.tcss450.groupchat.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for Contact list tab of the Contact page.
+ *
+ * @version November 19, 2020
  */
 public class ContactsFragment extends Fragment {
 
