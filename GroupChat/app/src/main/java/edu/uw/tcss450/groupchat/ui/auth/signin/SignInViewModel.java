@@ -36,18 +36,34 @@ public class SignInViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
 
+    /**
+     * Constructor of the ViewModel
+     *
+     * @param application the reference to the current application
+     */
     public SignInViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
     }
 
+    /**
+     * Add observer for receiving server's responses.
+     *
+     * @param owner The LifeCycle owner that will control the observer
+     * @param observer The observer that will receive the events
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
     }
 
-
+    /**
+     * Perform an HTTP Request for a sign in attempt.
+     *
+     * @param email provided email
+     * @param password password of user
+     */
     public void connect(final String email, final String password) {
         String url = getApplication().getResources().getString(R.string.base_url) +
                 "auth";

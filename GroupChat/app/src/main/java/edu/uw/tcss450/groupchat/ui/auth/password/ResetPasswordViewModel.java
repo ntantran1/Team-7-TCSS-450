@@ -23,6 +23,11 @@ import java.util.Objects;
 
 import edu.uw.tcss450.groupchat.R;
 
+/**
+ * ViewModel for Reset Password page, hold the responses from server.
+ *
+ * @version November 19, 2020
+ */
 public class ResetPasswordViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;

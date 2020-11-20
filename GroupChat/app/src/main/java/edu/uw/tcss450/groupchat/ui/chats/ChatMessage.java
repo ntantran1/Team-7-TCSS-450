@@ -7,6 +7,11 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
+/**
+ * The ChatMessage class represents a single chat in a room.
+ *
+ * @version November 19, 2020
+ */
 public final class ChatMessage implements Serializable, Comparable<ChatMessage> {
 
     private final int mMessageId;
@@ -14,6 +19,14 @@ public final class ChatMessage implements Serializable, Comparable<ChatMessage> 
     private final String mSender;
     private final String mTimeStamp;
 
+    /**
+     * Constructor initialize the object's fields.
+     *
+     * @param messageId message id as an integer
+     * @param message the message content as a string
+     * @param sender the sender
+     * @param timeStamp the time message was sent
+     */
     public ChatMessage(int messageId, String message, String sender, String timeStamp) {
         mMessageId = messageId;
         mMessage = message;
@@ -36,18 +49,38 @@ public final class ChatMessage implements Serializable, Comparable<ChatMessage> 
                 msg.getString("timestamp"));
     }
 
+    /**
+     * Return the message content.
+     *
+     * @return message content the object is holding as a string
+     */
     public String getMessage() {
         return mMessage;
     }
 
+    /**
+     * Return the sender of this message
+     *
+     * @return sender string
+     */
     public String getSender() {
         return mSender;
     }
 
+    /**
+     * Return the timestamp when the message was sent
+     *
+     * @return timestamp as a string
+     */
     public String getTimeStamp() {
         return mTimeStamp;
     }
 
+    /**
+     * Return the message id.
+     *
+     * @return id as an integer
+     */
     public int getMessageId() {
         return mMessageId;
     }

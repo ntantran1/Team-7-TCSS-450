@@ -1,5 +1,10 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
+/**
+ * The class represents weather in an hour timestamp.
+ *
+ * @version November 19, 2020
+ */
 public class WeatherHourly {
     private int mHour;
 
@@ -10,9 +15,9 @@ public class WeatherHourly {
 
     /**
      * Weather Constructor.
-     * @param hour the username of the contact
-     * @param id the name (first and last) of the contact
-     * @param temp the email of the contact
+     * @param hour the current hour of the day
+     * @param id the id of object
+     * @param temp the temperature of this hour
      */
     public WeatherHourly(final int hour, final String id, final String temp) {
         mHour = hour;
