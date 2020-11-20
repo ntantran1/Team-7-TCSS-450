@@ -5,7 +5,7 @@ package edu.uw.tcss450.groupchat.ui.contacts;
  * @author Dylan Hill
  * @version November 2020
  */
-public class Contact {
+public class Contact implements Comparable<Contact> {
 
     private String mUsername;
 
@@ -19,7 +19,7 @@ public class Contact {
     public Contact() {
         mUsername = "Blank";
         mName = "Blank Name";
-        mEmail = "test@fakemail.com";
+        mEmail = "test@mail.com";
     }
 
     /**
@@ -56,5 +56,19 @@ public class Contact {
      */
     public String getEmail() {
         return mEmail;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Contact)) return false;
+        if (!mUsername.equals(((Contact) o).getUsername())) return false;
+        if (!mEmail.equals(((Contact) o).getEmail())) return false;
+        if (!mName.equals(((Contact) o).getName())) return false;
+        return true;
+    }
+
+    @Override
+    public int compareTo(Contact other) {
+        return mUsername.compareToIgnoreCase(other.getUsername());
     }
 }

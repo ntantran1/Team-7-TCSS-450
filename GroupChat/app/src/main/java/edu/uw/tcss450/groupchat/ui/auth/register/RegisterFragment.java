@@ -38,7 +38,7 @@ public class RegisterFragment extends Fragment {
             .and(checkExcludeWhiteSpace())
             .and(checkPwdSpecialChar("@"));
 
-    private final PasswordValidator mUsernameValidator = checkPwdLength(8)
+    private final PasswordValidator mUsernameValidator = checkPwdLength(1)
             .and(checkExcludeWhiteSpace());
 
     private final PasswordValidator mPasswordValidator =
