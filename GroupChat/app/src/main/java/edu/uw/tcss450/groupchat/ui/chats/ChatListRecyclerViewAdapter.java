@@ -13,10 +13,21 @@ import java.util.List;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatCardBinding;
 
+/**
+ * The class describes how each chat room should look on the home page and manage the list of
+ * chat rooms.
+ *
+ * @version November 19 2020
+ */
 public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRecyclerViewAdapter.RoomViewHolder> {
 
     private List<ChatRoom> mRooms;
 
+    /**
+     * Constructor initialize list of rooms.
+     *
+     * @param items List of ChatRoom objects visible to the user.
+     */
     public ChatListRecyclerViewAdapter(List<ChatRoom> items) {
         this.mRooms = items;
     }
@@ -39,6 +50,11 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
         return mRooms.size();
     }
 
+    /**
+     * The class describes how each Chatroom should look on the page.
+     *
+     * @version November 19 2020
+     */
     class RoomViewHolder extends RecyclerView.ViewHolder {
 
         private final View mView;
@@ -47,12 +63,22 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
 
         private FragmentChatCardBinding binding;
 
+        /**
+         * Initialize the ViewHolder.
+         *
+         * @param view current view context for page
+         */
         public RoomViewHolder(View view) {
             super(view);
             mView = view;
             binding = FragmentChatCardBinding.bind(view);
         }
 
+        /**
+         * Initialize ChatRoom object and populate binding.
+         *
+         * @param room ChatRoom object
+         */
         void setRoom(final ChatRoom room) {
             mRoom = room;;
             binding.labelName.setText(room.getName());

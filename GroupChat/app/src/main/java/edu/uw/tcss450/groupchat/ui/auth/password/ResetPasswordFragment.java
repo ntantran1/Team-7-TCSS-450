@@ -26,7 +26,9 @@ import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkPwdLength;
 import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkPwdSpecialChar;
 
 /**
- * A simple {@link Fragment} subclass.
+ * The Fragment class for Reset Password page.
+ *
+ * @version November 19, 2020
  */
 public class ResetPasswordFragment extends Fragment {
 

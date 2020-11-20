@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import edu.uw.tcss450.groupchat.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment class for Request tab of Contact page.
+ *
+ * @version November 19, 2020
  */
 public class ContactsRequestFragment extends Fragment {
 

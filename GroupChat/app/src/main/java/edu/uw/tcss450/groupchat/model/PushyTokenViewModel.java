@@ -27,11 +27,19 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 import me.pushy.sdk.Pushy;
 
+/**
+ * View Model for Pushy Tokens.
+ */
 public class PushyTokenViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> mPushyToken;
     private final MutableLiveData<JSONObject> mResponse;
 
+    /**
+     * Initialize the data structure for storage.
+     *
+     * @param application the reference to the current applications
+     */
     public PushyTokenViewModel(@NonNull Application application) {
         super(application);
         mPushyToken = new MutableLiveData<>();
@@ -50,11 +58,20 @@ public class PushyTokenViewModel extends AndroidViewModel {
         mPushyToken.observe(owner, observer);
     }
 
+    /**
+     * Add observer for receiving server's responses.
+     *
+     * @param owner The LifeCycle owner that will control the observer
+     * @param observer The observer that will receive the events
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Retrieve a pushy token for the current application.
+     */
     public void retrieveToken() {
         if (!Pushy.isRegistered(getApplication().getApplicationContext())) {
 
@@ -68,6 +85,11 @@ public class PushyTokenViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Perform an HTTP request to delete the application's Pushy token from the web service
+     *
+     * @param jwt user sign-in token
+     */
     public void deleteTokenFromWebservice(final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url) + "auth";
 
@@ -129,7 +151,7 @@ public class PushyTokenViewModel extends AndroidViewModel {
 
     /**
      * Send this Pushy device token to the web service.
-     * @param jwt
+     * @param jwt user token
      * @throws IllegalStateException when this method is called before the token is retrieve
      */
     public void sendTokenToWebservice(final String jwt) {
