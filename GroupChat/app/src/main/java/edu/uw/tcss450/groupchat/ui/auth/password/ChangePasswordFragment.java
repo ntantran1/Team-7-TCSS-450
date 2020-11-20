@@ -77,7 +77,7 @@ public class ChangePasswordFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentChangePasswordBinding.inflate(inflater);
+        binding = FragmentChangePasswordBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
