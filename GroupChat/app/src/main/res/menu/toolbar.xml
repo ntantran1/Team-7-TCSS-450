@@ -12,7 +12,7 @@
     <item
         android:id="@+id/navigation_change_password"
         android:orderInCategory="200"
-        android:title="@string/action_change_password"
+        android:title="@string/title_change_password"
         app:showAsAction="never" />
     
     <item
