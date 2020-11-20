@@ -61,6 +61,11 @@ public class ChatViewModel extends AndroidViewModel {
         getOrCreateMapEntry(chatId).observe(owner, observer);
     }
 
+    /**
+     * Register as an observer to listen to a  list of rooms.
+     * @param owner the fragments lifecycle owner
+     * @param observer the observer
+     */
     public void addRoomsObserver(@NonNull LifecycleOwner owner,
                                  @NonNull Observer<? super List<ChatRoom>> observer) {
         mRooms.observe(owner, observer);
@@ -88,6 +93,11 @@ public class ChatViewModel extends AndroidViewModel {
         return mMessages.get(chatId);
     }
 
+    /**
+     * Perform an HTTP request to retrieve all the chat rooms available to the user.
+     *
+     * @param jwt user token
+     */
     public void connectRooms(final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "chatrooms";

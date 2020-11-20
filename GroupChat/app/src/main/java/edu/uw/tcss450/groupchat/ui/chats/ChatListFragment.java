@@ -17,7 +17,9 @@ import edu.uw.tcss450.groupchat.databinding.FragmentChatListBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A Fragment for displaying list of chat rooms.
+ *
+ * @version November 19 2020
  */
 public class ChatListFragment extends Fragment {
     //The chat ID for "global" chat
@@ -27,6 +29,9 @@ public class ChatListFragment extends Fragment {
     private ChatSendViewModel mSendModel;
     private UserInfoViewModel mUserModel;
 
+    /**
+     * Empty default constructor.
+     */
     public ChatListFragment() {
         // Required empty public constructor
     }

@@ -25,21 +25,45 @@ import java.util.Objects;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 
+/**
+ * View Model for a single chat room.
+ * Store the necessary live data.
+ *
+ * @version November 5
+ */
 public class ChatSendViewModel extends AndroidViewModel {
 
     private final MutableLiveData<JSONObject> mResponse;
 
+    /**
+     * Main default constructor for a ViewModel.
+     *
+     * @param application reference to the current application.
+     */
     public ChatSendViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
     }
 
+    /**
+     * Add an observer to the chat room.
+     *
+     * @param owner the LifecyleOwner object of the chat room
+     * @param observer an observer to observe
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Perform a send message HTTP request.
+     *
+     * @param chatId chat id integer
+     * @param jwt user token
+     * @param message message content string
+     */
     public void sendMessage(final int chatId, final String jwt, final String message) {
         String url = "https://dhill30-groupchat-backend.herokuapp.com/" +
                 "messages";

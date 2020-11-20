@@ -49,11 +49,22 @@ public class ContactListViewModel extends AndroidViewModel {
         mContactList.setValue(new ArrayList<>());
     }
 
+    /**
+     * Add observer for receiving server's responses.
+     *
+     * @param owner The LifeCycle owner that will control the observer
+     * @param observer The observer that will receive the events
+     */
     public void addContactListObserver(@NonNull LifecycleOwner owner,
                                        @NonNull Observer<? super List<Contact>> observer) {
         mContactList.observe(owner, observer);
     }
 
+    /**
+     * Perform an HTTP request for retrieving current contacts available to the user.
+     *
+     * @param jwt user sign-in token
+     */
     public void connectGet(final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "contacts";

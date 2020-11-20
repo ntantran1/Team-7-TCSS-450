@@ -13,6 +13,12 @@ import java.util.List;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentHourlyBinding;
 
+/**
+ * The class describes how each Hourly Weather object should look on the weather page
+ * and mange the list of all Hourly Weather object.
+ *
+ * @version November 19, 2020
+ */
 public class WeatherRecyclerViewAdapter extends
         RecyclerView.Adapter<WeatherRecyclerViewAdapter.WeatherViewHolder> {
 

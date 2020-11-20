@@ -19,25 +19,40 @@ import org.json.JSONObject;
 
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherHomeBinding;
 
-/*
- * A class that get current weather api
+/**
+ * A class that get current weather information.
+ *
+ * @version November 19, 2020
  */
 public class WeatherViewModel extends AndroidViewModel {
     private MutableLiveData<JSONObject> mResponse;
+    /** Binding to the weather home page. */
     FragmentWeatherHomeBinding binding;
     protected String mZip;
     private boolean mVal = true;
 
+    /**
+     * Get value.
+     *
+     * @return value boolean
+     */
     public boolean getVal() {
         return mVal;
     }
 
+    /**
+     * Set value.
+     *
+     * @return value boolean
+     */
     public void setVal() {
         mVal = false;
     }
 
-    /*
+    /**
      * A constructor
+     *
+     * @param application the reference to the current application.
      */
     public WeatherViewModel(@NonNull Application application) {
 
@@ -47,6 +62,12 @@ public class WeatherViewModel extends AndroidViewModel {
 
     }
 
+    /**
+     * Add observer for receiving server's responses.
+     *
+     * @param owner The LifeCycle owner that will control the observer
+     * @param observer The observer that will receive the events
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
@@ -61,13 +82,16 @@ public class WeatherViewModel extends AndroidViewModel {
 
     }
 
-
+    /**
+     * Perform an HTTP request to retrieve current weather information.
+     *
+     * @param b binding to the weather home page
+     * @param zip current location zip code
+     */
     public void connect(FragmentWeatherHomeBinding b, String zip) {
         binding = b;
         mZip = zip;
         String url = "https://dhill30-groupchat-backend.herokuapp.com/weather?zip=" + zip;
-
-
 
         Request request = new JsonObjectRequest(
 

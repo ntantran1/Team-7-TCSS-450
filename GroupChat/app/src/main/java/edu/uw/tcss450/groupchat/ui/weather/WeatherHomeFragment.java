@@ -38,7 +38,9 @@ import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 import edu.uw.tcss450.groupchat.ui.contacts.ContactsRecyclerViewAdapter;
 
 /**
- * A simple {@link Fragment} subclass.
+ * The Fragment class for Weather home page.
+ *
+ * @version November 19, 2020
  */
 public class WeatherHomeFragment extends Fragment {
 
