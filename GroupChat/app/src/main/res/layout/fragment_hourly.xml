@@ -9,7 +9,7 @@
         android:id="@+id/hour_text"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:text="TextView" />
+        android:textColor="?attr/colorPrimaryDark"/>
 
     <ImageView
         android:id="@+id/condition_image"
@@ -21,5 +21,5 @@
         android:id="@+id/temp_text"
         android:layout_width="wrap_content"
         android:layout_height="38dp"
-        android:text="TextView" />
+        android:textColor="?attr/colorPrimaryDark"/>
 </LinearLayout>
