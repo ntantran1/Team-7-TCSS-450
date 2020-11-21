@@ -100,8 +100,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
-        android:background="?attr/colorPrimary"
-        android:backgroundTint="@color/material_on_primary_disabled"
+        android:background="#C5B0EA"
+        android:backgroundTint="#BE9FF4"
         android:textAlignment="center"
         android:textColor="#3F51B5"
         android:textColorHint="#0B0A0A"
@@ -117,14 +117,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="56dp"
-        android:background="?attr/colorPrimary"
-        android:backgroundTint="@color/material_on_primary_disabled"
+        android:background="#C5B0EA"
+        android:backgroundTint="#BE9FF4"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textColorHint="#040404"
         android:textColorLink="#040303"
         android:textSize="18sp"
         android:textStyle="bold"
+
         app:layout_constraintStart_toStartOf="@+id/button_fahrenheit"
         app:layout_constraintTop_toBottomOf="@+id/text_condition" />
 
@@ -194,7 +195,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline_fifty"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hourly_view">
@@ -203,31 +206,31 @@
             android:id="@+id/text_day_one"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/text_day_two"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/text_day_three"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/text_day_four"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/text_day_five"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
     </LinearLayout>
 
     <LinearLayout
@@ -235,7 +238,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline_fifty"
         app:layout_constraintTop_toBottomOf="@+id/hourly_view">
 
@@ -270,7 +275,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/linearLayout2"
         app:layout_constraintTop_toBottomOf="@+id/hourly_view">
@@ -280,35 +287,35 @@
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:textAlignment="textEnd"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/text_weather_two"
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:textAlignment="textEnd"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/text_weather_three"
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:textAlignment="textEnd"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/text_weather_four"
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:textAlignment="textEnd"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/text_weather_five"
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:textAlignment="textEnd"
-            android:textColor="?attr/colorPrimaryDark"/>
+            android:textColor="?attr/colorPrimaryDark" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
