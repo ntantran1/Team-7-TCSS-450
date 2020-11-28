@@ -42,7 +42,6 @@ public class ChatListFragment extends Fragment {
         ViewModelProvider provider = new ViewModelProvider(getActivity());
         mUserModel = provider.get(UserInfoViewModel.class);
         mChatModel = provider.get(ChatViewModel.class);
-//        mChatModel.getFirstMessages(HARD_CODED_CHAT_ID, mUserModel.getJwt());
         mSendModel = provider.get(ChatSendViewModel.class);
 
         ChatListFragmentArgs args = ChatListFragmentArgs.fromBundle(getArguments());
