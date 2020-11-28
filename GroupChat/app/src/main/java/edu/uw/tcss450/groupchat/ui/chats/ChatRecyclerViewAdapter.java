@@ -12,6 +12,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.shape.CornerFamily;
 import java.util.List;
 import edu.uw.tcss450.groupchat.R;
+import edu.uw.tcss450.groupchat.databinding.FragmentChatListBinding;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatMessageBinding;
 
 /**

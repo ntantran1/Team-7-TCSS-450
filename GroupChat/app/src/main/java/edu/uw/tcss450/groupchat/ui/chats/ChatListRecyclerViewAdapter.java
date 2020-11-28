@@ -1,10 +1,14 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,12 +84,25 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
          * @param room ChatRoom object
          */
         void setRoom(final ChatRoom room) {
-            mRoom = room;;
+            mRoom = room;
             binding.labelName.setText(room.getName());
             mView.setOnClickListener(view -> {
                 Navigation.findNavController(mView).navigate(
                         ChatsHomeFragmentDirections
                                 .actionNavigationChatsToChatListFragment(room));
+                Navigation.findNavController(mView).addOnDestinationChangedListener(
+                        new NavController.OnDestinationChangedListener() {
+                            @Override
+                            public void onDestinationChanged(@NonNull NavController controller,
+                                                             @NonNull NavDestination destination,
+                                                             @Nullable Bundle arguments) {
+                                if(destination.getId() == R.id.chatListFragment){
+                                    destination.setLabel(mRoom.getName());
+                                }
+
+                            }
+                        }
+                );
             });
         }
     }
