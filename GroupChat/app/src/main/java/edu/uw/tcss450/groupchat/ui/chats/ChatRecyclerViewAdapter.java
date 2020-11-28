@@ -15,13 +15,14 @@ import com.google.android.material.shape.CornerFamily;
 import java.util.List;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatListBinding;
-import edu.uw.tcss450.groupchat.databinding.FragmentChatMessageBinding;
+
 
 /**
+ * @author Sukhraj Kaur (Sofia)
  * The class describes how each Messages should look in a chat room and mange the list
  * of messages.
  *
- * @version November 5, 2020
+ * @version November 27, 2020
  */
 public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
     private final List<ChatMessage> mMessages;
