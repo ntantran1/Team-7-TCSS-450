@@ -21,7 +21,7 @@ import edu.uw.tcss450.groupchat.databinding.FragmentChatCardBinding;
  * The class describes how each chat room should look on the home page and manage the list of
  * chat rooms.
  *
- * @version November 19 2020
+ * @version November 27 2020
  */
 public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRecyclerViewAdapter.RoomViewHolder> {
 

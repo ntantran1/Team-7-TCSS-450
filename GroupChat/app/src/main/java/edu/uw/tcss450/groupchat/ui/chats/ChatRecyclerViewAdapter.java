@@ -1,27 +1,22 @@
 package edu.uw.tcss450.groupchat.ui.chats;
-import android.content.res.Resources;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.shape.CornerFamily;
+
 import java.util.List;
 import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.databinding.FragmentChatListBinding;
-import edu.uw.tcss450.groupchat.databinding.FragmentChatMessageBinding;
+
 
 /**
+ * @author Sukhraj Kaur (Sofia)
  * The class describes how each Messages should look in a chat room and mange the list
  * of messages.
  *
- * @version November 5, 2020
+ * @version November 27, 2020
  */
 public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
     private final List<ChatMessage> mMessages;
@@ -54,11 +49,11 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
         View view;
 
         if(viewType == 0){
-            view = layoutInflater.inflate(R.layout.sent_chat, parent, false);
+            view = layoutInflater.inflate(R.layout.fragment_chat_sent, parent, false);
             return new ViewHolderSent(view);
         }
 
-        view = layoutInflater.inflate(R.layout.received_chat, parent, false);
+        view = layoutInflater.inflate(R.layout.fragment_chat_received, parent, false);
         return new ViewHolderReceived(view);
     }
 

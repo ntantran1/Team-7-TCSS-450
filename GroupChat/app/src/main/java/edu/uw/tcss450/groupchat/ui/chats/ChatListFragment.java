@@ -22,8 +22,7 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
  * @version November 19 2020
  */
 public class ChatListFragment extends Fragment {
-    //The chat ID for "global" chat
-//    private static final int HARD_CODED_CHAT_ID = 1;
+
 
     private ChatViewModel mChatModel;
     private ChatSendViewModel mSendModel;
