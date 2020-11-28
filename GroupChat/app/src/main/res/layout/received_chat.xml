@@ -13,6 +13,7 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="1dp"
         android:background="@drawable/holder_circle"
+        android:foreground="@drawable/ic_launcher_foreground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
