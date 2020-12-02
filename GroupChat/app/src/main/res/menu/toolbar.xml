@@ -17,7 +17,7 @@
     
     <item
         android:id="@+id/action_signout"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         android:title="@string/action_signout"
         app:showAsAction="never" />
 

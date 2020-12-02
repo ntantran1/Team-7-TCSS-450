@@ -38,7 +38,7 @@ public class ContactsHomeFragment extends Fragment {
         mModel = new ViewModelProvider(getActivity()).get(ContactListViewModel.class);
         mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
 
-        mModel.connectGet(mUserModel.getJwt());
+        mModel.connectContacts(mUserModel.getJwt());
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ContactsHomeFragment extends Fragment {
         final RecyclerView rv = binding.listRoot;
         rv.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>()));
 
-        binding.swipeContainer.setOnRefreshListener(() -> mModel.connectGet(mUserModel.getJwt()));
+        binding.swipeContainer.setOnRefreshListener(() -> mModel.connectContacts(mUserModel.getJwt()));
 
         mModel.addContactListObserver(getViewLifecycleOwner(), contactList -> {
             rv.setAdapter(new ContactsRecyclerViewAdapter(contactList));

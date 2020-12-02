@@ -30,13 +30,19 @@ import java.util.function.IntFunction;
 import edu.uw.tcss450.groupchat.R;
 
 /**
- * View Model for list of Contacts
+ * View Model for the lists of Contacts
  *
- * @version November 5
+ * @version December 2, 2020
  */
 public class ContactListViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<Contact>> mContactList;
+
+    private MutableLiveData<List<Contact>> mIncomingList;
+
+    private MutableLiveData<List<Contact>> mOutgoingList;
+
+    private MutableLiveData<List<Contact>> mSearchedList;
 
     /**
      * Main default constructor for View Model.
@@ -47,10 +53,16 @@ public class ContactListViewModel extends AndroidViewModel {
         super(application);
         mContactList = new MutableLiveData<>();
         mContactList.setValue(new ArrayList<>());
+        mIncomingList = new MutableLiveData<>();
+        mIncomingList.setValue(new ArrayList<>());
+        mOutgoingList = new MutableLiveData<>();
+        mOutgoingList.setValue(new ArrayList<>());
+        mSearchedList = new MutableLiveData<>();
+        mSearchedList.setValue(new ArrayList<>());
     }
 
     /**
-     * Add observer for receiving server's responses.
+     * Add observer to the Contact list for receiving server's responses.
      *
      * @param owner The LifeCycle owner that will control the observer
      * @param observer The observer that will receive the events
@@ -61,11 +73,44 @@ public class ContactListViewModel extends AndroidViewModel {
     }
 
     /**
+     * Add observer to the Incoming list for receiving server's responses.
+     *
+     * @param owner The LifeCycle owner that will control the observer
+     * @param observer The observer that will receive the events
+     */
+    public void addIncomingListObserver(@NonNull LifecycleOwner owner,
+                                       @NonNull Observer<? super List<Contact>> observer) {
+        mIncomingList.observe(owner, observer);
+    }
+
+    /**
+     * Add observer to the Outgoing list for receiving server's responses.
+     *
+     * @param owner The LifeCycle owner that will control the observer
+     * @param observer The observer that will receive the events
+     */
+    public void addOutgoingListObserver(@NonNull LifecycleOwner owner,
+                                       @NonNull Observer<? super List<Contact>> observer) {
+        mOutgoingList.observe(owner, observer);
+    }
+
+    /**
+     * Add observer to the Searched list for receiving server's responses.
+     *
+     * @param owner The LifeCycle owner that will control the observer
+     * @param observer The observer that will receive the events
+     */
+    public void addSearchedListObserver(@NonNull LifecycleOwner owner,
+                                         @NonNull Observer<? super List<Contact>> observer) {
+        mSearchedList.observe(owner, observer);
+    }
+
+    /**
      * Perform an HTTP request for retrieving current contacts available to the user.
      *
      * @param jwt user sign-in token
      */
-    public void connectGet(final String jwt) {
+    public void connectContacts(final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "contacts";
 
@@ -73,7 +118,7 @@ public class ContactListViewModel extends AndroidViewModel {
                 Request.Method.GET,
                 url,
                 null, //no body for this get request
-                this::handleResult,
+                this::handleContacts,
                 this::handleError) {
 
                 @Override
@@ -99,15 +144,15 @@ public class ContactListViewModel extends AndroidViewModel {
      *
      * @param jwt user sign-in token
      */
-    public void connectSearch(final String jwt) {
+    public void connectSearch(final String jwt, final String term) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "contacts?id=2";
+                + "search?term=" + term + "%";
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null, //no body for this get request
-                this::handleResult,
+                this::handleSearch,
                 this::handleError) {
 
             @Override
@@ -134,7 +179,7 @@ public class ContactListViewModel extends AndroidViewModel {
         throw new IllegalStateException(error.getMessage());
     }
 
-    private void handleResult(final JSONObject result) {
+    private void handleContacts(final JSONObject result) {
         List<Contact> sorted = new ArrayList<>();
         try {
             JSONObject root = result;
@@ -158,5 +203,83 @@ public class ContactListViewModel extends AndroidViewModel {
         //sort the list of contacts alphabetically
         Collections.sort(sorted);
         mContactList.setValue(sorted);
+    }
+
+    private void handleIncoming(final JSONObject result) {
+        List<Contact> sorted = new ArrayList<>();
+        try {
+            JSONObject root = result;
+            if (root.has("contacts")) {
+                JSONArray contacts = root.getJSONArray("contacts");
+
+                for (int i = 0; i < contacts.length(); i++) {
+                    JSONObject jsonContact = contacts.getJSONObject(i);
+                    Contact contact = new Contact(jsonContact.getString("username"),
+                            jsonContact.getString("name"),
+                            jsonContact.getString("email"));
+                    sorted.add(contact);
+                }
+            } else {
+                Log.e("ERROR", "No contacts array");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR", e.getMessage());
+        }
+        //sort the list of contacts alphabetically
+        Collections.sort(sorted);
+        mIncomingList.setValue(sorted);
+    }
+
+    private void handleOutgoing(final JSONObject result) {
+        List<Contact> sorted = new ArrayList<>();
+        try {
+            JSONObject root = result;
+            if (root.has("contacts")) {
+                JSONArray contacts = root.getJSONArray("contacts");
+
+                for (int i = 0; i < contacts.length(); i++) {
+                    JSONObject jsonContact = contacts.getJSONObject(i);
+                    Contact contact = new Contact(jsonContact.getString("username"),
+                            jsonContact.getString("name"),
+                            jsonContact.getString("email"));
+                    sorted.add(contact);
+                }
+            } else {
+                Log.e("ERROR", "No contacts array");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR", e.getMessage());
+        }
+        //sort the list of contacts alphabetically
+        Collections.sort(sorted);
+        mOutgoingList.setValue(sorted);
+    }
+
+    private void handleSearch(final JSONObject result) {
+        List<Contact> sorted = new ArrayList<>();
+        try {
+            JSONObject root = result;
+            if (root.has("users")) {
+                JSONArray contacts = root.getJSONArray("users");
+
+                for (int i = 0; i < contacts.length(); i++) {
+                    JSONObject jsonContact = contacts.getJSONObject(i);
+                    Contact contact = new Contact(jsonContact.getString("username"),
+                            jsonContact.getString("name"),
+                            jsonContact.getString("email"));
+                    sorted.add(contact);
+                }
+            } else {
+                Log.e("ERROR", "No users array");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR", e.getMessage());
+        }
+        //sort the list of users alphabetically
+        Collections.sort(sorted);
+        mSearchedList.setValue(sorted);
     }
 }
