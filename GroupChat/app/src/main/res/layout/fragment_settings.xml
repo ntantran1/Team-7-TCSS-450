@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.settings.SettingsFragment">
+
+    <TextView
+        android:id="@+id/colorSettingsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="56dp"
+        android:text="Color theme:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/colorSettingsLabel">
+
+        <RadioButton
+            android:id="@+id/settings_color_pg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Purple/Gold"
+            android:onClick="changeColorTheme"/>
+
+        <RadioButton
+            android:id="@+id/settings_color_ig"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Indigo/Green"
+            android:onClick="changeColorTheme"/>
+
+        <RadioButton
+            android:id="@+id/settings_color_go"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gray/Orange"
+            android:onClick="changeColorTheme"/>
+    </RadioGroup>
+</androidx.constraintlayout.widget.ConstraintLayout>
