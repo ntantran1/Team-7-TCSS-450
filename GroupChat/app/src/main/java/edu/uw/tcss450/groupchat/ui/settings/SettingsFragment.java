@@ -19,7 +19,9 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
  * A simple {@link Fragment} subclass
  */
 public class SettingsFragment extends Fragment {
+
     private FragmentSettingsBinding binding;
+
     private UserInfoViewModel mUserViewModel;
 
     public SettingsFragment() {
@@ -33,7 +35,8 @@ public class SettingsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentSettingsBinding.inflate(inflater, container, false);
