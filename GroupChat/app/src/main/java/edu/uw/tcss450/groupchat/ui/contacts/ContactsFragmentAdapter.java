@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Adapter for individual expanded contact pages.
  *
- * @version November 19, 2020
+ * @version December 2, 2020
  */
 public class ContactsFragmentAdapter extends FragmentStateAdapter {
 
@@ -26,6 +26,7 @@ public class ContactsFragmentAdapter extends FragmentStateAdapter {
         mPages = new ArrayList<>();
         mPages.add(new ContactsHomeFragment());
         mPages.add(new ContactsRequestFragment());
+        mPages.add(new ContactsSearchFragment());
     }
 
     @NonNull

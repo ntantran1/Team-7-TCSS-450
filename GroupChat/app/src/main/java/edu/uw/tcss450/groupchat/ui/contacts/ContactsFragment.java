@@ -25,7 +25,8 @@ import edu.uw.tcss450.groupchat.R;
 public class ContactsFragment extends Fragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_contacts, container, false);
@@ -35,17 +36,19 @@ public class ContactsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ViewPager2 vp = view.findViewById(R.id.view_pager);
-        vp.setAdapter(new ContactsFragmentAdapter(this));
+        ViewPager2 viewPager = view.findViewById(R.id.view_pager);
+        viewPager.setAdapter(new ContactsFragmentAdapter(this));
 
-        TabLayout tl = view.findViewById(R.id.tab_layout);
-        new TabLayoutMediator(tl, vp, (tab, position) -> {
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             if (position == 1) {
                 tab.setText("Requests");
+            } else if (position == 2) {
+                tab.setText("Search");
             } else {
                 tab.setText("Contacts");
             }
-            vp.setCurrentItem(tab.getPosition(), true);
+            viewPager.setCurrentItem(tab.getPosition(), true);
         }).attach();
     }
 }
