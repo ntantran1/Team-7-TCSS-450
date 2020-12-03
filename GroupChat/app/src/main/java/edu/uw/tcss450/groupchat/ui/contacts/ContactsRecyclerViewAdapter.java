@@ -109,26 +109,21 @@ public class ContactsRecyclerViewAdapter extends
             binding.textEmail.setText(contact.getEmail());
 
             switch (mContact.getType()) {
-                case 1: {
+                case 1:
                     mView.setOnClickListener(this::contactPopup);
                     break;
-                }
-                case 2: {
+                case 2:
                     mView.setOnClickListener(this::incomingPopup);
                     break;
-                }
-                case 3: {
+                case 3:
                     mView.setOnClickListener(this::outgoingPopup);
                     break;
-                }
-                case 4: {
+                case 4:
                     mView.setOnClickListener(this::searchPopup);
                     break;
-                }
-                default: {
+                default:
                     Log.d("Contact Holder", "OnClickListener not set up properly");
                     break;
-                }
             }
         }
 

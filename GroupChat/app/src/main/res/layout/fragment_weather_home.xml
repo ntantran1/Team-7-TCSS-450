@@ -5,10 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/weather"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:backgroundTint="@color/material_on_primary_disabled"
         android:backgroundTintMode="add"
@@ -18,9 +19,9 @@
             android:id="@+id/guideline_fifty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:isScrollContainer="true"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"
-            android:isScrollContainer="true"/>
+            app:layout_constraintGuide_percent="0.5" />
 
         <ImageButton
             android:id="@+id/button_refresh"
@@ -105,8 +106,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="56dp"
-            android:background="#C5B0EA"
-            android:backgroundTint="#BE9FF4"
+            android:background="?attr/colorPrimary"
+            android:backgroundTint="@color/material_on_primary_disabled"
+            android:backgroundTintMode="multiply"
             android:textAlignment="center"
             android:textColor="#3F51B5"
             android:textColorHint="#0B0A0A"
@@ -122,15 +124,16 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="56dp"
-            android:background="#C5B0EA"
-            android:backgroundTint="#BE9FF4"
+            android:background="?attr/colorPrimary"
+            android:backgroundTint="@color/material_on_primary_disabled"
+            android:backgroundTintMode="multiply"
             android:textAlignment="center"
             android:textColor="#000000"
+
             android:textColorHint="#040404"
             android:textColorLink="#040303"
             android:textSize="18sp"
             android:textStyle="bold"
-
             app:layout_constraintStart_toStartOf="@+id/button_fahrenheit"
             app:layout_constraintTop_toBottomOf="@+id/text_condition" />
 
