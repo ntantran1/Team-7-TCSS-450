@@ -8,9 +8,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -53,13 +56,13 @@ public class ContactsIncomingFragment extends Fragment {
         binding.incomingSwipeContainer.setRefreshing(true);
 
         final RecyclerView recyclerView = binding.incomingListRoot;
-        recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>()));
+        recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>(), mModel, mUserModel));
 
         binding.incomingSwipeContainer.setOnRefreshListener(() ->
                 mModel.connectIncoming(mUserModel.getJwt()));
 
         mModel.addIncomingListObserver(getViewLifecycleOwner(), incomingList -> {
-            recyclerView.setAdapter(new ContactsRecyclerViewAdapter(incomingList));
+            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(incomingList);
             binding.incomingSwipeContainer.setRefreshing(false);
         });
     }

@@ -5,9 +5,11 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +17,10 @@ import android.view.ViewGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import org.json.JSONException;
+
 import edu.uw.tcss450.groupchat.R;
+import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 
 /**
  * Fragment for Contact list tab of the Contact page.
@@ -23,6 +28,17 @@ import edu.uw.tcss450.groupchat.R;
  * @version November 19, 2020
  */
 public class ContactsFragment extends Fragment {
+
+    private ContactListViewModel mModel;
+
+    private UserInfoViewModel mUserModel;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mModel = new ViewModelProvider(getActivity()).get(ContactListViewModel.class);
+        mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -52,5 +68,25 @@ public class ContactsFragment extends Fragment {
             }
             viewPager.setCurrentItem(tab.getPosition(), true);
         }).attach();
+
+        mModel.addResponseObserver(getViewLifecycleOwner(), response -> {
+            if (response.length() > 0) {
+                if (response.has("code")) {
+                    try {
+                        Log.e("Web Service Error",
+                                response.getJSONObject("data").getString("message"));
+                    } catch (JSONException e) {
+                        Log.e("JSON Parse Error", e.getMessage());
+                    }
+                } else {
+                    mModel.connectContacts(mUserModel.getJwt());
+                    mModel.connectIncoming(mUserModel.getJwt());
+                    mModel.connectOutgoing(mUserModel.getJwt());
+                    mModel.connectSearch(mUserModel.getJwt(), "");
+                }
+            } else {
+                Log.d("JSON Response", "No Response");
+            }
+        });
     }
 }

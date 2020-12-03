@@ -10,6 +10,12 @@
     <string name="action_forgot_password">Forgot Password</string>
     <string name="action_confirm_reset">Reset</string>
     <string name="action_confirm_password">Confirm</string>
+    <string name="action_accept_request">Accept Request</string>
+    <string name="action_reject_request">Reject Request</string>
+    <string name="action_remove_request">Remove Request</string>
+    <string name="action_remove_contact">Remove Contact</string>
+    <string name="action_add_contact">Add Contact</string>
+    <string name="action_cancel">Cancel</string>
 
     <string name="hint_username">Username</string>
     <string name="hint_email">Email</string>

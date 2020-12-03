@@ -58,13 +58,13 @@ public class ContactsHomeFragment extends Fragment {
         binding.swipeContainer.setRefreshing(true);
 
         final RecyclerView recyclerView = binding.listRoot;
-        recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>()));
+        recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>(), mModel, mUserModel));
 
         binding.swipeContainer.setOnRefreshListener(() ->
                 mModel.connectContacts(mUserModel.getJwt()));
 
         mModel.addContactListObserver(getViewLifecycleOwner(), contactList -> {
-            recyclerView.setAdapter(new ContactsRecyclerViewAdapter(contactList));
+            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(contactList);
             binding.swipeContainer.setRefreshing(false);
         });
     }

@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }));
 
-        mNewMessageModel.addMessageCountObserver(this, count ->{
+        mNewMessageModel.addMessageCountObserver(this, count -> {
             BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
             badge.setMaxCharacterCount(2);
             if(count > 0) {
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                     R.id.nav_host_fragment);
             NavDestination nd = nc.getCurrentDestination();
 
-            if(intent.hasExtra("chatMessage")){
+            if(intent.hasExtra("chatMessage")) {
                 ChatMessage cm = (ChatMessage) intent.getSerializableExtra("chatMessage");
 
                 //if user is not on chat screen, update NewMessageCountView Model
