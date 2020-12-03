@@ -88,11 +88,11 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
             binding.labelName.setText(room.getName());
             //when someone clicks on a chat, takes to that chat list
             mView.setOnClickListener(view -> {
-                Navigation.findNavController(mView).getGraph().findNode(R.id.chatListFragment).setLabel(mRoom.getName());
+                Navigation.findNavController(mView).getGraph()
+                        .findNode(R.id.chatListFragment).setLabel(mRoom.getName());
                 Navigation.findNavController(mView).navigate(
                         ChatsHomeFragmentDirections
                                 .actionNavigationChatsToChatListFragment(mRoom));
-
             });
 
 

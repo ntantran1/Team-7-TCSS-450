@@ -21,14 +21,6 @@ public class UserInfoViewModel extends ViewModel {
     /** Current Theme **/
     private int mTheme;
 
-    public int getTheme() {
-        return mTheme;
-    }
-
-    public void setTheme(int theme) {
-        mTheme = theme;
-    }
-
     private UserInfoViewModel(String email, String jwt) {
         mEmail = email;
         mJwt = jwt;
@@ -54,7 +46,25 @@ public class UserInfoViewModel extends ViewModel {
     }
 
     /**
-     * Utility Factory class for initilizing UserInfoViewModel.
+     * Get app theme.
+     *
+     * @return current theme of the app
+     */
+    public int getTheme() {
+        return mTheme;
+    }
+
+    /**
+     * Set app theme.
+     *
+     * @param theme theme to change app to
+     */
+    public void setTheme(int theme) {
+        mTheme = theme;
+    }
+
+    /**
+     * Utility Factory class for initializing UserInfoViewModel.
      */
     public static class UserInfoViewModelFactory implements ViewModelProvider.Factory {
         private final String email;
