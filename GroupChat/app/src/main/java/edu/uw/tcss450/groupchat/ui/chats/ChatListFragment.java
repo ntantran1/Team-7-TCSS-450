@@ -1,14 +1,19 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -45,6 +50,11 @@ public class ChatListFragment extends Fragment {
 
         ChatListFragmentArgs args = ChatListFragmentArgs.fromBundle(getArguments());
         mChatModel.getFirstMessages(args.getRoom().getId(), mUserModel.getJwt());
+
+        setHasOptionsMenu(true);
+
+
+
     }
 
     @Override
@@ -66,6 +76,7 @@ public class ChatListFragment extends Fragment {
         binding.swipeContainer.setRefreshing(true);
 
         final RecyclerView rv = binding.recyclerviewChatList;
+
         //Set the Adapter to hold a reference to the list FOR THIS chat ID that the ViewModel
         //holds.
         rv.setAdapter(new ChatRecyclerViewAdapter(
@@ -104,5 +115,13 @@ public class ChatListFragment extends Fragment {
 
         });
 
+
+
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        menu.findItem(R.id.chatOptions).setVisible(true);
+        super.onPrepareOptionsMenu(menu);
     }
 }
