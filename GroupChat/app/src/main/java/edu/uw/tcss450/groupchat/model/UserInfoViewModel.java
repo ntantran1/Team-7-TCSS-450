@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import edu.uw.tcss450.groupchat.R;
+
 /**
  * View model for user's information.
  *
@@ -16,9 +18,21 @@ public class UserInfoViewModel extends ViewModel {
     /** User login token. */
     private final String mJwt;
 
+    /** Current Theme **/
+    private int mTheme;
+
+    public int getTheme() {
+        return mTheme;
+    }
+
+    public void setTheme(int theme) {
+        mTheme = theme;
+    }
+
     private UserInfoViewModel(String email, String jwt) {
         mEmail = email;
         mJwt = jwt;
+        mTheme = R.style.Theme_PurpleGold;
     }
 
     /**
