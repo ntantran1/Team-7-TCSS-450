@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RadioButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -42,19 +44,25 @@ public class MainActivity extends AppCompatActivity {
     private MainPushMessageReceiver mPushMessageReceiver;
     private NewMessageCountViewModel mNewMessageModel;
 
+    private UserInfoViewModel mUserViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         String email = args.getEmail();
         String jwt = args.getJwt();
-        mNewMessageModel = new ViewModelProvider(this).get(NewMessageCountViewModel.class);
 
         new ViewModelProvider(this,
                 new UserInfoViewModel.UserInfoViewModelFactory(email, jwt)).get(UserInfoViewModel.class);
+
+        mNewMessageModel = new ViewModelProvider(this).get(NewMessageCountViewModel.class);
+        mUserViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
+
+        setTheme(mUserViewModel.getTheme());
+
+        super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_contacts,
@@ -124,10 +132,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        if (id == R.id.action_settings) {
-            //TODO open a settings fragment
-            Log.d("SETTINGS", "Clicked");
-            return true;
+        if (id == R.id.navigation_settings) {
+            return NavigationUI.onNavDestinationSelected(item, navController);
         } else if (id == R.id.action_signout) {
             signOut();
             return true;
@@ -155,6 +161,31 @@ public class MainActivity extends AppCompatActivity {
                 new ViewModelProvider(this)
                         .get(UserInfoViewModel.class)
                         .getJwt());
+    }
+
+    public void changeColorTheme(View view) {
+        boolean checked = ((RadioButton) view).isChecked();
+
+        switch (view.getId()) {
+            case R.id.settings_color_pg:
+                if (checked && mUserViewModel.getTheme() != R.style.Theme_PurpleGold) {
+                    mUserViewModel.setTheme(R.style.Theme_PurpleGold);
+                    recreate();
+                }
+                break;
+            case R.id.settings_color_ig:
+                if (checked && mUserViewModel.getTheme() != R.style.Theme_IndigoGreen) {
+                    mUserViewModel.setTheme(R.style.Theme_IndigoGreen);
+                    recreate();
+                }
+                break;
+            case R.id.settings_color_go:
+                if (checked && mUserViewModel.getTheme() != R.style.Theme_GreyOrange) {
+                    mUserViewModel.setTheme(R.style.Theme_GreyOrange);
+                    recreate();
+                }
+                break;
+        }
     }
 
     /**
