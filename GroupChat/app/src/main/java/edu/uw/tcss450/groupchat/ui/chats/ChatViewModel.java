@@ -38,8 +38,6 @@ public class ChatViewModel extends AndroidViewModel {
      */
     private Map<Integer, MutableLiveData<List<ChatMessage>>> mMessages;
 
-//    private MutableLiveData<Map<Integer, List<ChatMessage>>> mMessages;
-
     private MutableLiveData<List<ChatRoom>> mRooms;
 
     public ChatViewModel(@NonNull Application application) {
