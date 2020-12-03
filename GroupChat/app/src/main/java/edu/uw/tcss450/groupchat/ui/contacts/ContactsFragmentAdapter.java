@@ -25,7 +25,8 @@ public class ContactsFragmentAdapter extends FragmentStateAdapter {
         super(fragment);
         mPages = new ArrayList<>();
         mPages.add(new ContactsHomeFragment());
-        mPages.add(new ContactsRequestFragment());
+        mPages.add(new ContactsIncomingFragment());
+        mPages.add(new ContactsOutgoingFragment());
         mPages.add(new ContactsSearchFragment());
     }
 

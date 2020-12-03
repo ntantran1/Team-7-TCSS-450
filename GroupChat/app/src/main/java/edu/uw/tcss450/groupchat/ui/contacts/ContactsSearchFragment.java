@@ -52,12 +52,12 @@ public class ContactsSearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.swipeContainer.setRefreshing(true);
+        binding.searchSwipeContainer.setRefreshing(true);
 
         final RecyclerView recyclerView = binding.searchListRoot;
         recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>()));
 
-        binding.swipeContainer.setOnRefreshListener(() ->
+        binding.searchSwipeContainer.setOnRefreshListener(() ->
                 mModel.connectSearch(mUserModel.getJwt(),
                         binding.searchUsers.getQuery().toString()));
 
@@ -78,7 +78,7 @@ public class ContactsSearchFragment extends Fragment {
 
         mModel.addSearchedListObserver(getViewLifecycleOwner(), userList -> {
             recyclerView.setAdapter(new ContactsRecyclerViewAdapter(userList));
-            binding.swipeContainer.setRefreshing(false);
+            binding.searchSwipeContainer.setRefreshing(false);
         });
     }
 }

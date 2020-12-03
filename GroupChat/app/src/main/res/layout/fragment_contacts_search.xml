@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_container"
+        android:id="@+id/search_swipe_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"

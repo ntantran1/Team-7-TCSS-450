@@ -11,6 +11,7 @@
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:tabTextAppearance="@style/TabText"
         app:tabMode="fixed"/>
 
     <androidx.viewpager2.widget.ViewPager2

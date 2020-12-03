@@ -42,8 +42,10 @@ public class ContactsFragment extends Fragment {
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             if (position == 1) {
-                tab.setText("Requests");
+                tab.setText("Incoming");
             } else if (position == 2) {
+                tab.setText("Outgoing");
+            } else if (position == 3) {
                 tab.setText("Search");
             } else {
                 tab.setText("Contacts");
