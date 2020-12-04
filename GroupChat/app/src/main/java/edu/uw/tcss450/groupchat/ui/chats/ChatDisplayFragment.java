@@ -48,9 +48,6 @@ public class ChatDisplayFragment extends Fragment {
         mChatModel.getFirstMessages(args.getRoom().getId(), mUserModel.getJwt());
 
         setHasOptionsMenu(true);
-
-
-
     }
 
     @Override

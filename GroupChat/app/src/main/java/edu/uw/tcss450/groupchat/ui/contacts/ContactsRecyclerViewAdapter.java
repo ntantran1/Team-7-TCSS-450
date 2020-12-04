@@ -1,8 +1,12 @@
 package edu.uw.tcss450.groupchat.ui.contacts;
 
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +15,11 @@ import java.util.List;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentContactCardBinding;
+import edu.uw.tcss450.groupchat.databinding.PopupContactHomeBinding;
+import edu.uw.tcss450.groupchat.databinding.PopupContactIncomingBinding;
+import edu.uw.tcss450.groupchat.databinding.PopupContactOutgoingBinding;
+import edu.uw.tcss450.groupchat.databinding.PopupContactSearchBinding;
+import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 
 /**
  * The class describe how each Contact should look on the page and manage
@@ -21,15 +30,23 @@ import edu.uw.tcss450.groupchat.databinding.FragmentContactCardBinding;
 public class ContactsRecyclerViewAdapter extends
         RecyclerView.Adapter<ContactsRecyclerViewAdapter.ContactViewHolder> {
 
-    private final List<Contact> mContacts;
+    private List<Contact> mContacts;
+
+    private ContactListViewModel mModel;
+
+    private UserInfoViewModel mUserModel;
 
     /**
      * Constructor to initialize the list of contacts.
      *
      * @param items List of Contact objects
      */
-    public ContactsRecyclerViewAdapter(List<Contact> items) {
+    public ContactsRecyclerViewAdapter(final List<Contact> items,
+                                       final ContactListViewModel model,
+                                       final UserInfoViewModel userModel) {
         this.mContacts = items;
+        this.mModel = model;
+        this.mUserModel = userModel;
     }
 
     @NonNull
@@ -48,6 +65,11 @@ public class ContactsRecyclerViewAdapter extends
     @Override
     public int getItemCount() {
         return mContacts.size();
+    }
+
+    public void setList(final List<Contact> items) {
+        this.mContacts = items;
+        notifyDataSetChanged();
     }
 
     /**
@@ -82,9 +104,49 @@ public class ContactsRecyclerViewAdapter extends
          */
         void setContact(final Contact contact) {
             mContact = contact;
-            binding.textUsername.setText(contact.getUsername());
-            binding.textName.setText(contact.getName());
-            binding.textEmail.setText(contact.getEmail());
+            binding.textUsername.setText(mContact.getUsername());
+            binding.textName.setText(mContact.getName());
+            binding.textEmail.setText(mContact.getEmail());
+
+            binding.imageAdd.setOnClickListener(click ->
+                    mModel.connectAdd(mUserModel.getJwt(), mContact.getEmail()));
+
+            binding.imageAccept.setOnClickListener(click ->
+                    mModel.connectAccept(mUserModel.getJwt(), mContact.getEmail()));
+
+            binding.imageReject.setOnClickListener(click ->
+                    mModel.connectRemove(mUserModel.getJwt(), mContact.getEmail()));
+
+            binding.imageRemove.setOnClickListener(click ->
+                    mModel.connectRemove(mUserModel.getJwt(), mContact.getEmail()));
+
+            switch (mContact.getType()) {
+                case 1:
+                    binding.imageAdd.setVisibility(View.INVISIBLE);
+                    binding.imageAccept.setVisibility(View.INVISIBLE);
+                    binding.imageReject.setVisibility(View.INVISIBLE);
+                    break;
+                case 2:
+                    binding.imageAdd.setVisibility(View.INVISIBLE);
+                    binding.imageRemove.setVisibility(View.INVISIBLE);
+                    binding.imageChat.setVisibility(View.INVISIBLE);
+                    break;
+                case 3:
+                    binding.imageAdd.setVisibility(View.INVISIBLE);
+                    binding.imageAccept.setVisibility(View.INVISIBLE);
+                    binding.imageReject.setVisibility(View.INVISIBLE);
+                    binding.imageChat.setVisibility(View.INVISIBLE);
+                    break;
+                case 4:
+                    binding.imageAccept.setVisibility(View.INVISIBLE);
+                    binding.imageReject.setVisibility(View.INVISIBLE);
+                    binding.imageRemove.setVisibility(View.INVISIBLE);
+                    binding.imageChat.setVisibility(View.INVISIBLE);
+                    break;
+                default:
+                    Log.d("Contact Holder", "OnClickListener not set up properly");
+                    break;
+            }
         }
     }
 }

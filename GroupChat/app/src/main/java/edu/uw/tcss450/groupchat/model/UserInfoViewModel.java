@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import edu.uw.tcss450.groupchat.R;
+
 /**
  * View model for user's information.
  *
@@ -16,9 +18,13 @@ public class UserInfoViewModel extends ViewModel {
     /** User login token. */
     private final String mJwt;
 
+    /** Current Theme **/
+    private int mTheme;
+
     private UserInfoViewModel(String email, String jwt) {
         mEmail = email;
         mJwt = jwt;
+        mTheme = R.style.Theme_PurpleGold;
     }
 
     /**
@@ -40,7 +46,25 @@ public class UserInfoViewModel extends ViewModel {
     }
 
     /**
-     * Utility Factory class for initilizing UserInfoViewModel.
+     * Get app theme.
+     *
+     * @return current theme of the app
+     */
+    public int getTheme() {
+        return mTheme;
+    }
+
+    /**
+     * Set app theme.
+     *
+     * @param theme theme to change app to
+     */
+    public void setTheme(int theme) {
+        mTheme = theme;
+    }
+
+    /**
+     * Utility Factory class for initializing UserInfoViewModel.
      */
     public static class UserInfoViewModelFactory implements ViewModelProvider.Factory {
         private final String email;
