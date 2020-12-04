@@ -13,12 +13,17 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,11 +33,18 @@ public class ChatRoomStartViewModel extends AndroidViewModel {
 
     private final MutableLiveData<JSONObject> mRoomStart;
 
+    private MutableLiveData<List<ChatRoom>> mRooms;
+
+
+
 
     public ChatRoomStartViewModel(@NonNull Application application) {
         super(application);
         mRoomStart = new MutableLiveData<>();
         mRoomStart.setValue(new JSONObject());
+
+        mRooms = new MutableLiveData<>();
+        mRooms.setValue(new ArrayList<>());
     }
 
     /**
@@ -47,19 +59,20 @@ public class ChatRoomStartViewModel extends AndroidViewModel {
     }
 
     public void startNewChatRoom(final String jwt, final String roomName){
-        String url = "https://dhill30-groupchat-backend.herokuapp.com/chats";
+        String url = "https://dhill30-groupchat-backend.herokuapp.com/chats?name="
+                +roomName;
 
         JSONObject body = new JSONObject();
         try {
             body.put("name", roomName);
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
         Request request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
-                body,
+                body, //push token found in the JSONObject body
                 mRoomStart::setValue,
                 this::handleError) {
 
@@ -79,7 +92,6 @@ public class ChatRoomStartViewModel extends AndroidViewModel {
         //Instantiate the RequestQueue and add the request to the queue
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);
-
     }
 
 
@@ -95,4 +107,6 @@ public class ChatRoomStartViewModel extends AndroidViewModel {
                             data);
         }
     }
+
+
 }

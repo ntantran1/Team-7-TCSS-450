@@ -46,6 +46,7 @@ public class ChatViewModel extends AndroidViewModel {
         mMessages = new HashMap<>();
         mRooms = new MutableLiveData<>();
         mRooms.setValue(new ArrayList<>());
+
     }
 
     /**
@@ -224,6 +225,10 @@ public class ChatViewModel extends AndroidViewModel {
         List<ChatMessage> list = getMessageListByChatId(chatId);
         list.add(message);
         getOrCreateMapEntry(chatId).setValue(list);
+    }
+
+    public void addNewRoom(final String name){
+        //TODO
     }
 
     private void handelSuccess(final JSONObject response) {
