@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
@@ -38,8 +39,6 @@ public class ChatViewModel extends AndroidViewModel {
      */
     private Map<Integer, MutableLiveData<List<ChatMessage>>> mMessages;
 
-//    private MutableLiveData<Map<Integer, List<ChatMessage>>> mMessages;
-
     private MutableLiveData<List<ChatRoom>> mRooms;
 
     public ChatViewModel(@NonNull Application application) {
@@ -47,6 +46,7 @@ public class ChatViewModel extends AndroidViewModel {
         mMessages = new HashMap<>();
         mRooms = new MutableLiveData<>();
         mRooms.setValue(new ArrayList<>());
+
     }
 
     /**
@@ -225,6 +225,10 @@ public class ChatViewModel extends AndroidViewModel {
         List<ChatMessage> list = getMessageListByChatId(chatId);
         list.add(message);
         getOrCreateMapEntry(chatId).setValue(list);
+    }
+
+    public void addNewRoom(final String name){
+        //TODO
     }
 
     private void handelSuccess(final JSONObject response) {

@@ -1,15 +1,11 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -18,15 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.databinding.FragmentChatListBinding;
+import edu.uw.tcss450.groupchat.databinding.FragmentChatDisplayBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 
 /**
- * A Fragment for displaying list of chat rooms.
+ * Fragment Displays chat messages
  *
  * @version November 19 2020
  */
-public class ChatListFragment extends Fragment {
+public class ChatDisplayFragment extends Fragment {
 
 
     private ChatViewModel mChatModel;
@@ -36,7 +32,7 @@ public class ChatListFragment extends Fragment {
     /**
      * Empty default constructor.
      */
-    public ChatListFragment() {
+    public ChatDisplayFragment() {
         // Required empty public constructor
     }
 
@@ -48,7 +44,7 @@ public class ChatListFragment extends Fragment {
         mChatModel = provider.get(ChatViewModel.class);
         mSendModel = provider.get(ChatSendViewModel.class);
 
-        ChatListFragmentArgs args = ChatListFragmentArgs.fromBundle(getArguments());
+        ChatDisplayFragmentArgs args = ChatDisplayFragmentArgs.fromBundle(getArguments());
         mChatModel.getFirstMessages(args.getRoom().getId(), mUserModel.getJwt());
 
         setHasOptionsMenu(true);
@@ -58,21 +54,21 @@ public class ChatListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat_list, container, false);
+        return inflater.inflate(R.layout.fragment_chat_display, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ChatListFragmentArgs args = ChatListFragmentArgs.fromBundle(getArguments());
+        ChatDisplayFragmentArgs args = ChatDisplayFragmentArgs.fromBundle(getArguments());
 
-        FragmentChatListBinding binding = FragmentChatListBinding.bind(getView());
+        FragmentChatDisplayBinding binding = FragmentChatDisplayBinding.bind(getView());
 
         //SetRefreshing shows the internal Swiper view progress bar. Show this until messages load
         binding.swipeContainer.setRefreshing(true);
 
-        final RecyclerView rv = binding.recyclerviewChatList;
+        final RecyclerView rv = binding.recyclerviewChatDisplay;
 
         //Set the Adapter to hold a reference to the list FOR THIS chat ID that the ViewModel
         //holds.

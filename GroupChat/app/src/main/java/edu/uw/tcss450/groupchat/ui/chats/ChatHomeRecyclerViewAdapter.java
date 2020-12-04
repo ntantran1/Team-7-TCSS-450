@@ -1,14 +1,10 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +19,7 @@ import edu.uw.tcss450.groupchat.databinding.FragmentChatCardBinding;
  *
  * @version November 27 2020
  */
-public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRecyclerViewAdapter.RoomViewHolder> {
+public class ChatHomeRecyclerViewAdapter extends RecyclerView.Adapter<ChatHomeRecyclerViewAdapter.RoomViewHolder> {
 
     private List<ChatRoom> mRooms;
 
@@ -32,7 +28,7 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
      *
      * @param items List of ChatRoom objects visible to the user.
      */
-    public ChatListRecyclerViewAdapter(List<ChatRoom> items) {
+    public ChatHomeRecyclerViewAdapter(List<ChatRoom> items) {
         this.mRooms = items;
     }
 
@@ -88,11 +84,11 @@ public class ChatListRecyclerViewAdapter extends RecyclerView.Adapter<ChatListRe
             binding.labelName.setText(room.getName());
             //when someone clicks on a chat, takes to that chat list
             mView.setOnClickListener(view -> {
-                Navigation.findNavController(mView).getGraph()
-                        .findNode(R.id.chatListFragment).setLabel(mRoom.getName());
+                Navigation.findNavController(mView).getGraph().findNode(R.id.chatDisplayFragment).setLabel(mRoom.getName());
                 Navigation.findNavController(mView).navigate(
                         ChatsHomeFragmentDirections
-                                .actionNavigationChatsToChatListFragment(mRoom));
+                                .actionNavigationChatsToChatDisplayFragment(mRoom));
+
             });
 
 
