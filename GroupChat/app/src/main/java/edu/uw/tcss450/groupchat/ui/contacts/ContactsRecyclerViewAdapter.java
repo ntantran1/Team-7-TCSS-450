@@ -104,132 +104,49 @@ public class ContactsRecyclerViewAdapter extends
          */
         void setContact(final Contact contact) {
             mContact = contact;
-            binding.textUsername.setText(contact.getUsername());
-            binding.textName.setText(contact.getName());
-            binding.textEmail.setText(contact.getEmail());
+            binding.textUsername.setText(mContact.getUsername());
+            binding.textName.setText(mContact.getName());
+            binding.textEmail.setText(mContact.getEmail());
+
+            binding.imageAdd.setOnClickListener(click ->
+                    mModel.connectAdd(mUserModel.getJwt(), mContact.getEmail()));
+
+            binding.imageAccept.setOnClickListener(click ->
+                    mModel.connectAccept(mUserModel.getJwt(), mContact.getEmail()));
+
+            binding.imageReject.setOnClickListener(click ->
+                    mModel.connectRemove(mUserModel.getJwt(), mContact.getEmail()));
+
+            binding.imageRemove.setOnClickListener(click ->
+                    mModel.connectRemove(mUserModel.getJwt(), mContact.getEmail()));
 
             switch (mContact.getType()) {
                 case 1:
-                    mView.setOnClickListener(this::contactPopup);
+                    binding.imageAdd.setVisibility(View.INVISIBLE);
+                    binding.imageAccept.setVisibility(View.INVISIBLE);
+                    binding.imageReject.setVisibility(View.INVISIBLE);
                     break;
                 case 2:
-                    mView.setOnClickListener(this::incomingPopup);
+                    binding.imageAdd.setVisibility(View.INVISIBLE);
+                    binding.imageRemove.setVisibility(View.INVISIBLE);
+                    binding.imageChat.setVisibility(View.INVISIBLE);
                     break;
                 case 3:
-                    mView.setOnClickListener(this::outgoingPopup);
+                    binding.imageAdd.setVisibility(View.INVISIBLE);
+                    binding.imageAccept.setVisibility(View.INVISIBLE);
+                    binding.imageReject.setVisibility(View.INVISIBLE);
+                    binding.imageChat.setVisibility(View.INVISIBLE);
                     break;
                 case 4:
-                    mView.setOnClickListener(this::searchPopup);
+                    binding.imageAccept.setVisibility(View.INVISIBLE);
+                    binding.imageReject.setVisibility(View.INVISIBLE);
+                    binding.imageRemove.setVisibility(View.INVISIBLE);
+                    binding.imageChat.setVisibility(View.INVISIBLE);
                     break;
                 default:
                     Log.d("Contact Holder", "OnClickListener not set up properly");
                     break;
             }
-        }
-
-        private void contactPopup(final View view) {
-            View popupView = LayoutInflater.from(view.getContext())
-                    .inflate(R.layout.popup_contact_home, null);
-
-            final PopupWindow popupWindow = new PopupWindow(popupView,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    true);
-            popupWindow.setElevation(10);
-            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-            PopupContactHomeBinding popupBinding =
-                    PopupContactHomeBinding.bind(popupView);
-
-            popupBinding.labelContact.setText(mContact.getUsername());
-
-            popupBinding.labelRemoveContact.setOnClickListener(click -> {
-                mModel.connectRemove(mUserModel.getJwt(), mContact.getEmail());
-                popupWindow.dismiss();
-            });
-
-            popupBinding.labelCancel.setOnClickListener(click ->
-                    popupWindow.dismiss());
-        }
-
-        private void incomingPopup(final View view) {
-            View popupView = LayoutInflater.from(view.getContext())
-                    .inflate(R.layout.popup_contact_incoming, null);
-
-            final PopupWindow popupWindow = new PopupWindow(popupView,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    true);
-            popupWindow.setElevation(10);
-            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-            PopupContactIncomingBinding popupBinding =
-                    PopupContactIncomingBinding.bind(popupView);
-
-            popupBinding.labelContact.setText(mContact.getUsername());
-
-            popupBinding.labelAcceptIncoming.setOnClickListener(click -> {
-                mModel.connectAccept(mUserModel.getJwt(), mContact.getEmail());
-                popupWindow.dismiss();
-            });
-
-            popupBinding.labelRejectIncoming.setOnClickListener(click -> {
-                mModel.connectRemove(mUserModel.getJwt(), mContact.getEmail());
-                popupWindow.dismiss();
-            });
-
-            popupBinding.labelCancel.setOnClickListener(click ->
-                    popupWindow.dismiss());
-        }
-
-        private void outgoingPopup(final View view) {
-            View popupView = LayoutInflater.from(view.getContext())
-                    .inflate(R.layout.popup_contact_outgoing, null);
-
-            final PopupWindow popupWindow = new PopupWindow(popupView,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    true);
-            popupWindow.setElevation(10);
-            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-            PopupContactOutgoingBinding popupBinding =
-                    PopupContactOutgoingBinding.bind(popupView);
-
-            popupBinding.labelContact.setText(mContact.getUsername());
-
-            popupBinding.labelRemoveOutgoing.setOnClickListener(click -> {
-                mModel.connectRemove(mUserModel.getJwt(), mContact.getEmail());
-                popupWindow.dismiss();
-            });
-
-            popupBinding.labelCancel.setOnClickListener(click ->
-                    popupWindow.dismiss());
-        }
-
-        private void searchPopup(final View view) {
-            View popupView = LayoutInflater.from(view.getContext())
-                    .inflate(R.layout.popup_contact_search, null);
-
-            final PopupWindow popupWindow = new PopupWindow(popupView,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    true);
-            popupWindow.setElevation(10);
-            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-            PopupContactSearchBinding popupBinding =
-                    PopupContactSearchBinding.bind(popupView);
-
-            popupBinding.labelContact.setText(mContact.getUsername());
-
-            popupBinding.labelAddContact.setOnClickListener(click -> {
-                mModel.connectAdd(mUserModel.getJwt(), mContact.getEmail());
-                popupWindow.dismiss();
-            });
-
-            popupBinding.labelCancel.setOnClickListener(click ->
-                    popupWindow.dismiss());
         }
     }
 }
