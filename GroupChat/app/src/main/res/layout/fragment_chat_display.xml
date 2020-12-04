@@ -7,7 +7,7 @@
     android:id="@+id/layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.chats.ChatListFragment">
+    tools:context=".ui.chats.ChatDisplayFragment">
 
 
 
@@ -24,14 +24,14 @@
         app:layout_constraintTop_toTopOf="parent" >
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_chat_list"
+            android:id="@+id/recyclerview_chat_display"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:orientation="vertical"
             app:layoutManager="LinearLayoutManager"
-            tools:context="edu.uw.tcss450.groupchat.ui.blog.ChatListFragment" />
+            tools:context="edu.uw.tcss450.groupchat.ui.blog.ChatDisplayFragment" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
