@@ -71,6 +71,9 @@ public class ChatRoomFragment extends Fragment {
 
         FragmentChatRoomBinding binding = FragmentChatRoomBinding.bind(getView());
 
+        ChatRoomViewModel roomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
+        roomModel.setCurrentRoom(args.getRoom().getId());
+
         //SetRefreshing shows the internal Swiper view progress bar. Show this until messages load
         binding.swipeContainer.setRefreshing(true);
 

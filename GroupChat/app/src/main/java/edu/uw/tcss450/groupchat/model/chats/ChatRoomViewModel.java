@@ -36,7 +36,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<ChatRoom>> mRooms;
 
-    private int mCurrent;
+    private MutableLiveData<Integer> mCurrentRoom;
 
     public ChatRoomViewModel(@NonNull Application application) {
         super(application);
@@ -44,7 +44,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mResponse.setValue(new JSONObject());
         mRooms = new MutableLiveData<>();
         mRooms.setValue(new ArrayList<>());
-        mCurrent = -1;
+        mCurrentRoom = new MutableLiveData<>();
+        mCurrentRoom.setValue(-1);
     }
 
     public void addResponseObserver(@NonNull LifecycleOwner owner,
@@ -57,12 +58,30 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mRooms.observe(owner, observer);
     }
 
+    public void addCurrentRoomObserver(@NonNull LifecycleOwner owner,
+                                       @NonNull Observer<? super Integer> observer) {
+        mCurrentRoom.observe(owner, observer);
+    }
+
     public int getCurrentRoom() {
-        return mCurrent;
+        return mCurrentRoom.getValue();
+    }
+
+    public List<ChatRoom> getRooms() {
+        return mRooms.getValue();
+    }
+
+    public int getRoomFromName(final String name) {
+        for (ChatRoom room : mRooms.getValue()) {
+            if (name.equals(room.getName())) {
+                return room.getId();
+            }
+        }
+        return -1;
     }
 
     public void setCurrentRoom(final int id) {
-        mCurrent = id;
+        mCurrentRoom.setValue(id);
     }
 
     public void connect(final String jwt) {

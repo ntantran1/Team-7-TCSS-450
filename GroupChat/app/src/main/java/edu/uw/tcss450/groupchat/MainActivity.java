@@ -77,12 +77,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        navController.addOnDestinationChangedListener(((controller, destination, arguments) -> {
-            if(destination.getId() == R.id.chatDisplayFragment) {
-                //when user navigates to chat page, reset new message count
-                mNewChatModel.reset(chatRoomModel.getCurrentRoom());
-            }
-        }));
+        chatRoomModel.addCurrentRoomObserver(this, chatId -> mNewChatModel.reset(chatId));
 
         mNewChatModel.addMessageCountObserver(this, notifications -> {
             BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
