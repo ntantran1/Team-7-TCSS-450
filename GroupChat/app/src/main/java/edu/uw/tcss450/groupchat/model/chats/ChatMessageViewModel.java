@@ -166,6 +166,13 @@ public class ChatMessageViewModel extends AndroidViewModel {
         getOrCreateMapEntry(chatId).setValue(list);
     }
 
+    private MutableLiveData<List<ChatMessage>> getOrCreateMapEntry(final int chatId) {
+        if(!mMessages.containsKey(chatId)) {
+            mMessages.put(chatId, new MutableLiveData<>(new ArrayList<>()));
+        }
+        return mMessages.get(chatId);
+    }
+
     private void handleSuccess(final JSONObject response) {
         List<ChatMessage> list;
         if (!response.has("chatId")) {
@@ -212,12 +219,5 @@ public class ChatMessageViewModel extends AndroidViewModel {
                     error.networkResponse.statusCode +
                             " " + data);
         }
-    }
-
-    private MutableLiveData<List<ChatMessage>> getOrCreateMapEntry(final int chatId) {
-        if(!mMessages.containsKey(chatId)) {
-            mMessages.put(chatId, new MutableLiveData<>(new ArrayList<>()));
-        }
-        return mMessages.get(chatId);
     }
 }

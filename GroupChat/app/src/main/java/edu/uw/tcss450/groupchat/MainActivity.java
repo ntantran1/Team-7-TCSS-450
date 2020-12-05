@@ -24,8 +24,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.uw.tcss450.groupchat.databinding.ActivityMainBinding;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
-import edu.uw.tcss450.groupchat.model.chats.NewMessageCountViewModel;
 import edu.uw.tcss450.groupchat.model.PushyTokenViewModel;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.services.PushReceiver;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MainPushMessageReceiver mPushMessageReceiver;
 
-    private NewMessageCountViewModel mNewMessageModel;
+    private ChatNotificationsViewModel mNewChatModel;
 
     private UserInfoViewModel mUserViewModel;
 
@@ -57,8 +57,9 @@ public class MainActivity extends AppCompatActivity {
         new ViewModelProvider(this,
                 new UserInfoViewModel.UserInfoViewModelFactory(email, jwt)).get(UserInfoViewModel.class);
 
-        mNewMessageModel = new ViewModelProvider(this).get(NewMessageCountViewModel.class);
+        mNewChatModel = new ViewModelProvider(this).get(ChatNotificationsViewModel.class);
         mUserViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
+        ChatRoomViewModel chatRoomModel = new ViewModelProvider(this).get(ChatRoomViewModel.class);
 
         setTheme(mUserViewModel.getTheme());
 
@@ -77,15 +78,21 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
         navController.addOnDestinationChangedListener(((controller, destination, arguments) -> {
-            if(destination.getId() == R.id.chatDisplayFragment){
+            if(destination.getId() == R.id.chatDisplayFragment) {
                 //when user navigates to chat page, reset new message count
-                mNewMessageModel.reset();
+                mNewChatModel.reset(chatRoomModel.getCurrentRoom());
             }
         }));
 
-        mNewMessageModel.addMessageCountObserver(this, count -> {
+        mNewChatModel.addMessageCountObserver(this, notifications -> {
             BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
             badge.setMaxCharacterCount(2);
+
+            int count = 0;
+            for (int chatId : notifications.keySet()) {
+                count += notifications.get(chatId);
+            }
+
             if(count > 0) {
                 //mew messages
                 badge.setNumber(count);
@@ -209,14 +216,14 @@ public class MainActivity extends AppCompatActivity {
 
             if(intent.hasExtra("chatMessage")) {
                 ChatMessage cm = (ChatMessage) intent.getSerializableExtra("chatMessage");
+                int chatId = intent.getIntExtra("chatid", -1);
 
                 //if user is not on chat screen, update NewMessageCountView Model
-                if(nd.getId() != R.id.chatDisplayFragment
-                        || mRoomModel.getCurrentRoom() != intent.getIntExtra("chatid", -1)){
-                    mNewMessageModel.increment();
+                if(nd.getId() != R.id.chatDisplayFragment || mRoomModel.getCurrentRoom() != chatId){
+                    mNewChatModel.increment(chatId);
                 }
 
-                //inform view model holding chatroom messages of the ones
+                //inform view model holding chatroom messages of the new ones
                 mChatModel.addMessage(intent.getIntExtra("chatid", -1), cm);
             }
         }
