@@ -14,25 +14,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.databinding.FragmentChatDisplayBinding;
+import edu.uw.tcss450.groupchat.databinding.FragmentChatRoomBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatSendViewModel;
 
 /**
  * Fragment Displays chat messages
  *
  * @version November 19 2020
  */
-public class ChatDisplayFragment extends Fragment {
+public class ChatRoomFragment extends Fragment {
 
+    private ChatMessageViewModel mChatModel;
 
-    private ChatViewModel mChatModel;
     private ChatSendViewModel mSendModel;
+
     private UserInfoViewModel mUserModel;
 
     /**
      * Empty default constructor.
      */
-    public ChatDisplayFragment() {
+    public ChatRoomFragment() {
         // Required empty public constructor
     }
 
@@ -41,11 +45,13 @@ public class ChatDisplayFragment extends Fragment {
         super.onCreate(savedInstanceState);
         ViewModelProvider provider = new ViewModelProvider(getActivity());
         mUserModel = provider.get(UserInfoViewModel.class);
-        mChatModel = provider.get(ChatViewModel.class);
+        mChatModel = provider.get(ChatMessageViewModel.class);
         mSendModel = provider.get(ChatSendViewModel.class);
+        ChatRoomViewModel roomModel = provider.get(ChatRoomViewModel.class);
 
-        ChatDisplayFragmentArgs args = ChatDisplayFragmentArgs.fromBundle(getArguments());
+        ChatRoomFragmentArgs args = ChatRoomFragmentArgs.fromBundle(getArguments());
         mChatModel.getFirstMessages(args.getRoom().getId(), mUserModel.getJwt());
+        roomModel.setCurrentRoom(args.getRoom().getId());
 
         setHasOptionsMenu(true);
     }
@@ -54,25 +60,24 @@ public class ChatDisplayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat_display, container, false);
+        return inflater.inflate(R.layout.fragment_chat_room, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ChatDisplayFragmentArgs args = ChatDisplayFragmentArgs.fromBundle(getArguments());
+        ChatRoomFragmentArgs args = ChatRoomFragmentArgs.fromBundle(getArguments());
 
-        FragmentChatDisplayBinding binding = FragmentChatDisplayBinding.bind(getView());
+        FragmentChatRoomBinding binding = FragmentChatRoomBinding.bind(getView());
 
         //SetRefreshing shows the internal Swiper view progress bar. Show this until messages load
         binding.swipeContainer.setRefreshing(true);
 
         final RecyclerView rv = binding.recyclerviewChatDisplay;
 
-        //Set the Adapter to hold a reference to the list FOR THIS chat ID that the ViewModel
-        //holds.
-        rv.setAdapter(new ChatRecyclerViewAdapter(
+        //Set the Adapter to hold a reference to the list FOR THIS chat ID that the ViewModel holds.
+        rv.setAdapter(new ChatMessageRecyclerViewAdapter(
                 mChatModel.getMessageListByChatId(args.getRoom().getId()),
                 mUserModel.getEmail()));
 
@@ -107,9 +112,6 @@ public class ChatDisplayFragment extends Fragment {
             binding.edittextChatbox.setText("");
 
         });
-
-
-
     }
 
     @Override

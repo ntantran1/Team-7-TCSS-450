@@ -8,35 +8,33 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentContactsIncomingBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
+import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ContactsIncomingFragment extends Fragment {
 
-    private ContactListViewModel mModel;
+    private ContactsIncomingViewModel mModel;
 
     private UserInfoViewModel mUserModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mModel = new ViewModelProvider(getActivity()).get(ContactListViewModel.class);
+        mModel = new ViewModelProvider(getActivity()).get(ContactsIncomingViewModel.class);
         mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
 
-        mModel.connectIncoming(mUserModel.getJwt());
+        mModel.connect(mUserModel.getJwt());
     }
 
     @Override
@@ -56,12 +54,12 @@ public class ContactsIncomingFragment extends Fragment {
         binding.incomingSwipeContainer.setRefreshing(true);
 
         final RecyclerView recyclerView = binding.incomingListRoot;
-        recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>(), mModel, mUserModel));
+        recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>(), getActivity()));
 
         binding.incomingSwipeContainer.setOnRefreshListener(() ->
-                mModel.connectIncoming(mUserModel.getJwt()));
+                mModel.connect(mUserModel.getJwt()));
 
-        mModel.addIncomingListObserver(getViewLifecycleOwner(), incomingList -> {
+        mModel.addContactsObserver(getViewLifecycleOwner(), incomingList -> {
             ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(incomingList);
             binding.incomingSwipeContainer.setRefreshing(false);
         });

@@ -34,8 +34,8 @@ import java.util.TimeZone;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherHomeBinding;
-import edu.uw.tcss450.groupchat.ui.contacts.Contact;
-import edu.uw.tcss450.groupchat.ui.contacts.ContactsRecyclerViewAdapter;
+import edu.uw.tcss450.groupchat.model.weather.WeatherSecondViewModel;
+import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
 
 /**
  * The Fragment class for Weather home page.
@@ -200,7 +200,7 @@ public class WeatherHomeFragment extends Fragment {
         });
 
         binding.buttonRefresh.setOnClickListener(button ->
-                mWeatherModel.connect(binding, mWeatherModel.mZip));
+                mWeatherModel.connect(binding, mWeatherModel.getZip()));
     }
 
     /**

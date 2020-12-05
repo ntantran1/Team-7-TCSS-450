@@ -1,4 +1,4 @@
-package edu.uw.tcss450.groupchat.ui.auth.signin;
+package edu.uw.tcss450.groupchat.ui.auth;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentSignInBinding;
 import edu.uw.tcss450.groupchat.model.PushyTokenViewModel;
+import edu.uw.tcss450.groupchat.model.auth.SignInViewModel;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.utils.PasswordValidator;
 

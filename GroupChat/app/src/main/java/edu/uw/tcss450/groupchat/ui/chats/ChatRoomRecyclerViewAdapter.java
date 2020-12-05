@@ -19,7 +19,8 @@ import edu.uw.tcss450.groupchat.databinding.FragmentChatCardBinding;
  *
  * @version November 27 2020
  */
-public class ChatHomeRecyclerViewAdapter extends RecyclerView.Adapter<ChatHomeRecyclerViewAdapter.RoomViewHolder> {
+public class ChatRoomRecyclerViewAdapter extends
+        RecyclerView.Adapter<ChatRoomRecyclerViewAdapter.RoomViewHolder> {
 
     private List<ChatRoom> mRooms;
 
@@ -28,7 +29,7 @@ public class ChatHomeRecyclerViewAdapter extends RecyclerView.Adapter<ChatHomeRe
      *
      * @param items List of ChatRoom objects visible to the user.
      */
-    public ChatHomeRecyclerViewAdapter(List<ChatRoom> items) {
+    public ChatRoomRecyclerViewAdapter(List<ChatRoom> items) {
         this.mRooms = items;
     }
 
@@ -86,9 +87,8 @@ public class ChatHomeRecyclerViewAdapter extends RecyclerView.Adapter<ChatHomeRe
             mView.setOnClickListener(view -> {
                 Navigation.findNavController(mView).getGraph().findNode(R.id.chatDisplayFragment).setLabel(mRoom.getName());
                 Navigation.findNavController(mView).navigate(
-                        ChatsHomeFragmentDirections
+                        ChatMainFragmentDirections
                                 .actionNavigationChatsToChatDisplayFragment(mRoom));
-
             });
 
 

@@ -1,4 +1,4 @@
-package edu.uw.tcss450.groupchat.ui.weather;
+package edu.uw.tcss450.groupchat.model.weather;
 
 import android.app.Application;
 import android.widget.EditText;
@@ -25,29 +25,15 @@ import edu.uw.tcss450.groupchat.databinding.FragmentWeatherHomeBinding;
  * @version November 19, 2020
  */
 public class WeatherViewModel extends AndroidViewModel {
+
     private MutableLiveData<JSONObject> mResponse;
+
     /** Binding to the weather home page. */
     FragmentWeatherHomeBinding binding;
-    protected String mZip;
+
+    private String mZip;
+
     private boolean mVal = true;
-
-    /**
-     * Get value.
-     *
-     * @return value boolean
-     */
-    public boolean getVal() {
-        return mVal;
-    }
-
-    /**
-     * Set value.
-     *
-     * @return value boolean
-     */
-    public void setVal() {
-        mVal = false;
-    }
 
     /**
      * A constructor
@@ -60,6 +46,28 @@ public class WeatherViewModel extends AndroidViewModel {
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
 
+    }
+
+    /**
+     * Get value.
+     *
+     * @return value boolean
+     */
+    public boolean getVal() {
+        return mVal;
+    }
+
+    public String getZip() {
+        return mZip;
+    }
+
+    /**
+     * Set value.
+     *
+     * @return value boolean
+     */
+    public void setVal() {
+        mVal = false;
     }
 
     /**
@@ -91,6 +99,7 @@ public class WeatherViewModel extends AndroidViewModel {
     public void connect(FragmentWeatherHomeBinding b, String zip) {
         binding = b;
         mZip = zip;
+
         String url = "https://dhill30-groupchat-backend.herokuapp.com/weather?zip=" + zip;
 
         Request request = new JsonObjectRequest(
@@ -107,8 +116,7 @@ public class WeatherViewModel extends AndroidViewModel {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext())
-                .add(request);
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
 

@@ -1,7 +1,6 @@
-package edu.uw.tcss450.groupchat.ui.auth.signin;
+package edu.uw.tcss450.groupchat.model.chats;
 
 import android.app.Application;
-import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,7 +13,6 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,30 +26,31 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 
 /**
- * View Model for Sign In page to store latest HTTP response.
+ * View Model for a single chat room.
+ * Store the necessary live data.
  *
  * @version November 5
  */
-public class SignInViewModel extends AndroidViewModel {
+public class ChatSendViewModel extends AndroidViewModel {
 
-    private MutableLiveData<JSONObject> mResponse;
+    private final MutableLiveData<JSONObject> mResponse;
 
     /**
-     * Constructor of the ViewModel
+     * Main default constructor for a ViewModel.
      *
-     * @param application the reference to the current application
+     * @param application reference to the current application.
      */
-    public SignInViewModel(@NonNull Application application) {
+    public ChatSendViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
     }
 
     /**
-     * Add observer for receiving server's responses.
+     * Add an observer to the chat room.
      *
-     * @param owner The LifeCycle owner that will control the observer
-     * @param observer The observer that will receive the events
+     * @param owner the LifecyleOwner object of the chat room
+     * @param observer an observer to observe
      */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
@@ -59,31 +58,36 @@ public class SignInViewModel extends AndroidViewModel {
     }
 
     /**
-     * Perform an HTTP Request for a sign in attempt.
+     * Perform a send message HTTP request.
      *
-     * @param email provided email
-     * @param password password of user
+     * @param chatId chat id integer
+     * @param jwt user token
+     * @param message message content string
      */
-    public void connect(final String email, final String password) {
-        String url = getApplication().getResources().getString(R.string.base_url) +
-                "auth";
+    public void sendMessage(final int chatId, final String jwt, final String message) {
+        String url = "https://dhill30-groupchat-backend.herokuapp.com/" +
+                "messages";
+
+        JSONObject body = new JSONObject();
+        try {
+            body.put("message", message);
+            body.put("chatId", chatId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Request request = new JsonObjectRequest(
-                Request.Method.GET,
+                Request.Method.POST,
                 url,
-                null, //no body for this get request
-                mResponse::setValue,
+                body, //push token found in the JSONObject body
+                mResponse::setValue, // we get a response but do nothing with it
                 this::handleError) {
 
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 // add headers <key,value>
-                String credentials = email + ":" + password;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
+                headers.put("Authorization", jwt);
                 return headers;
             }
         };
@@ -95,32 +99,20 @@ public class SignInViewModel extends AndroidViewModel {
         //Instantiate the RequestQueue and add the request to the queue
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);
-
-        //code here will run
     }
+
 
 
     private void handleError(final VolleyError error) {
         if (Objects.isNull(error.networkResponse)) {
-            try {
-                mResponse.setValue(new JSONObject("{" +
-                        "error:\"" + error.getMessage() +
-                        "\"}"));
-            } catch (JSONException e) {
-                Log.e("JSON PARSE", "JSON Parse Error in handleError");
-            }
+            Log.e("NETWORK ERROR", error.getMessage());
         }
         else {
             String data = new String(error.networkResponse.data, Charset.defaultCharset());
-            try {
-                mResponse.setValue(new JSONObject("{" +
-                        "code:" + error.networkResponse.statusCode +
-                        ", data:" + data +
-                        "}"));
-            } catch (JSONException e) {
-                Log.e("JSON PARSE", "JSON Parse Error in handleError");
-            }
+            Log.e("CLIENT ERROR",
+                    error.networkResponse.statusCode +
+                            " " +
+                            data);
         }
     }
-
 }
