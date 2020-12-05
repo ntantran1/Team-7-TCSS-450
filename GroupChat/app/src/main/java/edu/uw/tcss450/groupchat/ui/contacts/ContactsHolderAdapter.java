@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @version December 2, 2020
  */
-public class ContactsFragmentAdapter extends FragmentStateAdapter {
+public class ContactsHolderAdapter extends FragmentStateAdapter {
 
     private List<Fragment> mPages;
 
@@ -21,10 +21,10 @@ public class ContactsFragmentAdapter extends FragmentStateAdapter {
      *
      * @param fragment
      */
-    public ContactsFragmentAdapter(Fragment fragment) {
+    public ContactsHolderAdapter(Fragment fragment) {
         super(fragment);
         mPages = new ArrayList<>();
-        mPages.add(new ContactsHomeFragment());
+        mPages.add(new ContactsMainFragment());
         mPages.add(new ContactsIncomingFragment());
         mPages.add(new ContactsOutgoingFragment());
         mPages.add(new ContactsSearchFragment());

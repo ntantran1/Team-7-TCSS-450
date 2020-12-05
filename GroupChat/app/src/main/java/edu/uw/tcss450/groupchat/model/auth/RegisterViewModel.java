@@ -1,4 +1,4 @@
-package edu.uw.tcss450.groupchat.ui.auth.password;
+package edu.uw.tcss450.groupchat.model.auth;
 
 import android.app.Application;
 import android.util.Log;
@@ -21,14 +21,12 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
-import edu.uw.tcss450.groupchat.R;
-
 /**
- * ViewModel for Reset Password page, hold the responses from server.
+ * View Model for Register page to store latest HTTP response.
  *
- * @version November 19, 2020
+ * @version November 5
  */
-public class ResetPasswordViewModel extends AndroidViewModel {
+public class RegisterViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
 
@@ -37,7 +35,7 @@ public class ResetPasswordViewModel extends AndroidViewModel {
      *
      * @param application reference to the current application
      */
-    public ResetPasswordViewModel(@NonNull Application application) {
+    public RegisterViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
@@ -55,16 +53,28 @@ public class ResetPasswordViewModel extends AndroidViewModel {
     }
 
     /**
-     * Make an HTTP request for change password action.
-     * @param email email of user requesting a password reset
+     * Make an HTTP request for register action.
+     *
+     * @param first First name of user
+     * @param last Last name of user
+     * @param username username of user
+     * @param email email of user
+     * @param password password of user
      */
-    public void connect(final String email) {
-        String url = getApplication().getResources().getString(R.string.base_url)
-                + "recovery";
+    public void connect(final String first,
+                        final String last,
+                        final String username,
+                        final String email,
+                        final String password) {
+        String url = "https://dhill30-groupchat-backend.herokuapp.com/auth";
 
         JSONObject body = new JSONObject();
         try {
+            body.put("first", first);
+            body.put("last", last);
+            body.put("username", username);
             body.put("email", email);
+            body.put("password", password);
         } catch (JSONException e) {
             e.printStackTrace();
         }

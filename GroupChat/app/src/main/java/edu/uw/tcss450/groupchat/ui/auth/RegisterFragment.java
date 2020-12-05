@@ -1,4 +1,4 @@
-package edu.uw.tcss450.groupchat.ui.auth.register;
+package edu.uw.tcss450.groupchat.ui.auth;
 
 import static edu.uw.tcss450.groupchat.utils.PasswordValidator.*;
 
@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.uw.tcss450.groupchat.databinding.FragmentRegisterBinding;
+import edu.uw.tcss450.groupchat.model.auth.RegisterViewModel;
 import edu.uw.tcss450.groupchat.utils.PasswordValidator;
 
 /**

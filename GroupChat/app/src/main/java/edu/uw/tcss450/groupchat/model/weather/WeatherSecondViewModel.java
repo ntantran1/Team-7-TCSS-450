@@ -1,4 +1,4 @@
-package edu.uw.tcss450.groupchat.ui.weather;
+package edu.uw.tcss450.groupchat.model.weather;
 
 import android.app.Application;
 import android.widget.EditText;

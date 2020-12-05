@@ -15,9 +15,9 @@ import android.widget.SearchView;
 
 import java.util.ArrayList;
 
-import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentContactsSearchBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
+import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,17 +26,17 @@ public class ContactsSearchFragment extends Fragment {
 
     private FragmentContactsSearchBinding binding;
 
-    private ContactListViewModel mModel;
+    private ContactsSearchViewModel mModel;
 
     private UserInfoViewModel mUserModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mModel = new ViewModelProvider(getActivity()).get(ContactListViewModel.class);
+        mModel = new ViewModelProvider(getActivity()).get(ContactsSearchViewModel.class);
         mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
 
-        mModel.connectSearch(mUserModel.getJwt(), "");
+        mModel.connect(mUserModel.getJwt());
     }
 
     @Override
@@ -55,29 +55,29 @@ public class ContactsSearchFragment extends Fragment {
         binding.searchSwipeContainer.setRefreshing(true);
 
         final RecyclerView recyclerView = binding.searchListRoot;
-        recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>(), mModel, mUserModel));
+        recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>(), getActivity()));
 
         binding.searchSwipeContainer.setOnRefreshListener(() ->
-                mModel.connectSearch(mUserModel.getJwt(),
+                mModel.connect(mUserModel.getJwt(),
                         binding.searchUsers.getQuery().toString()));
 
         binding.searchUsers.setSubmitButtonEnabled(true);
         binding.searchUsers.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mModel.connectSearch(mUserModel.getJwt(), query);
+                mModel.connect(mUserModel.getJwt(), query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.length() == 0) mModel.connectSearch(mUserModel.getJwt(), newText);
+                if (newText.length() == 0) mModel.connect(mUserModel.getJwt());
                 return false;
             }
         });
 
-        mModel.addSearchedListObserver(getViewLifecycleOwner(), userList -> {
-            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(userList);
+        mModel.addContactsObserver(getViewLifecycleOwner(), searchList -> {
+            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(searchList);
             binding.searchSwipeContainer.setRefreshing(false);
         });
     }

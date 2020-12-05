@@ -18,8 +18,10 @@ import edu.uw.tcss450.groupchat.R;
  *
  * @version November 27, 2020
  */
-public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
+public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
+
     private final List<ChatMessage> mMessages;
+
     private final String mEmail;
 
     /**
@@ -28,7 +30,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
      * @param messages the List of messages in the chat room
      * @param email email of the current user
      */
-    public ChatRecyclerViewAdapter(List<ChatMessage> messages, String email) {
+    public ChatMessageRecyclerViewAdapter(List<ChatMessage> messages, String email) {
         this.mMessages = messages;
         mEmail = email;
     }

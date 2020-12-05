@@ -16,9 +16,8 @@ import android.view.ViewGroup;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.databinding.FragmentChangePasswordBinding;
 import edu.uw.tcss450.groupchat.databinding.FragmentResetPasswordBinding;
+import edu.uw.tcss450.groupchat.model.auth.ResetPasswordViewModel;
 import edu.uw.tcss450.groupchat.utils.PasswordValidator;
 
 import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkExcludeWhiteSpace;
