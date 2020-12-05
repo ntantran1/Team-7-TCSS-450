@@ -47,14 +47,6 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mCurrent = -1;
     }
 
-    public int getCurrentRoom() {
-        return mCurrent;
-    }
-
-    public void setCurrentRoom(final int id) {
-        mCurrent = id;
-    }
-
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
@@ -63,6 +55,14 @@ public class ChatRoomViewModel extends AndroidViewModel {
     public void addRoomsObserver(@NonNull LifecycleOwner owner,
                                  @NonNull Observer<? super List<ChatRoom>> observer) {
         mRooms.observe(owner, observer);
+    }
+
+    public int getCurrentRoom() {
+        return mCurrent;
+    }
+
+    public void setCurrentRoom(final int id) {
+        mCurrent = id;
     }
 
     public void connect(final String jwt) {
