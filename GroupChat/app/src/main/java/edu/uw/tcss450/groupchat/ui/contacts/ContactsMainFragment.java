@@ -22,7 +22,7 @@ import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
 /**
  * Fragment for default page of Contacts.
  *
- * @version November 5
+ * @version December 4, 2020
  */
 public class ContactsMainFragment extends Fragment {
 

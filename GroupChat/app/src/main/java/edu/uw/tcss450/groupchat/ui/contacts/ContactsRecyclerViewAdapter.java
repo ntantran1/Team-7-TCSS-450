@@ -1,5 +1,6 @@
 package edu.uw.tcss450.groupchat.ui.contacts;
 
+import android.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +11,19 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentContactCardBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsOutgoingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
+import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 
 /**
  * The class describe how each Contact should look on the page and manage
@@ -39,6 +44,8 @@ public class ContactsRecyclerViewAdapter extends
 
     private ContactsSearchViewModel mSearchModel;
 
+    private ChatRoomViewModel mChatRoomModel;
+
     private UserInfoViewModel mUserModel;
 
     /**
@@ -55,7 +62,10 @@ public class ContactsRecyclerViewAdapter extends
         mIncomingModel = provider.get(ContactsIncomingViewModel.class);
         mOutgoingModel = provider.get(ContactsOutgoingViewModel.class);
         mSearchModel = provider.get(ContactsSearchViewModel.class);
+        mChatRoomModel = provider.get(ChatRoomViewModel.class);
         mUserModel = provider.get(UserInfoViewModel.class);
+
+        mChatRoomModel.connect(mUserModel.getJwt());
     }
 
     @NonNull
@@ -95,6 +105,8 @@ public class ContactsRecyclerViewAdapter extends
         /** The ViewBinding for view object */
         public FragmentContactCardBinding binding;
 
+        private Contact mContact;
+
         /**
          * Initialize the ViewHolder.
          *
@@ -112,15 +124,17 @@ public class ContactsRecyclerViewAdapter extends
          * @param contact Contact object
          */
         void setContact(final Contact contact) {
-            binding.textUsername.setText(contact.getUsername());
-            binding.textName.setText(contact.getName());
-            binding.textEmail.setText(contact.getEmail());
+            mContact = contact;
+            binding.textUsername.setText(mContact.getUsername());
+            binding.textName.setText(mContact.getName());
+            binding.textEmail.setText(mContact.getEmail());
 
             final String jwt = mUserModel.getJwt();
-            final String email = contact.getEmail();
+            final String email = mContact.getEmail();
 
-            switch (contact.getType()) {
+            switch (mContact.getType()) {
                 case 1:
+                    binding.imageChat.setOnClickListener(this::addUserToChat);
                     binding.imageRemove.setOnClickListener(click ->
                             mContactsModel.connectRemove(jwt, email));
                     binding.imageAdd.setVisibility(View.INVISIBLE);
@@ -156,6 +170,30 @@ public class ContactsRecyclerViewAdapter extends
                     Log.d("Contact Holder", "OnClickListener not set up properly");
                     break;
             }
+        }
+
+        private void addUserToChat(View view) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
+            dialog.setTitle("Add to Chat Room");
+
+            List<String> rooms = new ArrayList<>();
+            for (ChatRoom room : mChatRoomModel.getRooms()) {
+                rooms.add(room.getName());
+            }
+            String[] roomNames = rooms.toArray(new String[rooms.size()]);
+
+            AtomicInteger selected = new AtomicInteger(-1);
+            dialog.setSingleChoiceItems(roomNames, selected.get(), (dlg, i) -> selected.set(i));
+
+            dialog.setPositiveButton("Add", (dlg, i) -> {
+                int roomId = mChatRoomModel.getRoomFromName(roomNames[selected.get()]);
+                mContactsModel.connectAddToChat(mUserModel.getJwt(), mContact.getEmail(), roomId);
+                dlg.dismiss();
+            });
+
+            dialog.setNegativeButton("Cancel", (dlg, i) -> dlg.dismiss());
+
+            dialog.show();
         }
     }
 }
