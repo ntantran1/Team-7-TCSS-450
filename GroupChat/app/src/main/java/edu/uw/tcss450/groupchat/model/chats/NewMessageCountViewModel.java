@@ -1,16 +1,18 @@
-package edu.uw.tcss450.groupchat.model;
+package edu.uw.tcss450.groupchat.model.chats;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
+
 /**
  * View Model for new incoming chat messages.
  *
  * @version November 19, 2020
  */
 public class NewMessageCountViewModel extends ViewModel {
+
     private MutableLiveData<Integer> mNewMessageCount;
 
     /**

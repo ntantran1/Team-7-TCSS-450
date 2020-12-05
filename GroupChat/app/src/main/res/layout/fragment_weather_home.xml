@@ -10,9 +10,7 @@
         android:id="@+id/weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:backgroundTint="@color/material_on_primary_disabled"
-        android:backgroundTintMode="add"
+        android:background="?attr/colorSurface"
         tools:context=".ui.weather.WeatherHomeFragment">
 
         <androidx.constraintlayout.widget.Guideline
@@ -106,7 +104,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="56dp"
-            android:background="?attr/colorPrimary"
             android:backgroundTint="@color/material_on_primary_disabled"
             android:backgroundTintMode="multiply"
             android:textAlignment="center"
@@ -124,12 +121,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="56dp"
-            android:background="?attr/colorPrimary"
             android:backgroundTint="@color/material_on_primary_disabled"
             android:backgroundTintMode="multiply"
+
             android:textAlignment="center"
             android:textColor="#000000"
-
             android:textColorHint="#040404"
             android:textColorLink="#040303"
             android:textSize="18sp"

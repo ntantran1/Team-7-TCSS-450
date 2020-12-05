@@ -1,4 +1,4 @@
-package edu.uw.tcss450.groupchat.ui.auth.password;
+package edu.uw.tcss450.groupchat.model.auth;
 
 import android.app.Application;
 import android.util.Log;
@@ -19,18 +19,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import edu.uw.tcss450.groupchat.R;
 
 /**
- * View Model for Change Password page to store latest HTTP response.
+ * ViewModel for Reset Password page, hold the responses from server.
  *
- * @version November 18
+ * @version November 19, 2020
  */
-public class ChangePasswordViewModel extends AndroidViewModel {
+public class ResetPasswordViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
 
@@ -39,7 +37,7 @@ public class ChangePasswordViewModel extends AndroidViewModel {
      *
      * @param application reference to the current application
      */
-    public ChangePasswordViewModel(@NonNull Application application) {
+    public ResetPasswordViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
@@ -58,16 +56,15 @@ public class ChangePasswordViewModel extends AndroidViewModel {
 
     /**
      * Make an HTTP request for change password action.
-     * @param jwt email of user
+     * @param email email of user requesting a password reset
      */
-    public void connect(final String jwt, final String oldpw, final String newpw) {
+    public void connect(final String email) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "changepw";
+                + "recovery";
 
         JSONObject body = new JSONObject();
         try {
-            body.put("oldpw", oldpw);
-            body.put("newpw", newpw);
+            body.put("email", email);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -77,16 +74,7 @@ public class ChangePasswordViewModel extends AndroidViewModel {
                 url,
                 body,
                 mResponse::setValue,
-                this::handleError) {
-
-                @Override
-                public Map<String, String> getHeaders() {
-                    Map<String, String> headers = new HashMap<>();
-                    //add headers <key, value>
-                    headers.put("Authorization", jwt);
-                    return headers;
-                }
-        };
+                this::handleError);
 
         request.setRetryPolicy(new DefaultRetryPolicy(
                 10_000,
@@ -120,5 +108,4 @@ public class ChangePasswordViewModel extends AndroidViewModel {
             }
         }
     }
-
 }

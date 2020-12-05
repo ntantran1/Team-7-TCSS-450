@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,24 +23,27 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.uw.tcss450.groupchat.databinding.ActivityMainBinding;
-import edu.uw.tcss450.groupchat.model.NewMessageCountViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
+import edu.uw.tcss450.groupchat.model.chats.NewMessageCountViewModel;
 import edu.uw.tcss450.groupchat.model.PushyTokenViewModel;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.services.PushReceiver;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
-import edu.uw.tcss450.groupchat.ui.chats.ChatViewModel;
 
 /**
  * Activity after the user is authenticated, for all the features of the application.
  *
- * @version November 5
+ * @version December 4, 2020
  */
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
     private ActivityMainBinding binding;
+
     private MainPushMessageReceiver mPushMessageReceiver;
+
     private NewMessageCountViewModel mNewMessageModel;
 
     private UserInfoViewModel mUserViewModel;
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
         navController.addOnDestinationChangedListener(((controller, destination, arguments) -> {
-            if(destination.getId() == R.id.navigation_chats){
+            if(destination.getId() == R.id.chatDisplayFragment){
                 //when user navigates to chat page, reset new message count
                 mNewMessageModel.reset();
             }
@@ -193,8 +195,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private class MainPushMessageReceiver extends BroadcastReceiver {
 
-        private ChatViewModel mModel = new ViewModelProvider(MainActivity.this).
-                get(ChatViewModel.class);
+        private ChatMessageViewModel mChatModel =
+                new ViewModelProvider(MainActivity.this).get(ChatMessageViewModel.class);
+
+        private ChatRoomViewModel mRoomModel =
+                new ViewModelProvider(MainActivity.this).get(ChatRoomViewModel.class);
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -206,12 +211,13 @@ public class MainActivity extends AppCompatActivity {
                 ChatMessage cm = (ChatMessage) intent.getSerializableExtra("chatMessage");
 
                 //if user is not on chat screen, update NewMessageCountView Model
-                if(nd.getId() != R.id.navigation_chats){
+                if(nd.getId() != R.id.chatDisplayFragment
+                        || mRoomModel.getCurrentRoom() != intent.getIntExtra("chatid", -1)){
                     mNewMessageModel.increment();
                 }
 
                 //inform view model holding chatroom messages of the ones
-                mModel.addMessage(intent.getIntExtra("chatid", -1), cm);
+                mChatModel.addMessage(intent.getIntExtra("chatid", -1), cm);
             }
         }
     }
