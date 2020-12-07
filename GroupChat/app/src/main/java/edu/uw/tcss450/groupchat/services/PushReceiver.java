@@ -143,7 +143,52 @@ public class PushReceiver extends BroadcastReceiver {
                 notificationManager.notify(1, builder.build());
             }
         } else if (typeOfMessage.equals("chat")) {
+            String text;
+            String email;
+            try {
+                JSONObject message = new JSONObject(intent.getStringExtra("message"));
+                text = message.getString("text");
+                email = message.getString("email");
+            } catch (JSONException e) {
+                //Web service sent us something unexpected...I can't deal with this.
+                throw new IllegalStateException("Error from Web Service. Contact Dev Support");
+            }
 
+            ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
+            ActivityManager.getMyMemoryState(appProcessInfo);
+
+            if (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE) {
+                Log.d("PUSHY", "Chat received in foreground: " + text);
+
+                Intent i = new Intent(RECEIVED_NEW_MESSAGE);
+                i.putExtra("chat", text);
+                i.putExtras(intent.getExtras());
+
+                context.sendBroadcast(i);
+            } else {
+                Log.d("PUSHY", "Chat received in background: " + text);
+
+                Intent i = new Intent(context, AuthActivity.class);
+                i.putExtras(intent.getExtras());
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                        i, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setAutoCancel(true)
+                        .setSmallIcon(R.drawable.ic_chat_notification)
+                        .setContentTitle(email)
+                        .setContentText(text)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent);
+
+                Pushy.setNotificationChannel(builder, context);
+
+                NotificationManager notificationManager =
+                        (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                notificationManager.notify(1, builder.build());
+            }
         }
     }
 }

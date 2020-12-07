@@ -9,10 +9,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -82,15 +85,28 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
             AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
             dialog.setTitle("Create New Chat Room");
 
-            final EditText chatName = new EditText(getContext());
+            EditText chatName = new EditText(getContext());
             dialog.setView(chatName);
 
             dialog.setPositiveButton("Create", (dlg, i) -> {
                 mModel.connectCreate(mUserModel.getJwt(), chatName.getText().toString());
 
                 mModel.addResponseObserver(getViewLifecycleOwner(), response -> {
-                    mModel.connect(mUserModel.getJwt());
-                    dlg.dismiss();
+                    if (response.length() > 0) {
+                        if (response.has("code")) {
+                            try {
+                                chatName.setError("Error: "
+                                        + response.getJSONObject("data").getString("message"));
+                            } catch (JSONException e) {
+                                Log.e("JSON Parse Error", e.getMessage());
+                            }
+                        } else {
+                            mModel.connect(mUserModel.getJwt());
+                            dlg.dismiss();
+                        }
+                    } else {
+                        Log.d("JSON Response", "No Response");
+                    }
                 });
             });
 
