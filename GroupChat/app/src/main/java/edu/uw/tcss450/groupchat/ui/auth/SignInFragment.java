@@ -130,6 +130,7 @@ public class SignInFragment extends Fragment {
     }
 
     private void attemptSignIn(final View button) {
+        binding.signinWait.setVisibility(View.VISIBLE);
         validateEmail();
     }
 
@@ -231,6 +232,7 @@ public class SignInFragment extends Fragment {
                 binding.editEmail.setError(
                         "Error Authenticating on Push Token. Please contact support");
             } else {
+                binding.signinWait.setVisibility(View.GONE);
                 navigateToSuccess(
                         binding.editEmail.getText().toString(),
                         mUserViewModel.getJwt()

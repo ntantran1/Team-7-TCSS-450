@@ -1,6 +1,9 @@
 package edu.uw.tcss450.groupchat.model;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -19,12 +22,18 @@ public class UserInfoViewModel extends ViewModel {
     private final String mJwt;
 
     /** Current Theme **/
-    private int mTheme;
+    private MutableLiveData<Integer> mTheme;
 
     private UserInfoViewModel(String email, String jwt) {
         mEmail = email;
         mJwt = jwt;
-        mTheme = R.style.Theme_PurpleGold;
+        mTheme = new MutableLiveData<>();
+        mTheme.setValue(R.style.Theme_PurpleGold);
+    }
+
+    public void addThemeObserver(@NonNull LifecycleOwner owner,
+                                 @NonNull Observer<? super Integer> observer) {
+        mTheme.observe(owner, observer);
     }
 
     /**
@@ -51,7 +60,7 @@ public class UserInfoViewModel extends ViewModel {
      * @return current theme of the app
      */
     public int getTheme() {
-        return mTheme;
+        return mTheme.getValue();
     }
 
     /**
@@ -60,7 +69,7 @@ public class UserInfoViewModel extends ViewModel {
      * @param theme theme to change app to
      */
     public void setTheme(int theme) {
-        mTheme = theme;
+        mTheme.setValue(theme);
     }
 
     /**
