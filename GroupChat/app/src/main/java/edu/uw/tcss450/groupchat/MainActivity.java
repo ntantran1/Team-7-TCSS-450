@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (destination.getId() == R.id.navigation_contacts) {
                 mNewContactModel.reset();
+            } else if (destination.getId() == R.id.navigation_chats) {
+                mNewChatModel.resetChat();
             }
         });
 
@@ -106,13 +108,46 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if(count > 0) {
-                //mew messages
-                badge.setNumber(count);
+                //new messages
+                if (mNewChatModel.getNewChatCount() < 1) {
+                    badge.setNumber(count);
+                } else {
+                    badge.setNumber(mNewChatModel.getNewChatCount() + count);
+                }
                 badge.setVisible(true);
             } else {
                 //remove badge
-                badge.clearNumber();
-                badge.setVisible(false);
+                if (mNewChatModel.getNewChatCount() < 1) {
+                    badge.clearNumber();
+                    badge.setVisible(false);
+                } else {
+                    badge.setNumber(mNewChatModel.getNewChatCount());
+                    badge.setVisible(true);
+                }
+            }
+        });
+
+        mNewChatModel.addChatCountObserver(this, count -> {
+            BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
+            badge.setMaxCharacterCount(2);
+
+            if(count > 0) {
+                //new contacts
+                if (mNewChatModel.getNewMessageCount() < 1) {
+                    badge.setNumber(count);
+                } else {
+                    badge.setNumber(mNewChatModel.getNewMessageCount() + count);
+                }
+                badge.setVisible(true);
+            } else {
+                //remove badge
+                if (mNewChatModel.getNewMessageCount() < 1) {
+                    badge.clearNumber();
+                    badge.setVisible(false);
+                } else {
+                    badge.setNumber(mNewChatModel.getNewMessageCount());
+                    badge.setVisible(true);
+                }
             }
         });
 
@@ -121,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             badge.setMaxCharacterCount(2);
 
             if(count > 0) {
-                //mew contacts
+                //new contacts
                 badge.setNumber(count);
                 badge.setVisible(true);
             } else {
@@ -274,6 +309,13 @@ public class MainActivity extends AppCompatActivity {
                 mIncomingModel.connect(mUserViewModel.getJwt());
                 mOutgoingModel.connect(mUserViewModel.getJwt());
                 mSearchModel.connect(mUserViewModel.getJwt());
+            } else if (intent.hasExtra("chat")) {
+
+                if (nd.getId() != R.id.navigation_chats) {
+                    mNewChatModel.incrementChat();
+                }
+
+                mRoomModel.connect(mUserViewModel.getJwt());
             }
         }
     }
