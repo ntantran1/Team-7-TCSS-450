@@ -64,6 +64,7 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
         binding = FragmentChatMainBinding.bind(getView());
 
         binding.swipeContainer.setRefreshing(true);
+        binding.chatWait.setVisibility(View.VISIBLE);
 
         final RecyclerView rv = binding.listRoot;
         rv.setAdapter(new ChatRoomRecyclerViewAdapter(new ArrayList<>(), getActivity()));
@@ -74,6 +75,7 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
         mModel.addRoomsObserver(getViewLifecycleOwner(), rooms -> {
             rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
             binding.swipeContainer.setRefreshing(false);
+            binding.chatWait.setVisibility(View.GONE);
         });
 
         binding.buttonStartChatRoom.setOnClickListener(this);

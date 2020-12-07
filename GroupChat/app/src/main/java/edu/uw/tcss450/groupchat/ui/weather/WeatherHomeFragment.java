@@ -201,6 +201,8 @@ public class WeatherHomeFragment extends Fragment {
 
         binding.buttonRefresh.setOnClickListener(button ->
                 mWeatherModel.connect(binding, mWeatherModel.getZip()));
+
+        binding.weatherWait.setVisibility(View.GONE);
     }
 
     /**
