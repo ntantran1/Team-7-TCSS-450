@@ -39,6 +39,7 @@ public class ChatNotificationsViewModel extends ViewModel {
 
     /**
      * Increment new message count of the specified chat room.
+     *
      * @param chatId The chat ID of the chat room
      */
     public void increment(int chatId) {
@@ -51,6 +52,7 @@ public class ChatNotificationsViewModel extends ViewModel {
 
     /**
      * Reset new message count of the specified chat room.
+     *
      * @param chatId The chat ID of the chat room
      */
     public void reset(int chatId) {

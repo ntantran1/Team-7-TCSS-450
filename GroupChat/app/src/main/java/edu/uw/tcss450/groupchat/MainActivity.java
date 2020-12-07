@@ -30,6 +30,11 @@ import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import edu.uw.tcss450.groupchat.model.PushyTokenViewModel;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
+import edu.uw.tcss450.groupchat.model.contacts.ContactNotificationsViewModel;
+import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
+import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
+import edu.uw.tcss450.groupchat.model.contacts.ContactsOutgoingViewModel;
+import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
 import edu.uw.tcss450.groupchat.services.PushReceiver;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ChatNotificationsViewModel mNewChatModel;
 
+    private ContactNotificationsViewModel mNewContactModel;
+
     private UserInfoViewModel mUserViewModel;
 
     @Override
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 .get(UserInfoViewModel.class);
 
         mNewChatModel = new ViewModelProvider(this).get(ChatNotificationsViewModel.class);
+        mNewContactModel = new ViewModelProvider(this).get(ContactNotificationsViewModel.class);
         mUserViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
         ChatRoomViewModel chatRoomModel = new ViewModelProvider(this).get(ChatRoomViewModel.class);
 
@@ -80,6 +88,12 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.navigation_contacts) {
+                mNewContactModel.reset();
+            }
+        });
+
         chatRoomModel.addCurrentRoomObserver(this, chatId -> mNewChatModel.reset(chatId));
 
         mNewChatModel.addMessageCountObserver(this, notifications -> {
@@ -93,6 +107,21 @@ public class MainActivity extends AppCompatActivity {
 
             if(count > 0) {
                 //mew messages
+                badge.setNumber(count);
+                badge.setVisible(true);
+            } else {
+                //remove badge
+                badge.clearNumber();
+                badge.setVisible(false);
+            }
+        });
+
+        mNewContactModel.addContactCountObserver(this, count -> {
+            BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
+            badge.setMaxCharacterCount(2);
+
+            if(count > 0) {
+                //mew contacts
                 badge.setNumber(count);
                 badge.setVisible(true);
             } else {
@@ -206,6 +235,18 @@ public class MainActivity extends AppCompatActivity {
         private ChatRoomViewModel mRoomModel =
                 new ViewModelProvider(MainActivity.this).get(ChatRoomViewModel.class);
 
+        private ContactsMainViewModel mContactsModel =
+                new ViewModelProvider(MainActivity.this).get(ContactsMainViewModel.class);
+
+        private ContactsIncomingViewModel mIncomingModel =
+                new ViewModelProvider(MainActivity.this).get(ContactsIncomingViewModel.class);
+
+        private ContactsOutgoingViewModel mOutgoingModel =
+                new ViewModelProvider(MainActivity.this).get(ContactsOutgoingViewModel.class);
+
+        private ContactsSearchViewModel mSearchModel =
+                new ViewModelProvider(MainActivity.this).get(ContactsSearchViewModel.class);
+
         @Override
         public void onReceive(Context context, Intent intent) {
             NavController nc = Navigation.findNavController(MainActivity.this,
@@ -223,6 +264,16 @@ public class MainActivity extends AppCompatActivity {
 
                 //inform view model holding chatroom messages of the new ones
                 mChatModel.addMessage(intent.getIntExtra("chatid", -1), cm);
+            } else if (intent.hasExtra("contact")) {
+
+                if (nd.getId() != R.id.navigation_contacts) {
+                    mNewContactModel.increment();
+                }
+
+                mContactsModel.connect(mUserViewModel.getJwt());
+                mIncomingModel.connect(mUserViewModel.getJwt());
+                mOutgoingModel.connect(mUserViewModel.getJwt());
+                mSearchModel.connect(mUserViewModel.getJwt());
             }
         }
     }
