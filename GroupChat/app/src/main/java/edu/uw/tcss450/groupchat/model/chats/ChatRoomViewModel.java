@@ -63,6 +63,10 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mCurrentRoom.observe(owner, observer);
     }
 
+    public ChatRoom getRoom(final int id) {
+        return mRooms.getValue().get(id);
+    }
+
     public int getCurrentRoom() {
         return mCurrentRoom.getValue();
     }

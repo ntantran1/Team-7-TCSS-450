@@ -62,7 +62,7 @@ public class ChangePasswordViewModel extends AndroidViewModel {
      */
     public void connect(final String jwt, final String oldpw, final String newpw) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "changepw";
+                + "password/change";
 
         JSONObject body = new JSONObject();
         try {

@@ -25,7 +25,7 @@ public class ContactsSearchViewModel extends ContactsViewModel {
         mContactType = 4;
 
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "search?term=%";
+                + "contacts/search?term=%";
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -56,7 +56,7 @@ public class ContactsSearchViewModel extends ContactsViewModel {
         mContactType = 4;
 
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "search?term=" + term + "%";
+                + "contacts/search?term=" + term + "%";
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
