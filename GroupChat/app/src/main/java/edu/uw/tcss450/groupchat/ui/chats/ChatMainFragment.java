@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatMainBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 
 /**
@@ -62,13 +63,13 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
         binding.swipeContainer.setRefreshing(true);
 
         final RecyclerView rv = binding.listRoot;
-        rv.setAdapter(new ChatRoomRecyclerViewAdapter(new ArrayList<>()));
+        rv.setAdapter(new ChatRoomRecyclerViewAdapter(new ArrayList<>(), getActivity()));
 
         binding.swipeContainer.setOnRefreshListener(() ->
                 mModel.connect(mUserModel.getJwt()));
 
         mModel.addRoomsObserver(getViewLifecycleOwner(), rooms -> {
-            rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms));
+            rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
             binding.swipeContainer.setRefreshing(false);
         });
 

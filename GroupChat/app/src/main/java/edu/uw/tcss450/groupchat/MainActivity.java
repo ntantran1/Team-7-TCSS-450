@@ -22,6 +22,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.Map;
+
 import edu.uw.tcss450.groupchat.databinding.ActivityMainBinding;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
@@ -55,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
         String jwt = args.getJwt();
 
         new ViewModelProvider(this,
-                new UserInfoViewModel.UserInfoViewModelFactory(email, jwt)).get(UserInfoViewModel.class);
+                new UserInfoViewModel.UserInfoViewModelFactory(email, jwt))
+                .get(UserInfoViewModel.class);
 
         mNewChatModel = new ViewModelProvider(this).get(ChatNotificationsViewModel.class);
         mUserViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);

@@ -60,7 +60,7 @@ public class ResetPasswordViewModel extends AndroidViewModel {
      */
     public void connect(final String email) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "recovery";
+                + "password/recover";
 
         JSONObject body = new JSONObject();
         try {

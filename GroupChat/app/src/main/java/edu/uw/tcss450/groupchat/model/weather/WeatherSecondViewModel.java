@@ -67,13 +67,13 @@ public class WeatherSecondViewModel extends AndroidViewModel {
      * Perform an HTTP request to the weather API to retrieve weather forecast information.
      *
      * @param b the binding of the weather fragment home page
-     * @param lo longitude of requesting location
+     * @param lon longitude of requesting location
      * @param lat latitude of requesting location
      */
-    public void connectDaily(FragmentWeatherHomeBinding b, String lo, String lat) {
+    public void connectDaily(FragmentWeatherHomeBinding b, String lon, String lat) {
         binding = b;
-        String url = "https://dhill30-groupchat-backend.herokuapp.com/weathersecond?lat=" + lat
-                + "&lon=" + lo;
+        String url = "https://dhill30-groupchat-backend.herokuapp.com/weather?lat="
+                + lat + "&lon=" + lon;
 
 
 
