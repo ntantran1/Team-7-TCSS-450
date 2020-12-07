@@ -62,6 +62,7 @@ public class ContactsOutgoingFragment extends Fragment {
         mModel.addContactsObserver(getViewLifecycleOwner(), outgoingList -> {
             ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(outgoingList);
             binding.outgoingSwipeContainer.setRefreshing(false);
+            binding.contactsOutgoingWait.setVisibility(View.GONE);
         });
     }
 }

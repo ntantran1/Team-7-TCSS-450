@@ -15,7 +15,7 @@ import edu.uw.tcss450.groupchat.databinding.FragmentHomeBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 
 /**
- * Fragment for Weather page.
+ * Fragment for Home page.
  *
  * @version November 5
  */

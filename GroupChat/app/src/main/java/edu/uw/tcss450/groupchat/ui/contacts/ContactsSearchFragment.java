@@ -15,6 +15,7 @@ import android.widget.SearchView;
 
 import java.util.ArrayList;
 
+import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentContactsSearchBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
@@ -23,8 +24,6 @@ import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
  * A simple {@link Fragment} subclass.
  */
 public class ContactsSearchFragment extends Fragment {
-
-    private FragmentContactsSearchBinding binding;
 
     private ContactsSearchViewModel mModel;
 
@@ -44,13 +43,14 @@ public class ContactsSearchFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentContactsSearchBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        return inflater.inflate(R.layout.fragment_contacts_search, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        FragmentContactsSearchBinding binding = FragmentContactsSearchBinding.bind(view);
 
         binding.searchSwipeContainer.setRefreshing(true);
 
@@ -79,6 +79,7 @@ public class ContactsSearchFragment extends Fragment {
         mModel.addContactsObserver(getViewLifecycleOwner(), searchList -> {
             ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(searchList);
             binding.searchSwipeContainer.setRefreshing(false);
+            binding.contactsSearchWait.setVisibility(View.GONE);
         });
     }
 }

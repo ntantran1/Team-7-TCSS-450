@@ -64,6 +64,7 @@ public class ContactsMainFragment extends Fragment {
         mModel.addContactsObserver(getViewLifecycleOwner(), contactList -> {
             ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(contactList);
             binding.swipeContainer.setRefreshing(false);
+            binding.contactsMainWait.setVisibility(View.GONE);
         });
     }
 }

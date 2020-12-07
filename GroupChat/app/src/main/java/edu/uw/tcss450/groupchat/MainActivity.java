@@ -96,6 +96,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mUserViewModel.addThemeObserver(this, theme -> {
+            BadgeDrawable contactBadge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
+            contactBadge.setMaxCharacterCount(2);
+
+            BadgeDrawable chatBadge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
+            chatBadge.setMaxCharacterCount(2);
+
+            contactBadge.setVisible(contactBadge.getNumber() != 0);
+            chatBadge.setVisible(chatBadge.getNumber() != 0);
+        });
+
         chatRoomModel.addCurrentRoomObserver(this, chatId -> mNewChatModel.reset(chatId));
 
         mNewChatModel.addMessageCountObserver(this, notifications -> {
@@ -109,15 +120,11 @@ public class MainActivity extends AppCompatActivity {
 
             if(count > 0) {
                 //new messages
-                if (mNewChatModel.getNewChatCount() < 1) {
-                    badge.setNumber(count);
-                } else {
-                    badge.setNumber(mNewChatModel.getNewChatCount() + count);
-                }
+                badge.setNumber(mNewChatModel.getNewChatCount() + count);
                 badge.setVisible(true);
             } else {
                 //remove badge
-                if (mNewChatModel.getNewChatCount() < 1) {
+                if (mNewChatModel.getNewChatCount() == 0) {
                     badge.clearNumber();
                     badge.setVisible(false);
                 } else {
@@ -133,15 +140,11 @@ public class MainActivity extends AppCompatActivity {
 
             if(count > 0) {
                 //new contacts
-                if (mNewChatModel.getNewMessageCount() < 1) {
-                    badge.setNumber(count);
-                } else {
-                    badge.setNumber(mNewChatModel.getNewMessageCount() + count);
-                }
+                badge.setNumber(mNewChatModel.getNewMessageCount() + count);
                 badge.setVisible(true);
             } else {
                 //remove badge
-                if (mNewChatModel.getNewMessageCount() < 1) {
+                if (mNewChatModel.getNewMessageCount() == 0) {
                     badge.clearNumber();
                     badge.setVisible(false);
                 } else {
