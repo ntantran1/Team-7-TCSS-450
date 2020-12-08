@@ -302,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //inform view model holding chatroom messages of the new ones
                 mChatModel.addMessage(intent.getIntExtra("chatid", -1), cm);
+                mRoomModel.connectRecent(mUserViewModel.getJwt());
             } else if (intent.hasExtra("contact")) {
 
                 if (nd.getId() != R.id.navigation_contacts) {
