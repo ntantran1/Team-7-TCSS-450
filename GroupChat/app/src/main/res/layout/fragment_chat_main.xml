@@ -31,7 +31,6 @@
             app:layoutManager="LinearLayoutManager"
             tools:context="edu.uw.tcss450.groupchat.ui.chats.ChatMainFragment"
             tools:listitem="@layout/fragment_chat_main" />
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

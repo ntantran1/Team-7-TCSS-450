@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,16 +22,16 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentHomeBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
-import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherSecondViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
-import edu.uw.tcss450.groupchat.ui.weather.WeatherHomeFragment;
+import edu.uw.tcss450.groupchat.ui.chats.ChatRoomRecyclerViewAdapter;
 
 /**
  * Fragment for Home page.
@@ -43,14 +44,19 @@ public class HomeFragment extends Fragment {
 
     private WeatherViewModel mWeatherModel;
 
-    private ChatMessageViewModel mChatModel;
+    private ChatRoomViewModel mRoomModel;
+
+    private UserInfoViewModel mUserModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
+        mRoomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
+        mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
 
         mWeatherModel.connect("98502");
+        mRoomModel.connectRecent(mUserModel.getJwt());
     }
 
     @Override
@@ -66,8 +72,10 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        UserInfoViewModel model = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
-        binding.textLabel.setText("Welcome home " + model.getEmail() + "!");
+        binding.textLabel.setText("Recent Chat Activity");
+
+        final RecyclerView rv = binding.listRootHome;
+        rv.setAdapter(new ChatRoomRecyclerViewAdapter(new ArrayList<>(), getActivity()));
 
         // getting response from the weather API
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
@@ -78,19 +86,21 @@ public class HomeFragment extends Fragment {
                 JSONObject info2 = (JSONObject) info.get(0);
 
                 // Getting weather information and display it
-                binding.textDegree2.setText(String.valueOf((int)(main.getDouble("temp"))) + "℉");
-                binding.textCity2.setText(response.getString("name"));
-                binding.textDayTime2.setText(LocalDate.now().getDayOfWeek().name() + " "
+                binding.textDegreeHome.setText(String.valueOf((int)(main.getDouble("temp"))) + " ℉");
+                binding.textCityHome.setText(response.getString("name"));
+                binding.textDayTimeHome.setText(LocalDate.now().getDayOfWeek().name() + " "
                         + new SimpleDateFormat("HH:mm",
                         Locale.getDefault()).format(new Date()));
-                setImage(info2, binding.imageCondition2);
+                setImage(info2, binding.imageConditionHome);
 
-                binding.textCondition2.setText(info2.getString("main"));
-
-
+                binding.textConditionHome.setText(info2.getString("main"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        });
+
+        mRoomModel.addRecentObserver(getViewLifecycleOwner(), rooms -> {
+            rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
         });
     }
 
