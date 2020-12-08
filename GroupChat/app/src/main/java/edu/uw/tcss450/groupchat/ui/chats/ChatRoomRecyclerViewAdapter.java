@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatCardBinding;
 import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
+import edu.uw.tcss450.groupchat.ui.HomeFragmentDirections;
 
 /**
  * The class describes how each chat room should look on the home page and manage the list of
@@ -97,10 +99,15 @@ public class ChatRoomRecyclerViewAdapter extends
 
             //when someone clicks on a chat, takes to that chat list
             mView.setOnClickListener(view -> {
-                Navigation.findNavController(mView).getGraph().findNode(R.id.chatDisplayFragment).setLabel(mRoom.getName());
-                Navigation.findNavController(mView).navigate(
-                        ChatMainFragmentDirections
-                                .actionNavigationChatsToChatDisplayFragment(mRoom));
+                NavController navController = Navigation.findNavController(mView);
+                navController.getGraph().findNode(R.id.chatDisplayFragment).setLabel(mRoom.getName());
+                if (navController.getCurrentDestination().getId() == R.id.navigation_home) {
+                    navController.navigate(HomeFragmentDirections
+                            .actionNavigationHomeToChatDisplayFragment(mRoom));
+                } else if (navController.getCurrentDestination().getId() == R.id.navigation_chats) {
+                    navController.navigate(ChatMainFragmentDirections
+                            .actionNavigationChatsToChatDisplayFragment(mRoom));
+                }
             });
 
             mNewChatModel.addMessageCountObserver(mActivity, notifications -> {

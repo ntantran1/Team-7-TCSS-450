@@ -9,7 +9,11 @@
         android:id="@+id/navigation_home"
         android:name="edu.uw.tcss450.groupchat.ui.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_chatDisplayFragment"
+            app:destination="@id/chatDisplayFragment" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_contacts"
         android:name="edu.uw.tcss450.groupchat.ui.contacts.ContactsHolderFragment"
