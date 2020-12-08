@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -179,7 +180,7 @@ public class WeatherHomeFragment extends Fragment {
         // Set up default location weather
         if(mWeatherModel.getVal()) {
             binding.layoutWait.setVisibility(View.VISIBLE);
-            mWeatherModel.connect(binding, "98502");
+            mWeatherModel.connect("98502");
 
             mWeatherModel.setVal();
         }
@@ -189,7 +190,7 @@ public class WeatherHomeFragment extends Fragment {
         binding.searchZip.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mWeatherModel.connect(binding, query);
+                mWeatherModel.connect(query);
                 return false;
             }
 
@@ -200,7 +201,7 @@ public class WeatherHomeFragment extends Fragment {
         });
 
         binding.buttonRefresh.setOnClickListener(button ->
-                mWeatherModel.connect(binding, mWeatherModel.getZip()));
+                mWeatherModel.connect(mWeatherModel.getZip()));
 
         binding.weatherWait.setVisibility(View.GONE);
     }
@@ -276,7 +277,6 @@ public class WeatherHomeFragment extends Fragment {
             String id = c.getString("icon");
 
             mHourly.add(new WeatherHourly(time, id, temp));
-
         }
 
         RecyclerView view = binding.hourlyView;
@@ -285,67 +285,76 @@ public class WeatherHomeFragment extends Fragment {
             view.setLayoutManager(new LinearLayoutManager(view.getContext(),
                     LinearLayoutManager.HORIZONTAL, false));
             view.setAdapter(new WeatherRecyclerViewAdapter(mHourly));
-
         }
-
     }
 
     /**
      * Method to set the icons for weather condition
-     * @param info2, the JSONObject that contain the weather info
-     * @param v, the image view for weather condition
+     *
+     * @param info, the JSONObject that contain the weather info
+     * @param view, the image view for weather condition
      */
-    public void setImage(JSONObject info2, ImageView v) throws JSONException {
-        String icon = info2.getString("icon");
-        if (icon.contentEquals("01d")) {
-            v.setImageResource(R.drawable.ic_1d);
-        } else if (icon.contentEquals("02d")) {
-            v.setImageResource(R.drawable.ic_2d);
-        } else if (icon.contentEquals("03d")) {
-            v.setImageResource(R.drawable.ic_3d);
-        } else if (icon.contentEquals("04d")) {
-            v.setImageResource(R.drawable.ic_4d);
-        } else if (icon.contentEquals("09d")) {
-            v.setImageResource(R.drawable.ic_9d);
-        } else if (icon.contentEquals("10d")) {
-            v.setImageResource(R.drawable.ic_10d);
+    private void setImage(JSONObject info, ImageView view) throws JSONException {
+        String icon = info.getString("icon");
 
-        } else if (icon.contentEquals("11d")) {
-            v.setImageResource(R.drawable.ic_11d);
-
-        } else if (icon.contentEquals("13d")) {
-            v.setImageResource(R.drawable.ic_13d);
-
-        } else if (icon.contentEquals("50d")) {
-            v.setImageResource(R.drawable.ic_50d);
-
-        } else if (icon.contentEquals("01n")) {
-            v.setImageResource(R.drawable.ic_1n);
-
-        } else if (icon.contentEquals("02n")) {
-            v.setImageResource(R.drawable.ic_2n);
-
-        } else if (icon.contentEquals("03n")) {
-            v.setImageResource(R.drawable.ic_3n);
-
-        } else if (icon.contentEquals("04n")) {
-            v.setImageResource(R.drawable.ic_4n);
-
-        } else if (icon.contentEquals("09n")) {
-            v.setImageResource(R.drawable.ic_9n);
-
-        } else if (icon.contentEquals("10n")) {
-            v.setImageResource(R.drawable.ic_10n);
-
-        } else if (icon.contentEquals("11n")) {
-            v.setImageResource(R.drawable.ic_11n);
-
-        } else if (icon.contentEquals("13n")) {
-            v.setImageResource(R.drawable.ic_13n);
-
-        } else if (icon.contentEquals("50n")) {
-            v.setImageResource(R.drawable.ic_50n);
-
+        switch (icon) {
+            case "01d":
+                view.setImageResource(R.drawable.ic_1d);
+                break;
+            case "02d":
+                view.setImageResource(R.drawable.ic_2d);
+                break;
+            case "03d":
+                view.setImageResource(R.drawable.ic_3d);
+                break;
+            case "04d":
+                view.setImageResource(R.drawable.ic_4d);
+                break;
+            case "09d":
+                view.setImageResource(R.drawable.ic_9d);
+                break;
+            case "10d":
+                view.setImageResource(R.drawable.ic_10d);
+                break;
+            case "11d":
+                view.setImageResource(R.drawable.ic_11d);
+                break;
+            case "13d":
+                view.setImageResource(R.drawable.ic_13d);
+                break;
+            case "50d":
+                view.setImageResource(R.drawable.ic_50d);
+                break;
+            case "01n":
+                view.setImageResource(R.drawable.ic_1n);
+                break;
+            case "02n":
+                view.setImageResource(R.drawable.ic_2n);
+                break;
+            case "03n":
+                view.setImageResource(R.drawable.ic_3n);
+                break;
+            case "04n":
+                view.setImageResource(R.drawable.ic_4n);
+                break;
+            case "09n":
+                view.setImageResource(R.drawable.ic_9n);
+                break;
+            case "10n":
+                view.setImageResource(R.drawable.ic_10n);
+                break;
+            case "11n":
+                view.setImageResource(R.drawable.ic_11n);
+                break;
+            case "13n":
+                view.setImageResource(R.drawable.ic_13n);
+                break;
+            case "50n":
+                view.setImageResource(R.drawable.ic_50n);
+                break;
+            default:
+                Log.d("ICON ERROR", "Could not get weather icon");
+                break;
         }
     }
 }

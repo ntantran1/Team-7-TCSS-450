@@ -93,12 +93,9 @@ public class WeatherViewModel extends AndroidViewModel {
     /**
      * Perform an HTTP request to retrieve current weather information.
      *
-     * @param b binding to the weather home page
      * @param zip current location zip code
      */
-    public void connect(FragmentWeatherHomeBinding b, String zip) {
-        binding = b;
-        mZip = zip;
+    public void connect(String zip) {
 
         String url = "https://dhill30-groupchat-backend.herokuapp.com/weather?zip=" + zip;
 
