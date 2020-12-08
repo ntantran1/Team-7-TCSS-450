@@ -25,9 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
+import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 
 public class ChatRoomViewModel extends AndroidViewModel {
@@ -36,7 +38,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<ChatRoom>> mRooms;
 
-    private MutableLiveData<List<ChatRoom>> mRecent;
+    private MutableLiveData<Map<ChatRoom, ChatMessage>> mRecent;
 
     private MutableLiveData<Integer> mCurrentRoom;
 
@@ -47,7 +49,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mRooms = new MutableLiveData<>();
         mRooms.setValue(new ArrayList<>());
         mRecent = new MutableLiveData<>();
-        mRecent.setValue(new ArrayList<>());
+        mRecent.setValue(new TreeMap<>());
         mCurrentRoom = new MutableLiveData<>();
         mCurrentRoom.setValue(-1);
     }
@@ -63,7 +65,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
     }
 
     public void addRecentObserver(@NonNull LifecycleOwner owner,
-                                 @NonNull Observer<? super List<ChatRoom>> observer) {
+                                 @NonNull Observer<? super Map<ChatRoom, ChatMessage>> observer) {
         mRecent.observe(owner, observer);
     }
 
@@ -210,7 +212,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
     }
 
     private void handleRecent(final JSONObject result) {
-        List<ChatRoom> chatRooms = new ArrayList<>();
+        Map<ChatRoom, ChatMessage> chats = new TreeMap<>();
         try {
             if (result.has("chats")) {
                 JSONArray rooms = result.getJSONArray("chats");
@@ -220,7 +222,12 @@ public class ChatRoomViewModel extends AndroidViewModel {
                     ChatRoom room = new ChatRoom(
                             jsonRoom.getInt("chatid"),
                             jsonRoom.getString("name"));
-                    chatRooms.add(room);
+                    ChatMessage message = new ChatMessage(
+                            jsonRoom.getInt("messageid"),
+                            jsonRoom.getString("message"),
+                            jsonRoom.getString("email"),
+                            jsonRoom.getString("timestamp"));
+                    chats.put(room, message);
                 }
             } else {
                 Log.e("ERROR", "No chats array");
@@ -229,7 +236,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
             e.printStackTrace();
             Log.e("ERROR", e.getMessage());
         }
-        mRecent.setValue(chatRooms);
+        mRecent.setValue(chats);
     }
 
     private void handleError(final VolleyError error) {
