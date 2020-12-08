@@ -8,6 +8,75 @@
     tools:context=".ui.HomeFragment" >
 
     <TextView
+        android:id="@+id/text_degree2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="?attr/colorPrimaryDark"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.563"
+        app:layout_constraintStart_toEndOf="@+id/text_city2"
+        app:layout_constraintTop_toBottomOf="@+id/text_label"
+        app:layout_constraintVertical_bias="0.042" />
+
+    <ImageView
+        android:id="@+id/image_condition2"
+        android:layout_width="53dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/text_day_time2"
+        app:layout_constraintTop_toBottomOf="@+id/text_degree2" />
+
+    <TextView
+        android:id="@+id/text_condition2"
+        android:layout_width="113dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textColor="?attr/colorPrimaryDark"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.339"
+        app:layout_constraintStart_toEndOf="@+id/image_condition2"
+        app:layout_constraintTop_toBottomOf="@+id/text_degree2" />
+
+    <TextView
+        android:id="@+id/text_day_time2"
+        android:layout_width="149dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textAlignment="textStart"
+        android:textColor="?attr/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.032"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_city2" />
+
+    <TextView
+        android:id="@+id/text_city2"
+        android:layout_width="133dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textAlignment="textStart"
+        android:textColor="?attr/colorPrimaryDark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.027"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_label"
+        app:layout_constraintVertical_bias="0.046" />
+
+    <TextView
         android:id="@+id/text_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,5 +85,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.071" />
 </androidx.constraintlayout.widget.ConstraintLayout>
