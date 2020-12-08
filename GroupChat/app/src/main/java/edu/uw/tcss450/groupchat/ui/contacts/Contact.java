@@ -13,6 +13,8 @@ public class Contact implements Comparable<Contact> {
 
     private String mEmail;
 
+    private int mType;
+
     /**
      * Generic constructor, should NEVER be called.
      */
@@ -20,6 +22,7 @@ public class Contact implements Comparable<Contact> {
         mUsername = "Blank";
         mName = "Blank Name";
         mEmail = "test@mail.com";
+        mType = 1;
     }
 
     /**
@@ -28,10 +31,11 @@ public class Contact implements Comparable<Contact> {
      * @param name the name (first and last) of the contact
      * @param email the email of the contact
      */
-    public Contact(final String username, final String name, final String email) {
+    public Contact(final String username, final String name, final String email, final int type) {
         mUsername = username;
         mName = name;
         mEmail = email;
+        mType = type;
     }
 
     /**
@@ -58,13 +62,20 @@ public class Contact implements Comparable<Contact> {
         return mEmail;
     }
 
+    /**
+     * Returns the contact's type.
+     * @return the type of contact
+     */
+    public int getType() {
+        return mType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Contact)) return false;
         if (!mUsername.equals(((Contact) o).getUsername())) return false;
         if (!mEmail.equals(((Contact) o).getEmail())) return false;
-        if (!mName.equals(((Contact) o).getName())) return false;
-        return true;
+        return mName.equals(((Contact) o).getName());
     }
 
     @Override

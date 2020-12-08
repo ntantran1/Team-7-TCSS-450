@@ -12,17 +12,17 @@
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/navigation_contacts"
-        android:name="edu.uw.tcss450.groupchat.ui.contacts.ContactsFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.contacts.ContactsHolderFragment"
         android:label="@string/title_contacts"
-        tools:layout="@layout/fragment_contacts" />
+        tools:layout="@layout/fragment_contacts_holder" />
     <fragment
         android:id="@+id/navigation_chats"
-        android:name="edu.uw.tcss450.groupchat.ui.chats.ChatsHomeFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.chats.ChatMainFragment"
         android:label="@string/title_chats"
-        tools:layout="@layout/fragment_chats_home" >
+        tools:layout="@layout/fragment_chat_main" >
         <action
-            android:id="@+id/action_navigation_chats_to_chatListFragment"
-            app:destination="@id/chatListFragment" />
+            android:id="@+id/action_navigation_chats_to_chatDisplayFragment"
+            app:destination="@id/chatDisplayFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_weather"
@@ -30,10 +30,10 @@
         android:label="@string/title_weather"
         tools:layout="@layout/fragment_weather_home" />
     <fragment
-        android:id="@+id/chatListFragment"
-        android:name="edu.uw.tcss450.groupchat.ui.chats.ChatListFragment"
+        android:id="@+id/chatDisplayFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.chats.ChatRoomFragment"
         android:label="@string/title_chats"
-        tools:layout="@layout/fragment_chat_list">
+        tools:layout="@layout/fragment_chat_room">
         <argument
             android:name="room"
             app:argType="edu.uw.tcss450.groupchat.ui.chats.ChatRoom" />
@@ -43,4 +43,9 @@
         android:name="edu.uw.tcss450.groupchat.ui.auth.password.ChangePasswordFragment"
         android:label="@string/title_change_password"
         tools:layout="@layout/fragment_change_password" />
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="edu.uw.tcss450.groupchat.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

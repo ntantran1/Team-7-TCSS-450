@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_root"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contact_card_root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"  >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_inner"
+        android:id="@+id/contact_layout_inner"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -31,7 +33,7 @@
             android:layout_marginEnd="8dp"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image_reject"
             app:layout_constraintStart_toEndOf="@+id/image_profile"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,7 +45,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image_reject"
             app:layout_constraintStart_toEndOf="@+id/image_profile"
             app:layout_constraintTop_toBottomOf="@+id/text_username" />
 
@@ -55,9 +57,69 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image_reject"
             app:layout_constraintStart_toEndOf="@+id/image_profile"
             app:layout_constraintTop_toBottomOf="@+id/text_name" />
+
+        <ImageView
+            android:id="@+id/image_add"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_contact_add_24dp" />
+
+        <ImageView
+            android:id="@+id/image_remove"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_contact_remove_24dp" />
+
+        <ImageView
+            android:id="@+id/image_chat"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image_remove"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_contact_chat_24dp" />
+
+        <ImageView
+            android:id="@+id/image_accept"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_contact_accept_24dp" />
+
+        <ImageView
+            android:id="@+id/image_reject"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image_accept"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_contact_reject_24dp" />
 
         <View
             android:layout_width="match_parent"

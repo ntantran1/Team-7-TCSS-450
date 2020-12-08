@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/signInFragment"
-        android:name="edu.uw.tcss450.groupchat.ui.auth.signin.SignInFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.auth.SignInFragment"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" >
         <action
@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="edu.uw.tcss450.groupchat.ui.auth.register.RegisterFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.auth.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action
