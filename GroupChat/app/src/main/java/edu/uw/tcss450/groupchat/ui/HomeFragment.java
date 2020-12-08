@@ -22,8 +22,8 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import edu.uw.tcss450.groupchat.R;
@@ -31,7 +31,7 @@ import edu.uw.tcss450.groupchat.databinding.FragmentHomeBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
-import edu.uw.tcss450.groupchat.ui.chats.ChatRoomRecyclerViewAdapter;
+import edu.uw.tcss450.groupchat.ui.chats.ChatDetailedRecyclerViewAdapter;
 
 /**
  * Fragment for Home page.
@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment {
         binding.textLabel.setText("Recent Chat Activity");
 
         final RecyclerView rv = binding.listRootHome;
-        rv.setAdapter(new ChatRoomRecyclerViewAdapter(new ArrayList<>(), getActivity()));
+        rv.setAdapter(new ChatDetailedRecyclerViewAdapter(new HashMap<>(), getActivity()));
 
         // getting response from the weather API
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
@@ -99,8 +99,8 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        mRoomModel.addRecentObserver(getViewLifecycleOwner(), rooms -> {
-            rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
+        mRoomModel.addRecentObserver(getViewLifecycleOwner(), chats -> {
+            rv.setAdapter(new ChatDetailedRecyclerViewAdapter(chats, getActivity()));
         });
     }
 

@@ -38,11 +38,10 @@ public class ChatRoomRecyclerViewAdapter extends
      *
      * @param items List of ChatRoom objects visible to the user.
      */
-    public ChatRoomRecyclerViewAdapter(List<ChatRoom> items,
-                                       FragmentActivity activity) {
-        this.mRooms = items;
+    public ChatRoomRecyclerViewAdapter(List<ChatRoom> items, FragmentActivity activity) {
+        mRooms = items;
         mActivity = activity;
-        mNewChatModel = new ViewModelProvider(mActivity).get(ChatNotificationsViewModel.class);
+        mNewChatModel = new ViewModelProvider(activity).get(ChatNotificationsViewModel.class);
     }
 
     @NonNull
@@ -100,14 +99,10 @@ public class ChatRoomRecyclerViewAdapter extends
             //when someone clicks on a chat, takes to that chat list
             mView.setOnClickListener(view -> {
                 NavController navController = Navigation.findNavController(mView);
+
                 navController.getGraph().findNode(R.id.chatDisplayFragment).setLabel(mRoom.getName());
-                if (navController.getCurrentDestination().getId() == R.id.navigation_home) {
-                    navController.navigate(HomeFragmentDirections
-                            .actionNavigationHomeToChatDisplayFragment(mRoom));
-                } else if (navController.getCurrentDestination().getId() == R.id.navigation_chats) {
-                    navController.navigate(ChatMainFragmentDirections
-                            .actionNavigationChatsToChatDisplayFragment(mRoom));
-                }
+                navController.navigate(ChatMainFragmentDirections
+                        .actionNavigationChatsToChatDisplayFragment(mRoom));
             });
 
             mNewChatModel.addMessageCountObserver(mActivity, notifications -> {

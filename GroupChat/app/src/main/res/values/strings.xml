@@ -23,6 +23,7 @@
     <string name="hint_last">Last Name</string>
     <string name="hint_password">Password</string>
     <string name="hint_password_again">Retype Password</string>
+    <string name="hint_chat_name">Chat Name</string>
     <string name="hint_message">Enter a message</string>
     <string name="hint_message_received">Received message</string>
     <string name="hint_message_sent">Sent message</string>
