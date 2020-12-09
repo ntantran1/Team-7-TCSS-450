@@ -11,7 +11,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -133,6 +132,7 @@ public class ChatDetailedRecyclerViewAdapter extends
             SimpleDateFormat other = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
             SimpleDateFormat today = new SimpleDateFormat("h:mm a", Locale.getDefault());
             in.setTimeZone(TimeZone.getTimeZone("UTC"));
+            other.setTimeZone(TimeZone.getDefault());
             today.setTimeZone(TimeZone.getDefault());
 
             Calendar calendar = Calendar.getInstance();
@@ -142,10 +142,11 @@ public class ChatDetailedRecyclerViewAdapter extends
             calendar.set(Calendar.MILLISECOND, 0);
             Date begin = calendar.getTime();
 
-            Date date;
             String time = "";
             try {
-                date = in.parse(timeStamp);
+                Date temp = in.parse(timeStamp);
+                in.setTimeZone(TimeZone.getDefault());
+                Date date = in.parse(in.format(temp));
                 if (date.before(begin)) {
                     time = other.format(date);
                 } else {
