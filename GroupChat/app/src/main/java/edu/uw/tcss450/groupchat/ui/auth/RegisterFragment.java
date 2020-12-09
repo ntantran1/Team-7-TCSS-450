@@ -82,6 +82,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private void attemptRegister(final View button) {
+        binding.registerWait.setVisibility(View.VISIBLE);
         validateFirst();
     }
 
@@ -160,6 +161,7 @@ public class RegisterFragment extends Fragment {
      */
     private void observeResponse(final JSONObject response) {
         if (response.length() > 0) {
+            binding.registerWait.setVisibility(View.GONE);
             if (response.has("code")) {
                 try {
                     String error = response.getJSONObject("data").getString("message");

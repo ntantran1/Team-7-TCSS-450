@@ -83,13 +83,22 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v == binding.buttonStartChatRoom){
-            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-            dialog.setTitle("Create New Chat Room");
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Create New Chat Room");
 
             EditText chatName = new EditText(getContext());
-            dialog.setView(chatName);
+            builder.setView(chatName);
 
-            dialog.setPositiveButton("Create", (dlg, i) -> {
+            builder.setPositiveButton("Create", (dlg, i) -> {
+                // do nothing because it's going to be overridden
+            });
+
+            builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
                 mModel.connectCreate(mUserModel.getJwt(), chatName.getText().toString());
 
                 mModel.addResponseObserver(getViewLifecycleOwner(), response -> {
@@ -103,17 +112,13 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
                             }
                         } else {
                             mModel.connect(mUserModel.getJwt());
-                            dlg.dismiss();
+                            dialog.dismiss();
                         }
                     } else {
                         Log.d("JSON Response", "No Response");
                     }
                 });
             });
-
-            dialog.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
-
-            dialog.show();
         }
     }
 }

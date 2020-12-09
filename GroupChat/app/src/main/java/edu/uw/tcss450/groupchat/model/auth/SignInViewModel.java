@@ -65,8 +65,8 @@ public class SignInViewModel extends AndroidViewModel {
      * @param password password of user
      */
     public void connect(final String email, final String password) {
-        String url = getApplication().getResources().getString(R.string.base_url) +
-                "auth";
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "auth";
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,

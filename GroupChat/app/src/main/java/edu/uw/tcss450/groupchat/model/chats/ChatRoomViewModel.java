@@ -25,9 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
+import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 
 public class ChatRoomViewModel extends AndroidViewModel {
@@ -35,6 +37,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
     private MutableLiveData<JSONObject> mResponse;
 
     private MutableLiveData<List<ChatRoom>> mRooms;
+
+    private MutableLiveData<Map<ChatRoom, ChatMessage>> mRecent;
 
     private MutableLiveData<Integer> mCurrentRoom;
 
@@ -44,6 +48,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mResponse.setValue(new JSONObject());
         mRooms = new MutableLiveData<>();
         mRooms.setValue(new ArrayList<>());
+        mRecent = new MutableLiveData<>();
+        mRecent.setValue(new TreeMap<>());
         mCurrentRoom = new MutableLiveData<>();
         mCurrentRoom.setValue(-1);
     }
@@ -56,6 +62,11 @@ public class ChatRoomViewModel extends AndroidViewModel {
     public void addRoomsObserver(@NonNull LifecycleOwner owner,
                                  @NonNull Observer<? super List<ChatRoom>> observer) {
         mRooms.observe(owner, observer);
+    }
+
+    public void addRecentObserver(@NonNull LifecycleOwner owner,
+                                 @NonNull Observer<? super Map<ChatRoom, ChatMessage>> observer) {
+        mRecent.observe(owner, observer);
     }
 
     public void addCurrentRoomObserver(@NonNull LifecycleOwner owner,
@@ -148,12 +159,39 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    public void connectRecent(final String jwt) {
+        String url = "https://dhill30-groupchat-backend.herokuapp.com/chatrooms/recent";
+
+        Request request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                this::handleRecent,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // add headers <key,value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
     private void handleRooms(final JSONObject result) {
         List<ChatRoom> sorted = new ArrayList<>();
         try {
-            JSONObject root = result;
-            if (root.has("rows")) {
-                JSONArray rooms = root.getJSONArray("rows");
+            if (result.has("rows")) {
+                JSONArray rooms = result.getJSONArray("rows");
 
                 for (int i = 0; i < rooms.length(); i++) {
                     JSONObject jsonRoom = rooms.getJSONObject(i);
@@ -173,15 +211,54 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mRooms.setValue(sorted);
     }
 
+    private void handleRecent(final JSONObject result) {
+        Map<ChatRoom, ChatMessage> chats = new TreeMap<>();
+        try {
+            if (result.has("chats")) {
+                JSONArray rooms = result.getJSONArray("chats");
+
+                for (int i = 0; i < rooms.length(); i++) {
+                    JSONObject jsonRoom = rooms.getJSONObject(i);
+                    ChatRoom room = new ChatRoom(
+                            jsonRoom.getInt("chatid"),
+                            jsonRoom.getString("name"));
+                    ChatMessage message = new ChatMessage(
+                            jsonRoom.getInt("messageid"),
+                            jsonRoom.getString("message"),
+                            jsonRoom.getString("email"),
+                            jsonRoom.getString("timestamp"));
+                    chats.put(room, message);
+                }
+            } else {
+                Log.e("ERROR", "No chats array");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR", e.getMessage());
+        }
+        mRecent.setValue(chats);
+    }
+
     private void handleError(final VolleyError error) {
         if (Objects.isNull(error.networkResponse)) {
-            Log.e("NETWORK ERROR", error.getMessage());
+            try {
+                mResponse.setValue(new JSONObject("{" +
+                        "error:\"" + error.getMessage() +
+                        "\"}"));
+            } catch (JSONException e) {
+                Log.e("JSON PARSE", "JSON Parse Error in handleError");
+            }
         }
         else {
             String data = new String(error.networkResponse.data, Charset.defaultCharset());
-            Log.e("CLIENT ERROR",
-                    error.networkResponse.statusCode +
-                            " " + data);
+            try {
+                mResponse.setValue(new JSONObject("{" +
+                        "code:" + error.networkResponse.statusCode +
+                        ", data:" + data +
+                        "}"));
+            } catch (JSONException e) {
+                Log.e("JSON PARSE", "JSON Parse Error in handleError");
+            }
         }
     }
 }

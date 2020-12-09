@@ -19,6 +19,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import org.json.JSONException;
 
 import edu.uw.tcss450.groupchat.R;
+import edu.uw.tcss450.groupchat.databinding.FragmentContactsHolderBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
@@ -42,6 +43,8 @@ public class ContactsHolderFragment extends Fragment {
 
     private UserInfoViewModel mUserModel;
 
+    private FragmentContactsHolderBinding binding;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,18 +62,17 @@ public class ContactsHolderFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contacts_holder, container, false);
+        binding = FragmentContactsHolderBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ViewPager2 viewPager = view.findViewById(R.id.view_pager);
-        viewPager.setAdapter(new ContactsHolderAdapter(this));
+        binding.viewPager.setAdapter(new ContactsHolderAdapter(this));
 
-        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+        new TabLayoutMediator(binding.tabLayout, binding.viewPager, (tab, position) -> {
             switch (position) {
                 case 1:
                     tab.setText("Incoming");
@@ -85,7 +87,7 @@ public class ContactsHolderFragment extends Fragment {
                     tab.setText("Contacts");
                     break;
             }
-            viewPager.setCurrentItem(tab.getPosition(), true);
+            binding.viewPager.setCurrentItem(tab.getPosition(), true);
         }).attach();
 
         mContactsModel.addResponseObserver(getViewLifecycleOwner(), response -> {

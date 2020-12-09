@@ -1,5 +1,6 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
@@ -148,6 +150,10 @@ public class ChatRoomFragment extends Fragment {
         //when we get response back from server, clear edit text
         mSendModel.addResponseObserver(getViewLifecycleOwner(), response -> {
             binding.edittextChatbox.setText("");
+
+            InputMethodManager manager =
+                    (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(binding.edittextChatbox.getWindowToken(), 0);
         });
     }
 
