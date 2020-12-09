@@ -7,7 +7,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import edu.uw.tcss450.groupchat.R;
 
 
@@ -61,29 +68,54 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        String timeStamp = getLocalTime(mMessages.get(position).getTimeStamp());
 
         if(mMessages.get(position).getSender().equals(mEmail)){
             //sent
             ViewHolderSent viewHolderSent = (ViewHolderSent) holder;
             viewHolderSent.sentMessage.setText(mMessages.get(position).getMessage());
-            viewHolderSent.sentTime.setText(mMessages.get(position).getTimeStamp().
-                    substring(11, 16));
+            viewHolderSent.sentTime.setText(timeStamp);
         } else {
             //received
             ViewHolderReceived viewHolderReceived = (ViewHolderReceived) holder;
             viewHolderReceived.receivedMessage.setText(mMessages.get(position).getMessage());
             viewHolderReceived.senderName.setText(mMessages.get(position).getSender());
-            viewHolderReceived.receivedTime.setText(mMessages.get(position).getTimeStamp().
-                    substring(11, 16));
-
-
+            viewHolderReceived.receivedTime.setText(timeStamp);
         }
-
     }
 
     @Override
     public int getItemCount() {
         return mMessages.size();
+    }
+
+    private String getLocalTime(final String timeStamp) {
+        SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+        SimpleDateFormat other = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
+        SimpleDateFormat today = new SimpleDateFormat("h:mm a", Locale.getDefault());
+        in.setTimeZone(TimeZone.getTimeZone("UTC"));
+        today.setTimeZone(TimeZone.getDefault());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date begin = calendar.getTime();
+
+        Date date;
+        String time = "";
+        try {
+            date = in.parse(timeStamp);
+            if (date.before(begin)) {
+                time = other.format(date);
+            } else {
+                time = today.format(date);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
     }
 
     class ViewHolderReceived extends RecyclerView.ViewHolder {

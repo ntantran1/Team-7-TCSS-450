@@ -6,15 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    android:backgroundTint="@color/material_on_primary_disabled"
+    android:backgroundTint="@color/material_on_primary_emphasis_medium"
     android:backgroundTintMode="multiply"
     tools:context=".ui.HomeFragment">
 
-    <TextView
-        android:id="@+id/text_day_time_home"
+    <TextClock
+        android:id="@+id/text_clock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:format12Hour="EEEE, h:mm a"
+        android:format24Hour="null"
         android:textColor="?attr/colorPrimaryDark"
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_city_home"
+        android:id="@+id/text_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -30,10 +32,10 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_day_time_home" />
+        app:layout_constraintTop_toBottomOf="@+id/text_clock" />
 
     <TextView
-        android:id="@+id/text_condition_home"
+        android:id="@+id/text_condition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -41,19 +43,19 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_city_home" />
+        app:layout_constraintTop_toBottomOf="@+id/text_city" />
 
     <ImageView
-        android:id="@+id/image_condition_home"
+        android:id="@+id/image_condition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_city_home" />
+        app:layout_constraintTop_toBottomOf="@+id/text_city" />
 
     <TextView
-        android:id="@+id/text_degree_home"
+        android:id="@+id/text_degree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
@@ -62,10 +64,10 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_condition_home" />
+        app:layout_constraintTop_toBottomOf="@+id/text_condition" />
 
     <TextView
-        android:id="@+id/text_label"
+        android:id="@+id/text_recent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
@@ -75,13 +77,14 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_degree_home" />
+        app:layout_constraintTop_toBottomOf="@+id/text_degree" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_root_home"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical"
@@ -89,7 +92,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_label"
+        app:layout_constraintTop_toBottomOf="@+id/text_recent"
         tools:context="edu.uw.tcss450.groupchat.ui.chats.ChatHomeFragment"
         tools:listitem="@layout/fragment_home" />
 
