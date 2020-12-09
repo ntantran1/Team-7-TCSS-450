@@ -1,5 +1,6 @@
 package edu.uw.tcss450.groupchat.ui.auth;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -101,7 +102,15 @@ public class SignInFragment extends Fragment {
         SignInFragmentArgs args = SignInFragmentArgs.fromBundle(getArguments());
         binding.editEmail.setText(args.getEmail().equals("default") ? "" : args.getEmail());
         binding.editPassword.setText(args.getPassword().equals("default") ? "" : args.getPassword());
-        binding.labelVerify.setText(args.getVerify().equals("default") ? "" : args.getVerify());
+
+        if (!args.getVerify().equals("default")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+            builder.setMessage(args.getVerify());
+            builder.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
+
+            builder.show();
+        }
 
         binding.editEmail.setError(null);
         binding.editPassword.setError(null);

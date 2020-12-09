@@ -33,7 +33,7 @@ import edu.uw.tcss450.groupchat.ui.chats.ChatDetailedRecyclerViewAdapter;
 /**
  * Fragment for Home page.
  *
- * @version November 5
+ * @version December 9, 2020
  */
 public class HomeFragment extends Fragment {
 
@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.textRecent.setText("Recent Chat Activity");
+        binding.textWelcome.setText("Welcome to Group Chat\n" + mUserModel.getEmail() + "!");
 
         final RecyclerView rv = binding.listRootHome;
         rv.setAdapter(new ChatDetailedRecyclerViewAdapter(new HashMap<>(), getActivity()));
@@ -92,7 +92,7 @@ public class HomeFragment extends Fragment {
                         binding.textCity.setText(response.getString("name"));
                         binding.textCondition.setText(info.getString("main"));
                         setImage(info, binding.imageCondition);
-                        binding.textDegree.setText(String.valueOf((int) main.getDouble("temp")));
+                        binding.textDegree.setText((int) main.getDouble("temp") + " °F");
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e("JSON Parse Error", e.getMessage());

@@ -1,5 +1,6 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
+import android.app.AlertDialog;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -66,6 +67,16 @@ public class WeatherMapFragment extends Fragment implements
             if (mMarker != null) {
                 LatLng latLng = mMarker.getPosition();
                 mWeatherModel.connect(latLng.latitude, latLng.longitude);
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setMessage("Searched Weather updated!");
+                dialog.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
+                dialog.show();
+            } else {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setMessage("No location selected!");
+                dialog.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
+                dialog.show();
             }
         });
 
@@ -75,6 +86,11 @@ public class WeatherMapFragment extends Fragment implements
             }
             Location location = mModel.getCurrentLocation();
             mWeatherModel.connect(location.getLatitude(), location.getLongitude());
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+            dialog.setMessage("Searched Weather reset!");
+            dialog.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
+            dialog.show();
         });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used
