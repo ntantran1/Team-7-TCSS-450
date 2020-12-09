@@ -11,9 +11,16 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatDetailedBinding;
@@ -94,7 +101,7 @@ public class ChatDetailedRecyclerViewAdapter extends
             binding.labelChatName.setText(room.getName());
             binding.textMessageName.setText(message.getSender());
             binding.textMessageBody.setText(message.getMessage());
-            binding.textMessageTime.setText(message.getTimeStamp().substring(11, 16));
+            binding.textMessageTime.setText(getLocalTime(message.getTimeStamp()));
             binding.imageNotification.setVisibility(View.INVISIBLE);
 
             mView.setOnClickListener(view -> {
@@ -119,6 +126,35 @@ public class ChatDetailedRecyclerViewAdapter extends
                     binding.imageNotification.setVisibility(View.INVISIBLE);
                 }
             });
+        }
+
+        private String getLocalTime(final String timeStamp) {
+            SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+            SimpleDateFormat other = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
+            SimpleDateFormat today = new SimpleDateFormat("h:mm a", Locale.getDefault());
+            in.setTimeZone(TimeZone.getTimeZone("UTC"));
+            today.setTimeZone(TimeZone.getDefault());
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            Date begin = calendar.getTime();
+
+            Date date;
+            String time = "";
+            try {
+                date = in.parse(timeStamp);
+                if (date.before(begin)) {
+                    time = other.format(date);
+                } else {
+                    time = today.format(date);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return time;
         }
     }
 }

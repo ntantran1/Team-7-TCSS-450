@@ -1,5 +1,6 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,7 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherMapBinding;
 import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
+import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,7 +32,7 @@ import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
 public class WeatherMapFragment extends Fragment implements
         OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
-    private WeatherViewModel mWeatherModel;
+    private WeatherSearchViewModel mWeatherModel;
 
     private LocationViewModel mModel;
 
@@ -58,18 +59,22 @@ public class WeatherMapFragment extends Fragment implements
         FragmentWeatherMapBinding binding = FragmentWeatherMapBinding.bind(getView());
 
         mModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
-        mModel.addLocationObserver(getViewLifecycleOwner(), location -> {
-            String loc = "Lat: " + location.getLatitude() + "\nLon: " + location.getLongitude();
-//            binding.textLatLong.setText(loc);
-        });
 
-        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
+        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherSearchViewModel.class);
 
         binding.buttonWeather.setOnClickListener(button -> {
             if (mMarker != null) {
                 LatLng latLng = mMarker.getPosition();
                 mWeatherModel.connect(latLng.latitude, latLng.longitude);
             }
+        });
+
+        binding.buttonReset.setOnClickListener(button -> {
+            if (mMarker != null) {
+                mMarker.remove();
+            }
+            Location location = mModel.getCurrentLocation();
+            mWeatherModel.connect(location.getLatitude(), location.getLongitude());
         });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used

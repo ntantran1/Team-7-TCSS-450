@@ -23,9 +23,9 @@ import java.util.Objects;
 
 import edu.uw.tcss450.groupchat.R;
 
-public class WeatherSearchDailyViewModel extends WeatherViewModel {
+public class WeatherCurrentDailyViewModel extends WeatherViewModel {
 
-    public WeatherSearchDailyViewModel(@NonNull Application application) {
+    public WeatherCurrentDailyViewModel(@NonNull Application application) {
         super(application);
     }
 

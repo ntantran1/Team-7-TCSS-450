@@ -23,26 +23,12 @@ import java.util.Objects;
 
 import edu.uw.tcss450.groupchat.R;
 
-public class WeatherSearchViewModel extends AndroidViewModel {
-
-    private MutableLiveData<JSONObject> mResponse;
+public class WeatherSearchViewModel extends WeatherViewModel {
 
     private boolean mInit = false;
 
     public WeatherSearchViewModel(@NonNull Application application) {
         super(application);
-        mResponse = new MutableLiveData<>(new JSONObject());
-    }
-
-    /**
-     * Add observer for receiving server's responses.
-     *
-     * @param owner The LifeCycle owner that will control the observer
-     * @param observer The observer that will receive the events
-     */
-    public void addResponseObserver(@NonNull LifecycleOwner owner,
-                                    @NonNull Observer<? super JSONObject> observer) {
-        mResponse.observe(owner, observer);
     }
 
     public boolean isInitialized() {
@@ -58,7 +44,6 @@ public class WeatherSearchViewModel extends AndroidViewModel {
                 + "weather?lat=" + lat + "&lon=" + lon;
 
         Request request = new JsonObjectRequest(
-
                 Request.Method.GET,
                 url,
                 null, //no body for this get request
@@ -84,7 +69,6 @@ public class WeatherSearchViewModel extends AndroidViewModel {
                 + "weather?zip=" + zip;
 
         Request request = new JsonObjectRequest(
-
                 Request.Method.GET,
                 url,
                 null, //no body for this get request
@@ -98,28 +82,5 @@ public class WeatherSearchViewModel extends AndroidViewModel {
 
         //Instantiate the RequestQueue and add the request to the queue
         Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
-    }
-
-    private void handleError(final VolleyError error) {
-        if (Objects.isNull(error.networkResponse)) {
-            try {
-                mResponse.setValue(new JSONObject("{" +
-                        "error:\"" + error.getMessage() +
-                        "\"}"));
-            } catch (JSONException e) {
-                Log.e("JSON PARSE", "JSON Parse Error in handleError");
-            }
-        }
-        else {
-            String data = new String(error.networkResponse.data, Charset.defaultCharset());
-            try {
-                mResponse.setValue(new JSONObject("{" +
-                        "code:" + error.networkResponse.statusCode +
-                        ", data:" + data +
-                        "}"));
-            } catch (JSONException e) {
-                Log.e("JSON PARSE", "JSON Parse Error in handleError");
-            }
-        }
     }
 }

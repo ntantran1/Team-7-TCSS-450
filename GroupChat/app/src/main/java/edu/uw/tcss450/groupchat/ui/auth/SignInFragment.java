@@ -186,6 +186,7 @@ public class SignInFragment extends Fragment {
      */
     private void observeSignInResponse(final JSONObject response) {
         if (response.length() > 0) {
+            binding.signinWait.setVisibility(View.GONE);
             if (response.has("code")) {
                 try {
                     binding.editEmail.setError(
