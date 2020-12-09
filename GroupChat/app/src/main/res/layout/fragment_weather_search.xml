@@ -210,30 +210,35 @@
                 android:id="@+id/text_day_one"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
+                android:gravity="center_vertical"
                 android:textColor="?attr/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/text_day_two"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
+                android:gravity="center_vertical"
                 android:textColor="?attr/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/text_day_three"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
+                android:gravity="center_vertical"
                 android:textColor="?attr/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/text_day_four"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
+                android:gravity="center_vertical"
                 android:textColor="?attr/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/text_day_five"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
+                android:gravity="center_vertical"
                 android:textColor="?attr/colorPrimaryDark" />
         </LinearLayout>
 
@@ -289,35 +294,35 @@
                 android:id="@+id/text_weather_one"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:textAlignment="textEnd"
+                android:gravity="center_vertical|end"
                 android:textColor="?attr/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/text_weather_two"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:textAlignment="textEnd"
+                android:gravity="center_vertical|end"
                 android:textColor="?attr/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/text_weather_three"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:textAlignment="textEnd"
+                android:gravity="center_vertical|end"
                 android:textColor="?attr/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/text_weather_four"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:textAlignment="textEnd"
+                android:gravity="center_vertical|end"
                 android:textColor="?attr/colorPrimaryDark" />
 
             <TextView
                 android:id="@+id/text_weather_five"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:textAlignment="textEnd"
+                android:gravity="center_vertical|end"
                 android:textColor="?attr/colorPrimaryDark" />
         </LinearLayout>
 

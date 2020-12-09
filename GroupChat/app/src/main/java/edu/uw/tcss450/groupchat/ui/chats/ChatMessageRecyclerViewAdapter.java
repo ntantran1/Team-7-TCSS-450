@@ -99,18 +99,14 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
         today.setTimeZone(TimeZone.getDefault());
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date begin = calendar.getTime();
+        Date now = calendar.getTime();
 
         String time = "";
         try {
             Date temp = in.parse(timeStamp);
             in.setTimeZone(TimeZone.getDefault());
             Date date = in.parse(in.format(temp));
-            if (date.before(begin)) {
+            if (now.getTime() - date.getTime() > (24 * 60 * 60 * 1000)) {
                 time = other.format(date);
             } else {
                 time = today.format(date);

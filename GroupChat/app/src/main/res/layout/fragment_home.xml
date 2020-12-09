@@ -70,14 +70,14 @@
         android:id="@+id/text_recent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:text="@string/text_blank"
+        android:layout_marginTop="32dp"
+        android:text="@string/text_recent_chats"
         android:textAlignment="center"
         android:textColor="?attr/colorPrimaryDark"
-        android:textSize="18sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_degree" />
+        app:layout_constraintTop_toBottomOf="@+id/text_welcome" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_root_home"
@@ -95,5 +95,18 @@
         app:layout_constraintTop_toBottomOf="@+id/text_recent"
         tools:context="edu.uw.tcss450.groupchat.ui.chats.ChatHomeFragment"
         tools:listitem="@layout/fragment_home" />
+
+    <TextView
+        android:id="@+id/text_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/text_blank"
+        android:textAlignment="center"
+        android:textColor="?attr/colorPrimaryDark"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_degree" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
