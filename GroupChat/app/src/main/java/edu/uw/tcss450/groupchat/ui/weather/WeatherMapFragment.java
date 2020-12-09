@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherMapBinding;
 import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
+import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
 
 /**
@@ -31,7 +32,7 @@ import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
 public class WeatherMapFragment extends Fragment implements
         OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
-    private WeatherViewModel mWeatherModel;
+    private WeatherSearchViewModel mWeatherModel;
 
     private LocationViewModel mModel;
 
@@ -63,7 +64,7 @@ public class WeatherMapFragment extends Fragment implements
 //            binding.textLatLong.setText(loc);
         });
 
-        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
+        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherSearchViewModel.class);
 
         binding.buttonWeather.setOnClickListener(button -> {
             if (mMarker != null) {
