@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/image_sender_profile"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="1dp"
         android:background="@drawable/holder_circle"
@@ -55,5 +55,18 @@
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="@+id/text_message_body"
         app:layout_constraintLeft_toRightOf="@+id/text_message_body" />
+
+    <ImageView
+        android:id="@+id/image_message_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="3dp"
+        android:maxWidth="240dp"
+        android:maxHeight="480dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/image_sender_profile"
+        app:layout_constraintTop_toBottomOf="@+id/text_message_body"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
