@@ -30,9 +30,9 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_weather"
-        android:name="edu.uw.tcss450.groupchat.ui.weather.WeatherHomeFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.weather.WeatherHolderFragment"
         android:label="@string/title_weather"
-        tools:layout="@layout/fragment_weather_home" />
+        tools:layout="@layout/fragment_weather_holder" />
     <fragment
         android:id="@+id/chatDisplayFragment"
         android:name="edu.uw.tcss450.groupchat.ui.chats.ChatRoomFragment"

@@ -16,6 +16,9 @@
     <string name="action_remove_contact">Remove Contact</string>
     <string name="action_add_contact">Add Contact</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_fahrenheit"> °F</string>
+    <string name="action_celsius"> °C</string>
+    <string name="action_get_weather">Get Weather</string>
 
     <string name="hint_username">Username</string>
     <string name="hint_email">Email</string>
@@ -31,6 +34,7 @@
     <string name="hint_old_password">Enter old password</string>
     <string name="hint_new_password">Enter new password</string>
     <string name="hint_new_password_again">Retype new password</string>
+    <string name="hint_vertical_bar">|</string>
 
     <string name="title_home">Home</string>
     <string name="title_contacts">Contacts</string>
@@ -45,6 +49,4 @@
 
     <string name="text_blank">Blank Text</string>
     <string name="base_url">https://dhill30-groupchat-backend.herokuapp.com/</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -209,7 +209,6 @@ public class SignInFragment extends Fragment {
         } else {
             Log.d("JSON Response", "No Response");
         }
-
     }
 
     /**
