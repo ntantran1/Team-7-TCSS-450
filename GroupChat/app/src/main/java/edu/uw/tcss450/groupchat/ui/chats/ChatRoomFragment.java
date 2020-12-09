@@ -5,15 +5,36 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.core.os.BuildCompat;
+import androidx.core.view.inputmethod.EditorInfoCompat;
+import androidx.core.view.inputmethod.InputConnectionCompat;
+import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
+import android.widget.EditText;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatRoomBinding;
@@ -73,6 +94,20 @@ public class ChatRoomFragment extends Fragment {
 
         FragmentChatRoomBinding binding = FragmentChatRoomBinding.bind(getView());
 
+
+        binding.edittextChatbox.setKeyBoardInputCallbackListener(new ChatEditText.KeyBoardInputCallbackListener() {
+            @Override
+            public void onCommitContent(InputContentInfoCompat inputContentInfo,
+                                        int flags, Bundle opts) {
+                // use image here
+                //mSendModel.uploadImage(inputContentInfo.getLinkUri().toString());
+                mSendModel.sendMessage(args.getRoom().getId(),
+                        mUserModel.getJwt(),
+                        inputContentInfo.getLinkUri().toString());
+            }
+        });
+
+
         ChatRoomViewModel roomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
         roomModel.setCurrentRoom(args.getRoom().getId());
 
@@ -115,6 +150,7 @@ public class ChatRoomFragment extends Fragment {
         //when we get response back from server, clear edit text
         mSendModel.addResponseObserver(getViewLifecycleOwner(), response -> {
             binding.edittextChatbox.setText("");
+
             InputMethodManager manager =
                     (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             manager.hideSoftInputFromWindow(binding.edittextChatbox.getWindowToken(), 0);

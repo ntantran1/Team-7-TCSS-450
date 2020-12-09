@@ -1,12 +1,22 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -74,12 +84,86 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
         if(mMessages.get(position).getSender().equals(mEmail)){
             //sent
             ViewHolderSent viewHolderSent = (ViewHolderSent) holder;
+
+            viewHolderSent.sentImage.setImageDrawable(null);
+            String msg = mMessages.get(position).getMessage().trim();
+            // if message is an image
+            // this method could use some refactoring
+            if (ChatMessage.isImage(msg)) {
+                // get the size
+                final int[] width = {-1};
+                final int[] height = {-1};
+                Glide.with(viewHolderSent.sentImage.getContext())
+                        .asBitmap()
+                        .load(msg)
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap bitmap,
+                                                        Transition<? super Bitmap> transition) {
+                                width[0] = bitmap.getWidth();
+                                height[0] = bitmap.getHeight();
+                            }
+                        });
+                int max = 400;
+                double ratio = width[0] > height[0] ? width[0] * 1.0 / max : height[0] * 1.0 / max;
+                width[0] = (int) (width[0] / ratio);
+                height[0] = (int) (height[0] / ratio);
+
+                // display
+                if (msg.endsWith("gif"))
+                    Glide.with(viewHolderSent.sentImage.getContext()).asGif().load(msg)
+                            .apply(new RequestOptions().override(width[0]*5/3, height[0]*5/3)
+                            ).into(viewHolderSent.sentImage);
+                else
+                    Glide.with(viewHolderSent.sentImage.getContext()).load(msg)
+                            .apply(new RequestOptions().override(width[0], height[0]))
+                            .into(viewHolderSent.sentImage);
+
+            }
+            viewHolderSent.sentMessage.setText(msg);
+
             viewHolderSent.sentMessage.setText(mMessages.get(position).getMessage());
             viewHolderSent.sentTime.setText(timeStamp);
         } else {
             //received
             ViewHolderReceived viewHolderReceived = (ViewHolderReceived) holder;
-            viewHolderReceived.receivedMessage.setText(mMessages.get(position).getMessage());
+
+            viewHolderReceived.receivedImage.setImageDrawable(null);
+            String msg = mMessages.get(position).getMessage().trim();
+            // if message is an image
+            if (ChatMessage.isImage(msg)) {
+                // get the size
+                final int[] width = {-1};
+                final int[] height = {-1};
+                Glide.with(viewHolderReceived.receivedImage.getContext())
+                        .asBitmap()
+                        .load(msg)
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap bitmap,
+                                                        Transition<? super Bitmap> transition) {
+                                width[0] = bitmap.getWidth();
+                                height[0] = bitmap.getHeight();
+                            }
+                        });
+                int max = 400;
+                double ratio = width[0] > height[0] ? width[0] * 1.0 / max : height[0] * 1.0 / max;
+                width[0] = (int) (width[0] / ratio);
+                height[0] = (int) (height[0] / ratio);
+
+                // display
+                if (msg.endsWith("gif"))
+                    Glide.with(viewHolderReceived.receivedMessage.getContext()).asGif().load(msg)
+                            .apply(new RequestOptions()
+                                    .override(width[0]*5/3, height[0]*5/3))
+                            .into(viewHolderReceived.receivedImage);
+                else
+                    Glide.with(viewHolderReceived.receivedMessage.getContext()).load(msg)
+                            .apply(new RequestOptions().override(width[0], height[0]))
+                            .into(viewHolderReceived.receivedImage);
+            }
+            viewHolderReceived.receivedMessage.setText(msg);
+
             viewHolderReceived.senderName.setText(mMessages.get(position).getSender());
             viewHolderReceived.receivedTime.setText(timeStamp);
         }
@@ -120,12 +204,14 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
     class ViewHolderReceived extends RecyclerView.ViewHolder {
 
         TextView senderName, receivedMessage, receivedTime;
+        ImageView receivedImage;
 
         public ViewHolderReceived(@NonNull View itemView) {
             super(itemView);
 
             senderName = itemView.findViewById(R.id.text_message_name);
             receivedMessage = itemView.findViewById(R.id.text_message_body);
+            receivedImage = itemView.findViewById(R.id.image_message_box);
             receivedTime = itemView.findViewById(R.id.text_message_time);
         }
     }
@@ -133,11 +219,13 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
     class ViewHolderSent extends RecyclerView.ViewHolder {
 
         TextView sentMessage, sentTime;
+        ImageView sentImage;
 
         public ViewHolderSent(@NonNull View itemView) {
             super(itemView);
 
             sentMessage = itemView.findViewById(R.id.text_message_body);
+            sentImage = itemView.findViewById(R.id.image_message_box);
             sentTime = itemView.findViewById(R.id.text_message_time);
         }
     }
