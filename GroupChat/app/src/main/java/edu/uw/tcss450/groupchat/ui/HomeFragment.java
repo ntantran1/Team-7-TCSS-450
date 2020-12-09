@@ -20,18 +20,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentHomeBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
+import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentViewModel;
 import edu.uw.tcss450.groupchat.ui.chats.ChatDetailedRecyclerViewAdapter;
 
 /**
@@ -43,7 +39,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
 
-    private WeatherViewModel mWeatherModel;
+    private WeatherCurrentViewModel mWeatherModel;
 
     private LocationViewModel mLocationModel;
 
@@ -54,7 +50,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
+        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherCurrentViewModel.class);
         mLocationModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
         mRoomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
         mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
@@ -75,43 +71,40 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.textLabel.setText("Recent Chat Activity");
+        binding.textRecent.setText("Recent Chat Activity");
 
         final RecyclerView rv = binding.listRootHome;
         rv.setAdapter(new ChatDetailedRecyclerViewAdapter(new HashMap<>(), getActivity()));
 
-        mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
-            if (!mWeatherModel.isInitialized()) {
-                mWeatherModel.connect(location.getLatitude(), location.getLongitude());
-                mWeatherModel.initialize();
-            }
-        });
+        mLocationModel.addLocationObserver(getViewLifecycleOwner(), location ->
+                mWeatherModel.connect(location.getLatitude(), location.getLongitude()));
 
-        // getting response from the weather API
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
-            try {
-                // Creating JSON from the api
-                JSONObject main = response.getJSONObject("main");
-                JSONArray info = response.getJSONArray("weather");
-                JSONObject info2 = (JSONObject) info.get(0);
+            if (response.length() > 0) {
+                if (response.has("code")) {
+                    Log.d("Weather", "Invalid location");
+                } else {
+                    try {
+                        JSONObject main = response.getJSONObject("main");
+                        JSONArray weather = response.getJSONArray("weather");
+                        JSONObject info = (JSONObject) weather.get(0);
 
-                // Getting weather information and display it
-                binding.textDegreeHome.setText(String.valueOf((int)(main.getDouble("temp"))) + " ℉");
-                binding.textCityHome.setText(response.getString("name"));
-                binding.textDayTimeHome.setText(LocalDate.now().getDayOfWeek().name() + " "
-                        + new SimpleDateFormat("HH:mm",
-                        Locale.getDefault()).format(new Date()));
-                setImage(info2, binding.imageConditionHome);
-
-                binding.textConditionHome.setText(info2.getString("main"));
-            } catch (JSONException e) {
-                e.printStackTrace();
+                        binding.textCity.setText(response.getString("name"));
+                        binding.textCondition.setText(info.getString("main"));
+                        setImage(info, binding.imageCondition);
+                        binding.textDegree.setText(String.valueOf((int) main.getDouble("temp")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e("JSON Parse Error", e.getMessage());
+                    }
+                }
+            } else {
+                Log.d("JSON Response", "No Response");
             }
         });
 
-        mRoomModel.addRecentObserver(getViewLifecycleOwner(), chats -> {
-            rv.setAdapter(new ChatDetailedRecyclerViewAdapter(chats, getActivity()));
-        });
+        mRoomModel.addRecentObserver(getViewLifecycleOwner(), chats ->
+                rv.setAdapter(new ChatDetailedRecyclerViewAdapter(chats, getActivity())));
     }
 
     @Override

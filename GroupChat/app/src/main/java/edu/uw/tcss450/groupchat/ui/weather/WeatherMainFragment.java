@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.SearchView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,8 +34,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherMainBinding;
 import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherDailyViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
+import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentDailyViewModel;
+import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,9 +44,9 @@ public class WeatherMainFragment extends Fragment {
 
     private LocationViewModel mLocationModel;
 
-    private WeatherViewModel mWeatherModel;
+    private WeatherCurrentViewModel mWeatherModel;
 
-    private WeatherDailyViewModel mDailyModel;
+    private WeatherCurrentDailyViewModel mDailyModel;
 
     private List<WeatherHourly> mHourly;
 
@@ -57,8 +56,8 @@ public class WeatherMainFragment extends Fragment {
     public void onCreate(@Nullable  Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLocationModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
-        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
-        mDailyModel = new ViewModelProvider(getActivity()).get(WeatherDailyViewModel.class);
+        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherCurrentViewModel.class);
+        mDailyModel = new ViewModelProvider(getActivity()).get(WeatherCurrentDailyViewModel.class);
     }
 
     @Override
@@ -74,29 +73,13 @@ public class WeatherMainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
-            if (!mWeatherModel.isInitialized()) {
-                mWeatherModel.connect(location.getLatitude(), location.getLongitude());
-                mWeatherModel.initialize();
-            }
+        mLocationModel.addLocationObserver(getViewLifecycleOwner(), location ->
+                mWeatherModel.connect(location.getLatitude(), location.getLongitude()));
+
+        binding.buttonRefresh.setOnClickListener(button -> {
+            Location location = mLocationModel.getCurrentLocation();
+            mWeatherModel.connect(location.getLatitude(), location.getLongitude());
         });
-
-        binding.searchZip.setSubmitButtonEnabled(true);
-        binding.searchZip.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                mWeatherModel.connectZip(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-        binding.buttonRefresh.setOnClickListener(button ->
-                mWeatherModel.connectZip(binding.searchZip.getQuery().toString()));
 
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
             if (response.length() > 0) {
@@ -124,8 +107,8 @@ public class WeatherMainFragment extends Fragment {
                         binding.textWind.setText("Wind: "
                                 + (int) wind.getDouble("speed") + " mph");
 
-                        mDailyModel.connect(String.valueOf(coord.getDouble("lat")),
-                                String.valueOf(coord.getDouble("lon")));
+                        mDailyModel.connect(coord.getDouble("lat"),
+                                coord.getDouble("lon"));
 
                         binding.buttonCelsius.setOnClickListener(v -> {
                             if (!celsius.get()) {

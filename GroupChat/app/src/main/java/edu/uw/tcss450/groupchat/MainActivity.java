@@ -29,11 +29,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.Map;
 
 import edu.uw.tcss450.groupchat.databinding.ActivityMainBinding;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
@@ -47,7 +44,6 @@ import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsOutgoingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
 import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
 import edu.uw.tcss450.groupchat.services.PushReceiver;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 
@@ -156,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-
         createLocationRequest();
 
         mUserViewModel.addThemeObserver(this, theme -> {
@@ -319,18 +314,15 @@ public class MainActivity extends AppCompatActivity {
             Log.d("REQUEST LOCATION", "User did NOT allow permission to request location.");
         } else {
             mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // got last known location, in some rare situations this can be null
-                            if (location != null) {
-                                Log.d("LOCATION", location.toString());
-                                if (mLocationModel == null) {
-                                    mLocationModel = new ViewModelProvider(MainActivity.this)
-                                            .get(LocationViewModel.class);
-                                }
-                                mLocationModel.setLocation(location);
+                    .addOnSuccessListener(this, location -> {
+                        // got last known location, in some rare situations this can be null
+                        if (location != null) {
+                            Log.d("LOCATION", location.toString());
+                            if (mLocationModel == null) {
+                                mLocationModel = new ViewModelProvider(MainActivity.this)
+                                        .get(LocationViewModel.class);
                             }
+                            mLocationModel.setLocation(location);
                         }
                     });
         }

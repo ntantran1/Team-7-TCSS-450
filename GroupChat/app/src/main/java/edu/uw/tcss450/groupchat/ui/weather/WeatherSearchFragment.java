@@ -32,12 +32,10 @@ import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.databinding.FragmentWeatherMainBinding;
+import edu.uw.tcss450.groupchat.databinding.FragmentWeatherSearchBinding;
 import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherDailyViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherSearchDailyViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,7 +50,7 @@ public class WeatherSearchFragment extends Fragment {
 
     private List<WeatherHourly> mHourly;
 
-    private FragmentWeatherMainBinding binding;
+    private FragmentWeatherSearchBinding binding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +65,7 @@ public class WeatherSearchFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentWeatherMainBinding.inflate(inflater, container, false);
+        binding = FragmentWeatherSearchBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -125,8 +123,8 @@ public class WeatherSearchFragment extends Fragment {
                         binding.textWind.setText("Wind: "
                                 + (int) wind.getDouble("speed") + " mph");
 
-                        mDailyModel.connect(String.valueOf(coord.getDouble("lat")),
-                                String.valueOf(coord.getDouble("lon")));
+                        mDailyModel.connect(coord.getDouble("lat"),
+                                coord.getDouble("lon"));
 
                         binding.buttonCelsius.setOnClickListener(v -> {
                             if (!celsius.get()) {
