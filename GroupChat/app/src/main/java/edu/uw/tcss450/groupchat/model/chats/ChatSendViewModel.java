@@ -1,6 +1,7 @@
 package edu.uw.tcss450.groupchat.model.chats;
 
 import android.app.Application;
+import android.os.Debug;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -17,8 +18,14 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -100,8 +107,6 @@ public class ChatSendViewModel extends AndroidViewModel {
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);
     }
-
-
 
     private void handleError(final VolleyError error) {
         if (Objects.isNull(error.networkResponse)) {

@@ -62,7 +62,6 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         binding = FragmentChatMainBinding.bind(getView());
-
         binding.swipeContainer.setRefreshing(true);
         binding.chatWait.setVisibility(View.VISIBLE);
 

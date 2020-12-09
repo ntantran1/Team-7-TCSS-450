@@ -86,6 +86,17 @@ public final class ChatMessage implements Serializable, Comparable<ChatMessage> 
     }
 
     /**
+     * Check if message is image.
+     *
+     * @return true if message is only image, false otherwise
+     */
+    public static boolean isImage(String message) {
+        return (message.endsWith(".gif") || message.endsWith(".png")
+                || message.endsWith(".jpg") || message.endsWith(".jpeg"))
+                & message.trim().split(" ").length < 2;
+    }
+
+    /**
      * Provides equality solely based on MessageId.
      * @param other the other object to check for equality
      * @return true if other message ID matches this message ID, false otherwise
