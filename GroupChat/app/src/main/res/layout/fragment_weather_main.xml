@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    android:backgroundTint="@color/material_on_primary_emphasis_medium"
+    android:backgroundTintMode="multiply">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
         tools:context=".ui.weather.WeatherMainFragment">
 
         <androidx.constraintlayout.widget.Guideline
@@ -25,23 +26,13 @@
             android:id="@+id/button_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:background="#8BC34A"
-            android:src="@android:drawable/ic_popup_sync"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:background="?attr/colorSurface"
+            android:backgroundTint="@color/material_on_primary_disabled"
+            android:backgroundTintMode="screen"
+            android:src="@drawable/ic_refresh_black_24dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <SearchView
-            android:id="@+id/search_zip"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:queryHint="Enter ZipCode"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/button_refresh"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -53,7 +44,7 @@
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/search_zip" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/text_day_time"
@@ -105,10 +96,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="56dp"
             android:backgroundTint="@color/material_on_primary_disabled"
-            android:backgroundTintMode="multiply"
+            android:backgroundTintMode="screen"
+            android:text="@string/action_fahrenheit"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:text="@string/action_fahrenheit"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/text_degree"
@@ -121,10 +112,10 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="56dp"
             android:backgroundTint="@color/material_on_primary_disabled"
-            android:backgroundTintMode="multiply"
+            android:backgroundTintMode="screen"
+            android:text="@string/action_celsius"
             android:textAlignment="center"
             android:textColor="@color/grey_600"
-            android:text="@string/action_celsius"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/button_fahrenheit"
@@ -136,9 +127,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="38dp"
             android:layout_marginTop="66dp"
+            android:text="@string/hint_vertical_bar"
             android:textAlignment="center"
             android:textColor="?attr/colorPrimaryDark"
-            android:text="@string/hint_vertical_bar"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/button_fahrenheit"
