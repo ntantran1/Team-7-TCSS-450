@@ -30,6 +30,7 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentHomeBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
+import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherViewModel;
 import edu.uw.tcss450.groupchat.ui.chats.ChatDetailedRecyclerViewAdapter;
 
@@ -44,6 +45,8 @@ public class HomeFragment extends Fragment {
 
     private WeatherViewModel mWeatherModel;
 
+    private LocationViewModel mLocationModel;
+
     private ChatRoomViewModel mRoomModel;
 
     private UserInfoViewModel mUserModel;
@@ -52,10 +55,10 @@ public class HomeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherViewModel.class);
+        mLocationModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
         mRoomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
         mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
 
-        mWeatherModel.connect("98502");
         mRoomModel.connectRecent(mUserModel.getJwt());
     }
 
@@ -76,6 +79,13 @@ public class HomeFragment extends Fragment {
 
         final RecyclerView rv = binding.listRootHome;
         rv.setAdapter(new ChatDetailedRecyclerViewAdapter(new HashMap<>(), getActivity()));
+
+        mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
+            if (!mWeatherModel.isInitialized()) {
+                mWeatherModel.connect(location.getLatitude(), location.getLongitude());
+                mWeatherModel.initialize();
+            }
+        });
 
         // getting response from the weather API
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
