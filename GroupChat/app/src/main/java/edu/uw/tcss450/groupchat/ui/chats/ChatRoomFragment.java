@@ -159,7 +159,8 @@ public class ChatRoomFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        menu.findItem(R.id.chatOptions).setVisible(true);
+        menu.findItem(R.id.chatOptionsAdd).setVisible(true);
+        menu.findItem(R.id.chatOptionsRemove).setVisible(true);
         super.onPrepareOptionsMenu(menu);
     }
 }

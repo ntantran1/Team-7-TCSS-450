@@ -22,8 +22,15 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/chatOptions"
-        android:icon="@drawable/ic_chat_menu_white_24dp"
+        android:id="@+id/chatOptionsAdd"
+        android:icon="@drawable/ic_chat_person_add_white_24dp"
+        app:showAsAction="always"
+        android:visible="false"
+        />
+
+    <item
+        android:id="@+id/chatOptionsRemove"
+        android:icon="@drawable/ic_chat_person_remove_white_24dp"
         app:showAsAction="always"
         android:visible="false"
         />
