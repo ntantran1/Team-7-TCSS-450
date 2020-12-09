@@ -1,7 +1,6 @@
-package edu.uw.tcss450.groupchat.model.auth;
+package edu.uw.tcss450.groupchat.model.weather;
 
 import android.app.Application;
-import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -20,31 +19,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 
-/**
- * View Model for Sign In page to store latest HTTP response.
- *
- * @version November 5
- */
-public class SignInViewModel extends AndroidViewModel {
+public class WeatherDailyViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
 
-    /**
-     * Constructor of the ViewModel
-     *
-     * @param application the reference to the current application
-     */
-    public SignInViewModel(@NonNull Application application) {
+    public WeatherDailyViewModel(@NonNull Application application) {
         super(application);
-        mResponse = new MutableLiveData<>();
-        mResponse.setValue(new JSONObject());
+        mResponse = new MutableLiveData<>(new JSONObject());
     }
 
     /**
@@ -58,47 +43,26 @@ public class SignInViewModel extends AndroidViewModel {
         mResponse.observe(owner, observer);
     }
 
-    /**
-     * Perform an HTTP Request for a sign in attempt.
-     *
-     * @param email provided email
-     * @param password password of user
-     */
-    public void connect(final String email, final String password) {
+    public void connect(final String lat, final String lon) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "auth";
+                + "weather/daily?lat=" + lat + "&lon=" + lon;
 
         Request request = new JsonObjectRequest(
+
                 Request.Method.GET,
                 url,
                 null, //no body for this get request
                 mResponse::setValue,
-                this::handleError) {
-
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                // add headers <key,value>
-                String credentials = email + ":" + password;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
-            }
-        };
+                this::handleError);
 
         request.setRetryPolicy(new DefaultRetryPolicy(
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //Instantiate the RequestQueue and add the request to the queue
-        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
-                .addToRequestQueue(request);
-
-        //code here will run
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
-
 
     private void handleError(final VolleyError error) {
         if (Objects.isNull(error.networkResponse)) {
@@ -122,5 +86,4 @@ public class SignInViewModel extends AndroidViewModel {
             }
         }
     }
-
 }

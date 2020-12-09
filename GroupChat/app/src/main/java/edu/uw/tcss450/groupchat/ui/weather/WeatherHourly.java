@@ -6,6 +6,7 @@ package edu.uw.tcss450.groupchat.ui.weather;
  * @version November 19, 2020
  */
 public class WeatherHourly {
+
     private int mHour;
 
     private String mId;
