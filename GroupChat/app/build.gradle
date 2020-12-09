@@ -47,4 +47,5 @@ dependencies {
     implementation 'me.pushy:sdk:1.0.65'
     implementation 'com.auth0.android:jwtdecode:2.0.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 }
