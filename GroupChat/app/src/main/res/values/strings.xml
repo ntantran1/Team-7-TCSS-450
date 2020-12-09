@@ -48,5 +48,6 @@
     <string name="keys_shared_prefs">My Auth App Shared Prefs</string>
 
     <string name="text_blank">Blank Text</string>
+    <string name="text_recent_chats">Recent Chat Activity</string>
     <string name="base_url">https://dhill30-groupchat-backend.herokuapp.com/</string>
 </resources>
