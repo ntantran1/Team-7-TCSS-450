@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatMainBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
-import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 
 /**
@@ -71,6 +71,9 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
         binding.swipeContainer.setOnRefreshListener(() ->
                 mModel.connect(mUserModel.getJwt()));
 
+        mModel.addResponseObserver(getViewLifecycleOwner(), response ->
+                mModel.connect(mUserModel.getJwt()));
+
         mModel.addRoomsObserver(getViewLifecycleOwner(), rooms -> {
             rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
             binding.swipeContainer.setRefreshing(false);
@@ -112,6 +115,8 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
                             }
                         } else {
                             mModel.connect(mUserModel.getJwt());
+                            Toast.makeText(getContext(), "You created " + chatName,
+                                    Toast.LENGTH_LONG).show();
                             dialog.dismiss();
                         }
                     } else {

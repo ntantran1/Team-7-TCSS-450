@@ -23,6 +23,8 @@ public class ContactsMainViewModel extends ContactsViewModel {
         super(application);
     }
 
+
+
     @Override
     public void connect(final String jwt) {
         mContactType = 1;
@@ -55,7 +57,7 @@ public class ContactsMainViewModel extends ContactsViewModel {
         Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
-    public void connectAddToChat(final String jwt, final String email, final int chatId) {
+    public void connectAdd(final String jwt, final String email, final int chatId) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "chats/" + chatId;
 

@@ -1,8 +1,5 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 
 /**
@@ -25,11 +22,6 @@ public class ChatRoom implements Serializable, Comparable<ChatRoom> {
     public ChatRoom(final int id, final String name) {
         mId = id;
         mName = name;
-    }
-
-    public static ChatRoom createFromJsonString(final String crAsJson) throws JSONException {
-        final JSONObject room = new JSONObject(crAsJson);
-        return new ChatRoom(room.getInt("chatid"), room.getString("name"));
     }
 
     /**

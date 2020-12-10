@@ -1,7 +1,6 @@
 package edu.uw.tcss450.groupchat.model.chats;
 
 import android.app.Application;
-import android.os.Debug;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -18,14 +17,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -72,8 +65,8 @@ public class ChatSendViewModel extends AndroidViewModel {
      * @param message message content string
      */
     public void sendMessage(final int chatId, final String jwt, final String message) {
-        String url = "https://dhill30-groupchat-backend.herokuapp.com/" +
-                "messages";
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "messages";
 
         JSONObject body = new JSONObject();
         try {
@@ -115,9 +108,7 @@ public class ChatSendViewModel extends AndroidViewModel {
         else {
             String data = new String(error.networkResponse.data, Charset.defaultCharset());
             Log.e("CLIENT ERROR",
-                    error.networkResponse.statusCode +
-                            " " +
-                            data);
+                    error.networkResponse.statusCode + " " + data);
         }
     }
 }

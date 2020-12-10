@@ -41,6 +41,9 @@
         <argument
             android:name="room"
             app:argType="edu.uw.tcss450.groupchat.ui.chats.ChatRoom" />
+        <action
+            android:id="@+id/action_chatDisplayFragment_to_navigation_chats"
+            app:destination="@id/navigation_chats" />
     </fragment>
     <fragment
         android:id="@+id/navigation_change_password"
