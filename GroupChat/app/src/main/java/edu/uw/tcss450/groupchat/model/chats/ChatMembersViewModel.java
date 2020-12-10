@@ -29,25 +29,43 @@ import java.util.Objects;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 
+/**
+ * This view model holds the members of each chat room.
+ *
+ * @version December 10, 2020
+ */
 public class ChatMembersViewModel extends AndroidViewModel {
 
     private Map<Integer, MutableLiveData<List<String>>> mMembers;
 
+    /**
+     * Constructor for the view model.
+     *
+     * @param application the application this view model is part of
+     */
     public ChatMembersViewModel(@NonNull Application application) {
         super(application);
         mMembers = new HashMap<>();
     }
 
-    public void addMembersObserver(int chatId,
-                                   @NonNull LifecycleOwner owner,
-                                   @NonNull Observer<? super List<String>> observer) {
-        getOrCreateMapEntry(chatId).observe(owner, observer);
-    }
-
+    /**
+     * Return a reference to the List<> associated with the chat room. If the view model does not
+     * have a mapping for this chatId, it will be created.
+     *
+     * @param chatId the id of the chat room List to retrieve
+     * @return a reference to the list of member emails
+     */
     public List<String> getMembersListByChatId(final int chatId) {
         return getOrCreateMapEntry(chatId).getValue();
     }
 
+    /**
+     * Makes a request to the web service to get the list of chat room members.
+     * Parses the response and adds the member emails to the List associated with the room.
+     *
+     * @param chatId the chat room id to request member of
+     * @param jwt the user's signed JWT
+     */
     public void connect(final int chatId, final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "chats/" + chatId;
@@ -78,6 +96,11 @@ public class ChatMembersViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    /**
+     * When a chat member is received externally to this ViewModel, add it with this method.
+     * @param chatId the chat room id to add to
+     * @param email the email of the user to add
+     */
     public void addMember(final int chatId, final String email) {
         List<String> list = getMembersListByChatId(chatId);
         if (!list.contains(email)) {
