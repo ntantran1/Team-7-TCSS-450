@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatRoomBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
+import edu.uw.tcss450.groupchat.model.chats.ChatMembersViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatSendViewModel;
@@ -50,6 +51,10 @@ public class ChatRoomFragment extends Fragment {
 
     private ContactsMainViewModel mContactModel;
 
+    private ChatMembersViewModel mMembersModel;
+
+    private ChatRoomFragmentArgs mRoomArgs;
+
     /**
      * Empty default constructor.
      */
@@ -64,13 +69,15 @@ public class ChatRoomFragment extends Fragment {
         mUserModel = provider.get(UserInfoViewModel.class);
         mChatModel = provider.get(ChatMessageViewModel.class);
         mSendModel = provider.get(ChatSendViewModel.class);
-        mContactModel = provider.get(ContactsMainViewModel.class);
         mRoomModel = provider.get(ChatRoomViewModel.class);
+        mContactModel = provider.get(ContactsMainViewModel.class);
+        mMembersModel = provider.get(ChatMembersViewModel.class);
 
-        ChatRoomFragmentArgs args = ChatRoomFragmentArgs.fromBundle(getArguments());
-        mChatModel.getFirstMessages(args.getRoom().getId(), mUserModel.getJwt());
-        mRoomModel.setCurrentRoom(args.getRoom().getId());
+        mRoomArgs = ChatRoomFragmentArgs.fromBundle(getArguments());
+        mChatModel.getFirstMessages(mRoomArgs.getRoom().getId(), mUserModel.getJwt());
+        mRoomModel.setCurrentRoom(mRoomArgs.getRoom().getId());
         mContactModel.connect(mUserModel.getJwt());
+        mMembersModel.connect(mRoomArgs.getRoom().getId(), mUserModel.getJwt());
 
         setHasOptionsMenu(true);
     }
@@ -146,22 +153,42 @@ public class ChatRoomFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        menu.findItem(R.id.chatOptionsAdd).setVisible(true);
-        menu.findItem(R.id.chatOptionsRemove).setVisible(true);
+        menu.findItem(R.id.action_chat_members).setVisible(true);
+        menu.findItem(R.id.action_chat_add).setVisible(true);
+        menu.findItem(R.id.action_chat_leave).setVisible(true);
         super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.chatOptionsAdd){
-            addUserToChat();
-        } else if(item.getItemId() == R.id.chatOptionsRemove){
-            leaveRoom();
-        }
+        if (item.getItemId() == R.id.action_chat_members) showMembers();
+        else if(item.getItemId() == R.id.action_chat_add) addUserToChat();
+        else if(item.getItemId() == R.id.action_chat_leave) leaveRoom();
         return super.onOptionsItemSelected(item);
     }
 
-    private void addUserToChat(){
+    private void showMembers() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Chat Members");
+
+        List<String> members = mMembersModel.getMembersListByChatId(mRoomArgs.getRoom().getId());
+        String[] emails = new String[members.size()];
+        emails = members.toArray(emails);
+        builder.setItems(emails, (dlg, i) -> {
+            //do nothing since getting overridden
+        });
+
+        builder.setPositiveButton("Done", (dlg, i) -> dlg.dismiss());
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        dialog.getListView().setOnItemClickListener((p, v, i, id) -> {
+            //do nothing on click
+        });
+    }
+
+    private void addUserToChat() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Add from Contacts");
 
@@ -189,7 +216,7 @@ public class ChatRoomFragment extends Fragment {
         dialog.show();
     }
 
-    private void leaveRoom(){
+    private void leaveRoom() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Leave Room?");
 
