@@ -121,11 +121,9 @@ public class ChatMessageViewModel extends AndroidViewModel {
      * @param jwt the users signed JWT
      */
     public void getNextMessages(final int chatId, final String jwt) {
-        String url = getApplication().getResources().getString(R.string.base_url) +
-                "messages/" +
-                chatId +
-                "/" +
-                mMessages.get(chatId).getValue().get(0).getMessageId();
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "messages/" + chatId + "/"
+                + mMessages.get(chatId).getValue().get(0).getMessageId();
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -150,8 +148,6 @@ public class ChatMessageViewModel extends AndroidViewModel {
         //Instantiate the RequestQueue and add the request to the queue
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);
-
-        //code here will run
     }
 
     /**
@@ -198,7 +194,6 @@ public class ChatMessageViewModel extends AndroidViewModel {
                     Log.wtf("Chat message already received",
                             "Or duplicate id:" + cMessage.getMessageId());
                 }
-
             }
             Collections.sort(list);
             //inform observers of the change (setValue)
@@ -216,8 +211,7 @@ public class ChatMessageViewModel extends AndroidViewModel {
         else {
             String data = new String(error.networkResponse.data, Charset.defaultCharset());
             Log.e("CLIENT ERROR",
-                    error.networkResponse.statusCode +
-                            " " + data);
+                    error.networkResponse.statusCode + " " + data);
         }
     }
 }
