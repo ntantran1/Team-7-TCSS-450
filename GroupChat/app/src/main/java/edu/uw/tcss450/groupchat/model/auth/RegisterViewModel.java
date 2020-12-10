@@ -21,6 +21,8 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
+import edu.uw.tcss450.groupchat.R;
+
 /**
  * View Model for Register page to store latest HTTP response.
  *
@@ -66,7 +68,8 @@ public class RegisterViewModel extends AndroidViewModel {
                         final String username,
                         final String email,
                         final String password) {
-        String url = "https://dhill30-groupchat-backend.herokuapp.com/auth";
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "auth";
 
         JSONObject body = new JSONObject();
         try {

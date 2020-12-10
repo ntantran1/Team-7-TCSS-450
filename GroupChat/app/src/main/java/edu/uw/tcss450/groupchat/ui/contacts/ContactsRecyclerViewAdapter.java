@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -48,6 +49,8 @@ public class ContactsRecyclerViewAdapter extends
 
     private UserInfoViewModel mUserModel;
 
+    private FragmentActivity mActivity;
+
     /**
      * Constructor to initialize the list of contacts.
      *
@@ -55,7 +58,8 @@ public class ContactsRecyclerViewAdapter extends
      */
     public ContactsRecyclerViewAdapter(final List<Contact> items,
                                        final FragmentActivity activity) {
-        this.mContacts = items;
+        mContacts = items;
+        mActivity = activity;
 
         ViewModelProvider provider = new ViewModelProvider(activity);
         mContactsModel = provider.get(ContactsMainViewModel.class);
@@ -131,36 +135,52 @@ public class ContactsRecyclerViewAdapter extends
 
             final String jwt = mUserModel.getJwt();
             final String email = mContact.getEmail();
+            final String name = mContact.getUsername();
 
             switch (mContact.getType()) {
                 case 1:
                     binding.imageChat.setOnClickListener(this::addUserToChat);
-                    binding.imageRemove.setOnClickListener(click ->
-                            mContactsModel.connectRemove(jwt, email));
+                    binding.imageRemove.setOnClickListener(click -> {
+                        mContactsModel.connectRemove(jwt, email);
+                        Toast.makeText(mActivity, "Removed " + name,
+                                Toast.LENGTH_LONG).show();
+                    });
                     binding.imageAdd.setVisibility(View.INVISIBLE);
                     binding.imageAccept.setVisibility(View.INVISIBLE);
                     binding.imageReject.setVisibility(View.INVISIBLE);
                     break;
                 case 2:
-                    binding.imageAccept.setOnClickListener(click ->
-                            mIncomingModel.connectAccept(jwt, email));
-                    binding.imageReject.setOnClickListener(click ->
-                            mIncomingModel.connectReject(jwt, email));
+                    binding.imageAccept.setOnClickListener(click -> {
+                        mIncomingModel.connectAccept(jwt, email);
+                        Toast.makeText(mActivity, "Accepted " + name,
+                                Toast.LENGTH_LONG).show();
+                    });
+                    binding.imageReject.setOnClickListener(click -> {
+                        mIncomingModel.connectReject(jwt, email);
+                        Toast.makeText(mActivity, "Rejected " + name,
+                                Toast.LENGTH_LONG).show();
+                    });
                     binding.imageAdd.setVisibility(View.INVISIBLE);
                     binding.imageRemove.setVisibility(View.INVISIBLE);
                     binding.imageChat.setVisibility(View.INVISIBLE);
                     break;
                 case 3:
-                    binding.imageRemove.setOnClickListener(click ->
-                            mOutgoingModel.connectCancel(jwt, email));
+                    binding.imageRemove.setOnClickListener(click -> {
+                        mOutgoingModel.connectCancel(jwt, email);
+                        Toast.makeText(mActivity, "Removed request",
+                                Toast.LENGTH_LONG).show();
+                    });
                     binding.imageAdd.setVisibility(View.INVISIBLE);
                     binding.imageAccept.setVisibility(View.INVISIBLE);
                     binding.imageReject.setVisibility(View.INVISIBLE);
                     binding.imageChat.setVisibility(View.INVISIBLE);
                     break;
                 case 4:
-                    binding.imageAdd.setOnClickListener(click ->
-                            mSearchModel.connectAdd(jwt, email));
+                    binding.imageAdd.setOnClickListener(click -> {
+                        mSearchModel.connectAdd(jwt, email);
+                        Toast.makeText(mActivity, "Sent request to " + name,
+                                Toast.LENGTH_LONG).show();
+                    });
                     binding.imageAccept.setVisibility(View.INVISIBLE);
                     binding.imageReject.setVisibility(View.INVISIBLE);
                     binding.imageRemove.setVisibility(View.INVISIBLE);
@@ -187,7 +207,10 @@ public class ContactsRecyclerViewAdapter extends
 
             dialog.setPositiveButton("Add", (dlg, i) -> {
                 int roomId = mChatRoomModel.getRoomFromName(roomNames[selected.get()]);
-                mContactsModel.connectAddToChat(mUserModel.getJwt(), mContact.getEmail(), roomId);
+                mContactsModel.connectAdd(mUserModel.getJwt(), mContact.getEmail(), roomId);
+                Toast.makeText(mActivity,
+                        mContact.getUsername() + " has been added to " + roomNames[selected.get()],
+                        Toast.LENGTH_LONG).show();
                 dlg.dismiss();
             });
 

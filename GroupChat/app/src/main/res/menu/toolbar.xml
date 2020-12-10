@@ -22,17 +22,21 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/chatOptionsAdd"
-        android:icon="@drawable/ic_chat_person_add_white_24dp"
+        android:id="@+id/action_chat_members"
+        android:icon="@drawable/ic_chat_members_24dp"
         app:showAsAction="always"
-        android:visible="false"
-        />
+        android:visible="false" />
 
     <item
-        android:id="@+id/chatOptionsRemove"
-        android:icon="@drawable/ic_chat_person_remove_white_24dp"
+        android:id="@+id/action_chat_add"
+        android:icon="@drawable/ic_chat_add_24dp"
         app:showAsAction="always"
-        android:visible="false"
-        />
+        android:visible="false"  />
+
+    <item
+        android:id="@+id/action_chat_leave"
+        android:icon="@drawable/ic_chat_leave_24dp"
+        app:showAsAction="always"
+        android:visible="false" />
 
 </menu>

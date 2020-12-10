@@ -8,10 +8,8 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 
 import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.databinding.FragmentResetPasswordBinding;
 import edu.uw.tcss450.groupchat.databinding.FragmentSettingsBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 
