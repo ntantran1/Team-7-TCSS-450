@@ -27,6 +27,11 @@ public class WeatherCurrentViewModel extends WeatherViewModel{
         super(application);
     }
 
+    /**
+     * Makes a request to the web service to get weather information at the given location.
+     * @param lat the latitude of the location
+     * @param lon the longitude of the location
+     */
     public void connect(final double lat, final double lon) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "weather?lat=" + lat + "&lon=" + lon;

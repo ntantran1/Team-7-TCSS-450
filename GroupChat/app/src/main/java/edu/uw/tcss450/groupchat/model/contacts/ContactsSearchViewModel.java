@@ -14,13 +14,25 @@ import java.util.Map;
 
 import edu.uw.tcss450.groupchat.R;
 
+/**
+ * This view model holds a list of the searched potential contacts.
+ *
+ * @version December, 2020
+ */
 public class ContactsSearchViewModel extends ContactsViewModel {
 
+    /**
+     * Default constructor for this view model.
+     * @param application reference to the current application
+     */
     public ContactsSearchViewModel(@NonNull Application application) {
         super(application);
     }
 
-    @Override
+    /**
+     * Makes a request to the web service to get a list of up to 10 random users.
+     * @param jwt the user's signed JWT
+     */
     public void connect(String jwt) {
         mContactType = 4;
 
@@ -52,6 +64,11 @@ public class ContactsSearchViewModel extends ContactsViewModel {
         Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
+    /**
+     * Makes a request to the web service to search for users by the term.
+     * @param jwt the user's signed JWT
+     * @param term the term to search available users by
+     */
     public void connect(final String jwt, final String term) {
         mContactType = 4;
 
@@ -83,6 +100,11 @@ public class ContactsSearchViewModel extends ContactsViewModel {
         Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
+    /**
+     * Makes a request to the web service to initiate a contact request with the specified user.
+     * @param jwt the user's signed JWT
+     * @param email the email of the user to initiate a request with
+     */
     public void connectAdd(final String jwt, final String email) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "contacts?email=" + email;

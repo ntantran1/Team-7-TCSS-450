@@ -396,6 +396,10 @@ public class MainActivity extends AppCompatActivity {
                         .getJwt());
     }
 
+    /**
+     * Changes the color theme of the app.
+     * @param view the theme to change to
+     */
     public void changeColorTheme(View view) {
         boolean checked = ((RadioButton) view).isChecked();
 
