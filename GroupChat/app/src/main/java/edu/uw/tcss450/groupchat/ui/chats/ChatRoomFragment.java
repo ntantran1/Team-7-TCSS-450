@@ -1,10 +1,12 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.os.BuildCompat;
 import androidx.core.view.inputmethod.EditorInfoCompat;
@@ -12,18 +14,22 @@ import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,6 +40,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import edu.uw.tcss450.groupchat.R;
@@ -42,6 +49,9 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatSendViewModel;
+import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
+import edu.uw.tcss450.groupchat.model.contacts.ContactsViewModel;
+import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
 /**
  * Fragment Displays chat messages
@@ -55,6 +65,12 @@ public class ChatRoomFragment extends Fragment {
     private ChatSendViewModel mSendModel;
 
     private UserInfoViewModel mUserModel;
+
+    private ContactsMainViewModel mContactViewModel;
+
+    private ChatRoomViewModel mRoomModel;
+
+
 
     /**
      * Empty default constructor.
@@ -70,11 +86,13 @@ public class ChatRoomFragment extends Fragment {
         mUserModel = provider.get(UserInfoViewModel.class);
         mChatModel = provider.get(ChatMessageViewModel.class);
         mSendModel = provider.get(ChatSendViewModel.class);
-        ChatRoomViewModel roomModel = provider.get(ChatRoomViewModel.class);
+        mContactViewModel = provider.get(ContactsMainViewModel.class);
+        mRoomModel = provider.get(ChatRoomViewModel.class);
 
         ChatRoomFragmentArgs args = ChatRoomFragmentArgs.fromBundle(getArguments());
         mChatModel.getFirstMessages(args.getRoom().getId(), mUserModel.getJwt());
-        roomModel.setCurrentRoom(args.getRoom().getId());
+        mRoomModel.setCurrentRoom(args.getRoom().getId());
+        mContactViewModel.connect(mUserModel.getJwt());
 
         setHasOptionsMenu(true);
     }
@@ -108,8 +126,8 @@ public class ChatRoomFragment extends Fragment {
         });
 
 
-        ChatRoomViewModel roomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
-        roomModel.setCurrentRoom(args.getRoom().getId());
+//        ChatRoomViewModel roomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
+//        roomModel.setCurrentRoom(args.getRoom().getId());
 
         //SetRefreshing shows the internal Swiper view progress bar. Show this until messages load
         binding.swipeContainer.setRefreshing(true);
@@ -159,7 +177,63 @@ public class ChatRoomFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        menu.findItem(R.id.chatOptions).setVisible(true);
+        menu.findItem(R.id.chatOptionsAdd).setVisible(true);
+        menu.findItem(R.id.chatOptionsRemove).setVisible(true);
         super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.chatOptionsAdd){
+            addUserToChat();
+        } else if(item.getItemId() == R.id.chatOptionsRemove){
+            leaveRoom();
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void addUserToChat(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Add from Contacts");
+
+        List<String> contacts = new ArrayList<>();
+        for(Contact contact: mContactViewModel.getContacts()){
+            contacts.add(contact.getUsername());
+        }
+        String[] contactNames = contacts.toArray(new String[contacts.size()]);
+
+        AtomicInteger selected = new AtomicInteger(-1);
+        builder.setSingleChoiceItems(contactNames, selected.get(), (dlg, i) -> selected.set(i));
+
+        builder.setPositiveButton("Add", (dlg, i) -> {
+           String contactId = mContactViewModel.getContactFromUserName(contactNames[selected.get()]);
+           mRoomModel.connectAddToChat(mUserModel.getJwt(), contactId, mRoomModel.getCurrentRoom());
+            Toast.makeText(getContext(), contactId + " has been added to chat",
+                    Toast.LENGTH_LONG);
+        });
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void leaveRoom(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Leave Room?");
+
+        builder.setPositiveButton("Leave", (dlg, i) -> {
+            mRoomModel.requestLeaveRoom(mUserModel.getJwt(),
+                    mRoomModel.getCurrentRoom(), mUserModel.getEmail());
+            NavController navController = Navigation.findNavController(getView());
+            navController.navigate(ChatRoomFragmentDirections.
+                    actionChatDisplayFragmentToNavigationChats());
+            Toast.makeText(getContext(), "You left a chat",
+                    Toast.LENGTH_LONG);
+        });
+
+        builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

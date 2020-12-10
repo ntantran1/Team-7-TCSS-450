@@ -23,6 +23,8 @@ public class ContactsMainViewModel extends ContactsViewModel {
         super(application);
     }
 
+
+
     @Override
     public void connect(final String jwt) {
         mContactType = 1;
