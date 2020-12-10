@@ -1,6 +1,7 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,8 @@ import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
@@ -26,6 +29,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -205,6 +209,8 @@ public class ChatRoomFragment extends Fragment {
         builder.setPositiveButton("Add", (dlg, i) -> {
            String contactId = mContactViewModel.getContactFromUserName(contactNames[selected.get()]);
            mRoomModel.connectAddToChat(mUserModel.getJwt(), contactId, mRoomModel.getCurrentRoom());
+            Toast.makeText(getContext(), contactId + " has been added to chat",
+                    Toast.LENGTH_LONG);
         });
 
         final AlertDialog dialog = builder.create();
@@ -218,6 +224,11 @@ public class ChatRoomFragment extends Fragment {
         builder.setPositiveButton("Leave", (dlg, i) -> {
             mRoomModel.requestLeaveRoom(mUserModel.getJwt(),
                     mRoomModel.getCurrentRoom(), mUserModel.getEmail());
+            NavController navController = Navigation.findNavController(getView());
+            navController.navigate(ChatRoomFragmentDirections.
+                    actionChatDisplayFragmentToNavigationChats());
+            Toast.makeText(getContext(), "You left " + mRoomModel.getCurrentRoom(),
+                    Toast.LENGTH_LONG);
         });
 
         builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
