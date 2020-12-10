@@ -1,6 +1,7 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -76,7 +77,7 @@ public class WeatherSearchFragment extends Fragment {
         mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
             if (!mWeatherModel.isInitialized()) {
                 mWeatherModel.connect(location.getLatitude(), location.getLongitude());
-                mWeatherModel.initialize();
+                mWeatherModel.initialize(location);
             }
         });
 
@@ -85,6 +86,7 @@ public class WeatherSearchFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mWeatherModel.connectZip(query);
+                binding.weatherWait.setVisibility(View.VISIBLE);
                 return false;
             }
 
@@ -94,8 +96,15 @@ public class WeatherSearchFragment extends Fragment {
             }
         });
 
-        binding.buttonRefresh.setOnClickListener(button ->
-                mWeatherModel.connectZip(binding.searchZip.getQuery().toString()));
+        binding.buttonRefresh.setOnClickListener(button -> {
+            if (binding.searchZip.getQuery().toString().isEmpty()) {
+                Location location = mWeatherModel.getLocation();
+                mWeatherModel.connect(location.getLatitude(), location.getLongitude());
+            } else {
+                mWeatherModel.connectZip(binding.searchZip.getQuery().toString());
+            }
+            binding.weatherWait.setVisibility(View.VISIBLE);
+        });
 
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
             if (response.length() > 0) {
@@ -110,6 +119,11 @@ public class WeatherSearchFragment extends Fragment {
                         JSONObject wind = response.getJSONObject("wind");
                         JSONArray weather = response.getJSONArray("weather");
                         JSONObject info = (JSONObject) weather.get(0);
+
+                        Location location = new Location("");
+                        location.setLatitude(coord.getDouble("lat"));
+                        location.setLongitude(coord.getDouble("lon"));
+                        mWeatherModel.setLocation(location);
 
                         binding.textCity.setText(response.getString("name"));
                         binding.textDayTime.setText(LocalDate.now().getDayOfWeek().name() + " "

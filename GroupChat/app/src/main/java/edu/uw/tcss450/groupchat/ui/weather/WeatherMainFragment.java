@@ -79,6 +79,7 @@ public class WeatherMainFragment extends Fragment {
         binding.buttonRefresh.setOnClickListener(button -> {
             Location location = mLocationModel.getCurrentLocation();
             mWeatherModel.connect(location.getLatitude(), location.getLongitude());
+            binding.weatherWait.setVisibility(View.VISIBLE);
         });
 
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
