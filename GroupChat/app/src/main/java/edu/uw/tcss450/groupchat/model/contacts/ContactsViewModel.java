@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
 public abstract class ContactsViewModel extends AndroidViewModel {
@@ -51,6 +52,19 @@ public abstract class ContactsViewModel extends AndroidViewModel {
     }
 
     public abstract void connect(final String jwt);
+
+    public List<Contact> getContacts(){
+        return mContacts.getValue();
+    }
+
+    public String getContactFromUserName(final String name) {
+        for (Contact contact : mContacts.getValue()) {
+            if (name.equals(contact.getUsername())) {
+                return contact.getEmail();
+            }
+        }
+        return "-1";
+    }
 
     protected void handleSuccess(final JSONObject result) {
         List<Contact> sorted = new ArrayList<>();
