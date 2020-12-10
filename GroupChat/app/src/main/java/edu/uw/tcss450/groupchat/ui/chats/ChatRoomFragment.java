@@ -182,6 +182,9 @@ public class ChatRoomFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.chatOptionsAdd){
             addUserToChat();
+        } else if(item.getItemId() == R.id.chatOptionsRemove){
+            leaveRoom();
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -203,6 +206,21 @@ public class ChatRoomFragment extends Fragment {
            String contactId = mContactViewModel.getContactFromUserName(contactNames[selected.get()]);
            mRoomModel.connectAddToChat(mUserModel.getJwt(), contactId, mRoomModel.getCurrentRoom());
         });
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void leaveRoom(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Leave Room?");
+
+        builder.setPositiveButton("Leave", (dlg, i) -> {
+            mRoomModel.requestLeaveRoom(mUserModel.getJwt(),
+                    mRoomModel.getCurrentRoom(), mUserModel.getEmail());
+        });
+
+        builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
 
         final AlertDialog dialog = builder.create();
         dialog.show();
