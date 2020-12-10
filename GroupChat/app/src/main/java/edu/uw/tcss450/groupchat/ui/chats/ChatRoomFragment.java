@@ -227,7 +227,7 @@ public class ChatRoomFragment extends Fragment {
             NavController navController = Navigation.findNavController(getView());
             navController.navigate(ChatRoomFragmentDirections.
                     actionChatDisplayFragmentToNavigationChats());
-            Toast.makeText(getContext(), "You left " + mRoomModel.getCurrentRoom(),
+            Toast.makeText(getContext(), "You left a chat",
                     Toast.LENGTH_LONG);
         });
 
