@@ -2,7 +2,6 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/contact_card_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"  >
@@ -11,6 +10,13 @@
         android:id="@+id/contact_layout_inner"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="0dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/image_profile"
@@ -120,13 +126,6 @@
             app:layout_constraintEnd_toStartOf="@+id/image_accept"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_contact_reject_24dp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="4dp"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintTop_toBottomOf="@id/text_email" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -11,12 +11,26 @@ import com.android.volley.toolbox.Volley;
 
 import edu.uw.tcss450.groupchat.R;
 
+/**
+ * This view model handles the response from the web service for getting weather information.
+ *
+ * @version December, 2020
+ */
 public class WeatherCurrentDailyViewModel extends WeatherViewModel {
 
+    /**
+     * Default constructor for this view model.
+     * @param application reference to the current application
+     */
     public WeatherCurrentDailyViewModel(@NonNull Application application) {
         super(application);
     }
 
+    /**
+     * Makes a request to the web service to get detailed weather information at the given location.
+     * @param lat the latitude of the location
+     * @param lon the longitude of the location
+     */
     public void connect(final double lat, final double lon) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "weather/daily?lat=" + lat + "&lon=" + lon;

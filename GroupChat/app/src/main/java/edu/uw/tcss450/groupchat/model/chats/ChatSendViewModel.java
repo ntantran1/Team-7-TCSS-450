@@ -49,7 +49,7 @@ public class ChatSendViewModel extends AndroidViewModel {
     /**
      * Add an observer to the chat room.
      *
-     * @param owner the LifecyleOwner object of the chat room
+     * @param owner the LifecycleOwner object of the chat room
      * @param observer an observer to observe
      */
     public void addResponseObserver(@NonNull LifecycleOwner owner,

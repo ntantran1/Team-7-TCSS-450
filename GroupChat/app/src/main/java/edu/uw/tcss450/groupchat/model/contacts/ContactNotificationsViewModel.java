@@ -24,7 +24,7 @@ public class ContactNotificationsViewModel extends ViewModel {
     }
 
     /**
-     * Add observer for receiving the server's rsponses.
+     * Add observer for receiving the server's responses.
      *
      * @param owner The Lifecycle owner that will control the observer
      * @param observer The observe that will receive the events

@@ -24,6 +24,11 @@ import java.util.Objects;
 import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
+/**
+ * This abstract view model is the parent for the actual contacts view models.
+ *
+ * @version December, 2020
+ */
 public abstract class ContactsViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<Contact>> mContacts;
@@ -32,31 +37,50 @@ public abstract class ContactsViewModel extends AndroidViewModel {
 
     protected int mContactType;
 
+    /**
+     * Default constructor for this view model.
+     * @param application reference to the current application
+     */
     public ContactsViewModel(@NonNull Application application) {
         super(application);
-        mResponse = new MutableLiveData<>();
-        mResponse.setValue(new JSONObject());
-        mContacts = new MutableLiveData<>();
-        mContacts.setValue(new ArrayList<>());
+        mResponse = new MutableLiveData<>(new JSONObject());
+        mContacts = new MutableLiveData<>(new ArrayList<>());
         mContactType = -1;
     }
 
+    /**
+     * Add an observer to the response object.
+     * @param owner the fragment's LifecycleOwner
+     * @param observer an observer to observe
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Add an observer to the list of contacts.
+     * @param owner the fragment's LifecycleOwner
+     * @param observer an observer to observe
+     */
     public void addContactsObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super List<Contact>> observer) {
         mContacts.observe(owner, observer);
     }
 
-    public abstract void connect(final String jwt);
-
+    /**
+     * Returns the list of the user's contacts.
+     * @return the list of contacts
+     */
     public List<Contact> getContacts(){
         return mContacts.getValue();
     }
 
+    /**
+     * Returns the email of a contact from the passed username.
+     * @param name the username of the contact
+     * @return the email of the contact
+     */
     public String getContactFromUserName(final String name) {
         for (Contact contact : mContacts.getValue()) {
             if (name.equals(contact.getUsername())) {
@@ -65,6 +89,12 @@ public abstract class ContactsViewModel extends AndroidViewModel {
         }
         return "-1";
     }
+
+    /**
+     * Makes a request to the web service to get the list of the user's contacts.
+     * @param jwt the user's signed JWT
+     */
+    public abstract void connect(final String jwt);
 
     protected void handleSuccess(final JSONObject result) {
         List<Contact> sorted = new ArrayList<>();
