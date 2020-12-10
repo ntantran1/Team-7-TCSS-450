@@ -477,7 +477,6 @@ public class MainActivity extends AppCompatActivity {
                 if (nd.getId() != R.id.navigation_chats) {
                     mNewChatModel.incrementChat();
                 }
-
                 mRoomModel.connect(mUserViewModel.getJwt());
             }
         }

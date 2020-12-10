@@ -16,7 +16,6 @@ import java.util.List;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentChatCardBinding;
 import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
-import edu.uw.tcss450.groupchat.ui.HomeFragmentDirections;
 
 /**
  * The class describes how each chat room should look on the home page and manage the list of

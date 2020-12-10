@@ -9,19 +9,13 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
 import java.util.Objects;
-
-import edu.uw.tcss450.groupchat.R;
 
 public abstract class WeatherViewModel extends AndroidViewModel {
 

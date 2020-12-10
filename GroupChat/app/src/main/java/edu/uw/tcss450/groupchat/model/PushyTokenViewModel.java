@@ -91,7 +91,8 @@ public class PushyTokenViewModel extends AndroidViewModel {
      * @param jwt user sign-in token
      */
     public void deleteTokenFromWebservice(final String jwt) {
-        String url = getApplication().getResources().getString(R.string.base_url) + "auth";
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "auth";
 
         Request request = new JsonObjectRequest(
                 Request.Method.DELETE,

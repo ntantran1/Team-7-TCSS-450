@@ -13,6 +13,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,14 +45,10 @@ public class ChatRoomViewModel extends AndroidViewModel {
 
     public ChatRoomViewModel(@NonNull Application application) {
         super(application);
-        mResponse = new MutableLiveData<>();
-        mResponse.setValue(new JSONObject());
-        mRooms = new MutableLiveData<>();
-        mRooms.setValue(new ArrayList<>());
-        mRecent = new MutableLiveData<>();
-        mRecent.setValue(new TreeMap<>());
-        mCurrentRoom = new MutableLiveData<>();
-        mCurrentRoom.setValue(-1);
+        mResponse = new MutableLiveData<>(new JSONObject());
+        mRooms = new MutableLiveData<>(new ArrayList<>());
+        mRecent = new MutableLiveData<>(new TreeMap<>());
+        mCurrentRoom = new MutableLiveData<>(-1);
     }
 
     public void addResponseObserver(@NonNull LifecycleOwner owner,
@@ -91,6 +88,42 @@ public class ChatRoomViewModel extends AndroidViewModel {
         return -1;
     }
 
+    public void connectAddToChat(final String jwt, final String email, final int chatId) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chats/" + chatId;
+
+        JSONObject body = new JSONObject();
+        try {
+            body.put("email", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Request request = new JsonObjectRequest(
+                Request.Method.PUT,
+                url,
+                body, //user email to add to chat room
+                mResponse::setValue,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                //add headers <key, value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        //Instantiate the RequestQueue and add the request to the queue
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+    }
+
     public void setCurrentRoom(final int id) {
         mCurrentRoom.setValue(id);
     }
@@ -124,8 +157,38 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    public void connectRecent(final String jwt) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chatrooms/recent";
+
+        Request request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                this::handleRecent,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // add headers <key,value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
     public void connectCreate(final String jwt, final String name) {
-        String url = "https://dhill30-groupchat-backend.herokuapp.com/chats?name=";
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chats?name=";
 
         JSONObject body = new JSONObject();
         try {
@@ -159,20 +222,20 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
-    public void connectRecent(final String jwt) {
-        String url = "https://dhill30-groupchat-backend.herokuapp.com/chatrooms/recent";
+    public void connectLeave(final String jwt, final int roomId, final String email){
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chats/" + roomId + "/" + email;
 
         Request request = new JsonObjectRequest(
-                Request.Method.GET,
+                Request.Method.DELETE,
                 url,
                 null,
-                this::handleRecent,
+                mResponse::setValue,
                 this::handleError) {
 
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                // add headers <key,value>
                 headers.put("Authorization", jwt);
                 return headers;
             }
@@ -182,9 +245,9 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //Instantiate the RequestQueue and add the request to the queue
-        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
-                .addToRequestQueue(request);
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
     private void handleRooms(final JSONObject result) {

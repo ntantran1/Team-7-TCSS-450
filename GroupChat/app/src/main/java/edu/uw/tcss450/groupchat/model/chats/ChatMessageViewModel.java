@@ -30,10 +30,20 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 
+/**
+ * This view model holds the messages for each chat room.
+ *
+ * @version November, 2020
+ */
 public class ChatMessageViewModel extends AndroidViewModel {
 
     private Map<Integer, MutableLiveData<List<ChatMessage>>> mMessages;
 
+    /**
+     * Constructor for the view model.
+     *
+     * @param application the application this view model is part of
+     */
     public ChatMessageViewModel(@NonNull Application application) {
         super(application);
         mMessages = new HashMap<>();
@@ -74,12 +84,12 @@ public class ChatMessageViewModel extends AndroidViewModel {
      * Subsequent requests to the web service for a given chat room should be made from
      * getNextMessages()
      *
-     * @param chatId the chatroom id to request messages of
-     * @param jwt the users signed JWT
+     * @param chatId the chat room id to request messages of
+     * @param jwt the user's signed JWT
      */
     public void getFirstMessages(final int chatId, final String jwt) {
-        String url = getApplication().getResources().getString(R.string.base_url) +
-                "messages/" + chatId;
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "messages/" + chatId;
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -101,11 +111,10 @@ public class ChatMessageViewModel extends AndroidViewModel {
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //Instantiate the RequestQueue and add the request to the queue
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);
-
-        //code here will run
     }
 
     /**
@@ -121,11 +130,9 @@ public class ChatMessageViewModel extends AndroidViewModel {
      * @param jwt the users signed JWT
      */
     public void getNextMessages(final int chatId, final String jwt) {
-        String url = getApplication().getResources().getString(R.string.base_url) +
-                "messages/" +
-                chatId +
-                "/" +
-                mMessages.get(chatId).getValue().get(0).getMessageId();
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "messages/" + chatId + "/"
+                + mMessages.get(chatId).getValue().get(0).getMessageId();
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -147,18 +154,17 @@ public class ChatMessageViewModel extends AndroidViewModel {
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //Instantiate the RequestQueue and add the request to the queue
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);
-
-        //code here will run
     }
 
     /**
      * When a chat message is received externally to this ViewModel, add it
      * with this method.
-     * @param chatId
-     * @param message
+     * @param chatId the id of the chat room to add to
+     * @param message the ChatMessage to add
      */
     public void addMessage(final int chatId, final ChatMessage message) {
         List<ChatMessage> list = getMessageListByChatId(chatId);
@@ -167,7 +173,7 @@ public class ChatMessageViewModel extends AndroidViewModel {
     }
 
     private MutableLiveData<List<ChatMessage>> getOrCreateMapEntry(final int chatId) {
-        if(!mMessages.containsKey(chatId)) {
+        if (!mMessages.containsKey(chatId)) {
             mMessages.put(chatId, new MutableLiveData<>(new ArrayList<>()));
         }
         return mMessages.get(chatId);
@@ -176,7 +182,7 @@ public class ChatMessageViewModel extends AndroidViewModel {
     private void handleSuccess(final JSONObject response) {
         List<ChatMessage> list;
         if (!response.has("chatId")) {
-            throw new IllegalStateException("Unexpected response in ChatViewModel: " + response);
+            throw new IllegalStateException("Unexpected response in ChatMessageViewModel: " + response);
         }
         try {
             list = getMessageListByChatId(response.getInt("chatId"));
@@ -198,13 +204,12 @@ public class ChatMessageViewModel extends AndroidViewModel {
                     Log.wtf("Chat message already received",
                             "Or duplicate id:" + cMessage.getMessageId());
                 }
-
             }
             Collections.sort(list);
             //inform observers of the change (setValue)
             getOrCreateMapEntry(response.getInt("chatId")).setValue(list);
         }catch (JSONException e) {
-            Log.e("JSON PARSE ERROR", "Found in handle Success ChatViewModel");
+            Log.e("JSON PARSE ERROR", "Found in handle Success ChatMessageViewModel");
             Log.e("JSON PARSE ERROR", "Error: " + e.getMessage());
         }
     }
@@ -216,8 +221,7 @@ public class ChatMessageViewModel extends AndroidViewModel {
         else {
             String data = new String(error.networkResponse.data, Charset.defaultCharset());
             Log.e("CLIENT ERROR",
-                    error.networkResponse.statusCode +
-                            " " + data);
+                    error.networkResponse.statusCode + " " + data);
         }
     }
 }
