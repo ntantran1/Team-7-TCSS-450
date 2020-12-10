@@ -206,6 +206,7 @@ public class ChatRoomFragment extends Fragment {
             String chatName = (String) Navigation.findNavController(getView())
                     .getCurrentDestination().getLabel();
             mRoomModel.connectAddToChat(mUserModel.getJwt(), contactId, mRoomModel.getCurrentRoom());
+            mMembersModel.addMember(mRoomArgs.getRoom().getId(), contactId);
             Toast.makeText(getContext(), contactId + " has been added to " + chatName,
                     Toast.LENGTH_LONG).show();
         });

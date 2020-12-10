@@ -30,10 +30,20 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 
+/**
+ * This view model holds the messages for each chat room.
+ *
+ * @version November, 2020
+ */
 public class ChatMessageViewModel extends AndroidViewModel {
 
     private Map<Integer, MutableLiveData<List<ChatMessage>>> mMessages;
 
+    /**
+     * Constructor for the view model.
+     *
+     * @param application the application this view model is part of
+     */
     public ChatMessageViewModel(@NonNull Application application) {
         super(application);
         mMessages = new HashMap<>();
@@ -74,8 +84,8 @@ public class ChatMessageViewModel extends AndroidViewModel {
      * Subsequent requests to the web service for a given chat room should be made from
      * getNextMessages()
      *
-     * @param chatId the chatroom id to request messages of
-     * @param jwt the users signed JWT
+     * @param chatId the chat room id to request messages of
+     * @param jwt the user's signed JWT
      */
     public void getFirstMessages(final int chatId, final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
@@ -153,8 +163,8 @@ public class ChatMessageViewModel extends AndroidViewModel {
     /**
      * When a chat message is received externally to this ViewModel, add it
      * with this method.
-     * @param chatId
-     * @param message
+     * @param chatId the id of the chat room to add to
+     * @param message the ChatMessage to add
      */
     public void addMessage(final int chatId, final ChatMessage message) {
         List<ChatMessage> list = getMessageListByChatId(chatId);
