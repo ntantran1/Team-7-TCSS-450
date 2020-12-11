@@ -14,7 +14,9 @@ import edu.uw.tcss450.groupchat.databinding.FragmentSettingsBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 
 /**
- * A simple {@link Fragment} subclass
+ * Fragment for application settings page.
+ *
+ * @version December 2020
  */
 public class SettingsFragment extends Fragment {
 

@@ -97,9 +97,9 @@ public class ChatRoomFragment extends Fragment {
 
         FragmentChatRoomBinding binding = FragmentChatRoomBinding.bind(getView());
 
+        // define the action for the interface class
         binding.edittextChatbox.setKeyBoardInputCallbackListener((inputContentInfo, flags, opts) -> {
             // use image here
-            //mSendModel.uploadImage(inputContentInfo.getLinkUri().toString());
             mSendModel.sendMessage(args.getRoom().getId(),
                     mUserModel.getJwt(),
                     inputContentInfo.getLinkUri().toString());

@@ -38,7 +38,9 @@ import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentDailyViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentViewModel;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for main page of weather.
+ *
+ * @version December 2020
  */
 public class WeatherMainFragment extends Fragment {
 

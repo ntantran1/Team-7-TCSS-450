@@ -7,10 +7,20 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * View Adapter for loading page of weather.
+ *
+ * @version December 2020
+ */
 public class WeatherHolderAdapter extends FragmentStateAdapter {
 
     private List<Fragment> mPages;
 
+    /**
+     * Public constructor.
+     *
+     * @param fragment loading fragment of weather
+     */
     public WeatherHolderAdapter(Fragment fragment) {
         super(fragment);
         mPages = new ArrayList<>();

@@ -15,7 +15,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherHolderBinding;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for loading page of weather.
+ *
+ * @version December 2020.
  */
 public class WeatherHolderFragment extends Fragment {
 
