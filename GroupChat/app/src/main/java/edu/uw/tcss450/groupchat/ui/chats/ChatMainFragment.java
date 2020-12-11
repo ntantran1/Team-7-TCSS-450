@@ -26,7 +26,8 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 
 /**
- * Fragment for Home Page of the application.
+ * Fragment for Home Page of the chats.
+ * Displays list of chat rooms a user is member of.
  *
  * @version November 5
  */
@@ -38,6 +39,7 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
 
     private FragmentChatMainBinding binding;
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,7 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
 
         mModel.connect(mUserModel.getJwt());
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -82,6 +85,7 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
 
         binding.buttonStartChatRoom.setOnClickListener(this);
     }
+
 
     @Override
     public void onClick(View v) {
