@@ -158,16 +158,8 @@ public class MainActivity extends AppCompatActivity {
         };
         createLocationRequest();
 
-        mUserViewModel.addThemeObserver(this, theme -> {
-            BadgeDrawable contactBadge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
-            contactBadge.setMaxCharacterCount(2);
-
-            BadgeDrawable chatBadge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
-            chatBadge.setMaxCharacterCount(2);
-
-            contactBadge.setVisible(contactBadge.getNumber() != 0);
-            chatBadge.setVisible(chatBadge.getNumber() != 0);
-        });
+        binding.navView.getOrCreateBadge(R.id.navigation_chats).setVisible(false);
+        binding.navView.getOrCreateBadge(R.id.navigation_contacts).setVisible(false);
 
         chatRoomModel.addCurrentRoomObserver(this, chatId -> mNewChatModel.reset(chatId));
 
@@ -396,6 +388,10 @@ public class MainActivity extends AppCompatActivity {
                         .getJwt());
     }
 
+    /**
+     * Changes the color theme of the app.
+     * @param view the theme to change to
+     */
     public void changeColorTheme(View view) {
         boolean checked = ((RadioButton) view).isChecked();
 

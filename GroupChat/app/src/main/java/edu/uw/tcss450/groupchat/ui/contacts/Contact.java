@@ -16,16 +16,6 @@ public class Contact implements Comparable<Contact> {
     private int mType;
 
     /**
-     * Generic constructor, should NEVER be called.
-     */
-    public Contact() {
-        mUsername = "Blank";
-        mName = "Blank Name";
-        mEmail = "test@mail.com";
-        mType = 1;
-    }
-
-    /**
      * Contact class constructor, initializes the contact with the passed arguments.
      * @param username the username of the contact
      * @param name the name (first and last) of the contact

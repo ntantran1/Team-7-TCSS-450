@@ -17,15 +17,25 @@ import java.util.Map;
 
 import edu.uw.tcss450.groupchat.R;
 
+/**
+ * This view model holds a list of the user's contacts.
+ *
+ * @version December, 2020
+ */
 public class ContactsMainViewModel extends ContactsViewModel {
 
+    /**
+     * Default constructor for this view model.
+     * @param application reference to the current application
+     */
     public ContactsMainViewModel(@NonNull Application application) {
         super(application);
     }
 
-
-
-    @Override
+    /**
+     * Makes a request to the web service to get the list of the user's contacts.
+     * @param jwt the user's signed JWT
+     */
     public void connect(final String jwt) {
         mContactType = 1;
 
@@ -57,6 +67,12 @@ public class ContactsMainViewModel extends ContactsViewModel {
         Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
+    /**
+     * Makes a request to the web service to add the specified contact to a chat room.
+     * @param jwt the user's signed JWT
+     * @param email the email of the contact to add
+     * @param chatId the chat id of the chat room to add to
+     */
     public void connectAdd(final String jwt, final String email, final int chatId) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "chats/" + chatId;
@@ -93,6 +109,11 @@ public class ContactsMainViewModel extends ContactsViewModel {
         Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
+    /**
+     * Makes a request to the web service to remove the specified contact.
+     * @param jwt the user's signed JWT
+     * @param email the email of the contact to remove
+     */
     public void connectRemove(final String jwt, final String email) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "contacts?email=" + email;

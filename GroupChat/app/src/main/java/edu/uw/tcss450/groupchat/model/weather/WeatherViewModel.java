@@ -17,10 +17,19 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
+/**
+ * This abstract view model is the parent for the actual weather view models.
+ *
+ * @version December, 2020
+ */
 public abstract class WeatherViewModel extends AndroidViewModel {
 
     protected MutableLiveData<JSONObject> mResponse;
 
+    /**
+     * Default constructor for this view model.
+     * @param application reference to the current application
+     */
     public WeatherViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>(new JSONObject());
@@ -37,6 +46,11 @@ public abstract class WeatherViewModel extends AndroidViewModel {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Makes a request to the web service to get weather information at the given location.
+     * @param lat the latitude of the location
+     * @param lon the longitude of the location
+     */
     public abstract void connect(final double lat, final double lon);
 
     protected void handleError(final VolleyError error) {

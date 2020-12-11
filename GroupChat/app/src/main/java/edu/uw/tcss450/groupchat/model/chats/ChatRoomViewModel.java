@@ -33,6 +33,11 @@ import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 
+/**
+ * View Model for the list of chat rooms, recent and all.
+ *
+ * @version December, 2020
+ */
 public class ChatRoomViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
@@ -43,6 +48,11 @@ public class ChatRoomViewModel extends AndroidViewModel {
 
     private MutableLiveData<Integer> mCurrentRoom;
 
+    /**
+     * Main default constructor the this ViewModel.
+     *
+     * @param application reference to the current application.
+     */
     public ChatRoomViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>(new JSONObject());
@@ -51,34 +61,72 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mCurrentRoom = new MutableLiveData<>(-1);
     }
 
+    /**
+     * Add an observer to the response object.
+     *
+     * @param owner the LifecycleOwner object of the chat room
+     * @param observer an observer to observe
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Add an observer to the main list of rooms.
+     *
+     * @param owner the LifecycleOwner object of the chat room
+     * @param observer an observer to observe
+     */
     public void addRoomsObserver(@NonNull LifecycleOwner owner,
                                  @NonNull Observer<? super List<ChatRoom>> observer) {
         mRooms.observe(owner, observer);
     }
 
+    /**
+     * Add an observer to the list of recent rooms.
+     *
+     * @param owner the LifecycleOwner object of the chat room
+     * @param observer an observer to observe
+     */
     public void addRecentObserver(@NonNull LifecycleOwner owner,
                                  @NonNull Observer<? super Map<ChatRoom, ChatMessage>> observer) {
         mRecent.observe(owner, observer);
     }
 
+    /**
+     * Add an observer to the current room object.
+     *
+     * @param owner the LifecycleOwner object of the chat room
+     * @param observer an observer to observe
+     */
     public void addCurrentRoomObserver(@NonNull LifecycleOwner owner,
                                        @NonNull Observer<? super Integer> observer) {
         mCurrentRoom.observe(owner, observer);
     }
 
+    /**
+     * Returns the chat id of the current chat room.
+     * @return chat id of current room
+     */
     public int getCurrentRoom() {
         return mCurrentRoom.getValue();
     }
 
+    /**
+     * Returns the list of ChatRoom objects.
+     * @return list of chat rooms
+     */
     public List<ChatRoom> getRooms() {
         return mRooms.getValue();
     }
 
+    /**
+     * Returns the chat id of the room given its name.
+     *
+     * @param name name of the chat room to get
+     * @return chat id of chat room
+     */
     public int getRoomFromName(final String name) {
         for (ChatRoom room : mRooms.getValue()) {
             if (name.equals(room.getName())) {
@@ -88,46 +136,19 @@ public class ChatRoomViewModel extends AndroidViewModel {
         return -1;
     }
 
-    public void connectAddToChat(final String jwt, final String email, final int chatId) {
-        String url = getApplication().getResources().getString(R.string.base_url)
-                + "chats/" + chatId;
-
-        JSONObject body = new JSONObject();
-        try {
-            body.put("email", email);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Request request = new JsonObjectRequest(
-                Request.Method.PUT,
-                url,
-                body, //user email to add to chat room
-                mResponse::setValue,
-                this::handleError) {
-
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                //add headers <key, value>
-                headers.put("Authorization", jwt);
-                return headers;
-            }
-        };
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                10_000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        //Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
-    }
-
+    /**
+     * Sets the current chat room id.
+     * @param id chat id of current room
+     */
     public void setCurrentRoom(final int id) {
         mCurrentRoom.setValue(id);
     }
 
+    /**
+     * Makes a request to the web service to get the list of chat rooms available to the user.
+     *
+     * @param jwt the user's signed JWT
+     */
     public void connect(final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "chatrooms";
@@ -157,6 +178,11 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    /**
+     * Makes a request to the web service to get the most recently updated chat rooms.
+     *
+     * @param jwt the user's signed JWT
+     */
     public void connectRecent(final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "chatrooms/recent";
@@ -186,6 +212,12 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    /**
+     * Makes a request to the web service to create a new chat room.
+     *
+     * @param jwt the user's signed JWT
+     * @param name the name of the chat room to create
+     */
     public void connectCreate(final String jwt, final String name) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "chats?name=";
@@ -222,6 +254,56 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    /**
+     * Makes a request to the web service to add a user to a chat room.
+     *
+     * @param jwt the user's signed JWT
+     * @param email the email of the user to add
+     * @param chatId the chat room id to add to
+     */
+    public void connectAddToChat(final String jwt, final String email, final int chatId) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chats/" + chatId;
+
+        JSONObject body = new JSONObject();
+        try {
+            body.put("email", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Request request = new JsonObjectRequest(
+                Request.Method.PUT,
+                url,
+                body, //user email to add to chat room
+                mResponse::setValue,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                //add headers <key, value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        //Instantiate the RequestQueue and add the request to the queue
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+    }
+
+    /**
+     * Makes a request to the web service to remove the user from a chat room.
+     *
+     * @param jwt the user's signed JWT
+     * @param roomId the chat id of the room to leave
+     * @param email the email of the user to leave
+     */
     public void connectLeave(final String jwt, final int roomId, final String email){
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "chats/" + roomId + "/" + email;

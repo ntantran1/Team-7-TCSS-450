@@ -12,29 +12,55 @@ import com.android.volley.toolbox.Volley;
 
 import edu.uw.tcss450.groupchat.R;
 
+/**
+ * This view model handles the response from the web service for getting weather information
+ * for the searched location.
+ *
+ * @version December, 2020
+ */
 public class WeatherSearchViewModel extends WeatherViewModel {
 
     private Location mLocation;
 
     private boolean mInit = false;
 
+    /**
+     * Default constructor for this view model.
+     * @param application reference to the current application
+     */
     public WeatherSearchViewModel(@NonNull Application application) {
         super(application);
     }
 
+    /**
+     * Returns whether or not the view model has been initialized.
+     * @return true if the view model has been initialized
+     */
     public boolean isInitialized() {
         return mInit;
     }
 
+    /**
+     * Initializes the view model with the given location.
+     * @param location the location to initialize with
+     */
     public void initialize(final Location location) {
         mInit = true;
         mLocation = location;
     }
 
+    /**
+     * Returns the saved weather location.
+     * @return the saved location
+     */
     public Location getLocation() {
         return new Location(mLocation);
     }
 
+    /**
+     * Sets the location for this view model to the passed location.
+     * @param location the location to set
+     */
     public void setLocation(final Location location) {
         if (mLocation == null
                 || location.getLatitude() != mLocation.getLatitude()
@@ -43,6 +69,11 @@ public class WeatherSearchViewModel extends WeatherViewModel {
         }
     }
 
+    /**
+     * Makes a request to the web service to get weather information at the given location.
+     * @param lat the latitude of the location
+     * @param lon the longitude of the location
+     */
     public void connect(final double lat, final double lon) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "weather?lat=" + lat + "&lon=" + lon;
@@ -64,9 +95,8 @@ public class WeatherSearchViewModel extends WeatherViewModel {
     }
 
     /**
-     * Perform an HTTP request to retrieve current weather information.
-     *
-     * @param zip current location zip code
+     * Makes a request to the web service to get weather information at the given location.
+     * @param zip the zip code to get weather of
      */
     public void connectZip(final String zip) {
         String url = getApplication().getResources().getString(R.string.base_url)
