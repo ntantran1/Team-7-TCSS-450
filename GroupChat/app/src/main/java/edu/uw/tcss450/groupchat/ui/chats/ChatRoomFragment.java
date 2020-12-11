@@ -167,6 +167,10 @@ public class ChatRoomFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Show a list of members who are part of a chatroom
+     * via alert dialog
+     */
     private void showMembers() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Chat Members");
@@ -188,6 +192,9 @@ public class ChatRoomFragment extends Fragment {
         });
     }
 
+    /**
+     * Prompt to add contact to a chat via alert dialog
+     */
     private void addUserToChat() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Add from Contacts");
@@ -207,8 +214,7 @@ public class ChatRoomFragment extends Fragment {
                     .getCurrentDestination().getLabel();
             mRoomModel.connectAddToChat(mUserModel.getJwt(), contactId, mRoomModel.getCurrentRoom());
             mMembersModel.addMember(mRoomArgs.getRoom().getId(), contactId);
-            Toast.makeText(getContext(), contactId + " has been added to " + chatName,
-                    Toast.LENGTH_LONG).show();
+
         });
 
         builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
@@ -217,6 +223,9 @@ public class ChatRoomFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Method deletes the user from chatroom
+     */
     private void leaveRoom() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Leave Room?");
@@ -228,7 +237,6 @@ public class ChatRoomFragment extends Fragment {
             String chatName = (String) navController.getCurrentDestination().getLabel();
             navController.navigate(ChatRoomFragmentDirections.
                     actionChatDisplayFragmentToNavigationChats());
-            Toast.makeText(getContext(), "You left " + chatName, Toast.LENGTH_LONG).show();
         });
 
         builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());

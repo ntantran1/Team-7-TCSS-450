@@ -198,11 +198,18 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
         return time;
     }
 
+    /**
+     * ViewHolder for received messages only
+     */
     class ViewHolderReceived extends RecyclerView.ViewHolder {
 
         TextView senderName, receivedMessage, receivedTime;
         ImageView receivedImage;
 
+        /**
+         * Constructor for received message view holder
+         * @param itemView
+         */
         public ViewHolderReceived(@NonNull View itemView) {
             super(itemView);
 
@@ -213,11 +220,18 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
         }
     }
 
+    /**
+     * View Holder sent messages
+     */
     class ViewHolderSent extends RecyclerView.ViewHolder {
 
         TextView sentMessage, sentTime;
         ImageView sentImage;
 
+        /**
+         * Constructor for sent messages view holder
+         * @param itemView
+         */
         public ViewHolderSent(@NonNull View itemView) {
             super(itemView);
 
