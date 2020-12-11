@@ -28,7 +28,9 @@ import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for Google Maps service of weather.
+ *
+ * @version December 2020
  */
 public class WeatherMapFragment extends Fragment implements
         OnMapReadyCallback, GoogleMap.OnMapClickListener {
@@ -41,6 +43,9 @@ public class WeatherMapFragment extends Fragment implements
 
     private Marker mMarker;
 
+    /**
+     * Default public constructor.
+     */
     public WeatherMapFragment() {
         // Required empty public constructor
     }

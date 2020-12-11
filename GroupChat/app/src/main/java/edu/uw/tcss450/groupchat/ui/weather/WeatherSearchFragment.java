@@ -39,7 +39,9 @@ import edu.uw.tcss450.groupchat.model.weather.WeatherSearchDailyViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for custom location search of weather.
+ *
+ * @version December 2020
  */
 public class WeatherSearchFragment extends Fragment {
 
