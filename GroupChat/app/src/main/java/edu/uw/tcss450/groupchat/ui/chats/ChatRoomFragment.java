@@ -214,7 +214,8 @@ public class ChatRoomFragment extends Fragment {
                     .getCurrentDestination().getLabel();
             mRoomModel.connectAddToChat(mUserModel.getJwt(), contactId, mRoomModel.getCurrentRoom());
             mMembersModel.addMember(mRoomArgs.getRoom().getId(), contactId);
-
+            Toast.makeText(getContext(), contactId + " has been added to " + chatName,	
+                    Toast.LENGTH_LONG).show();
         });
 
         builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
@@ -237,6 +238,7 @@ public class ChatRoomFragment extends Fragment {
             String chatName = (String) navController.getCurrentDestination().getLabel();
             navController.navigate(ChatRoomFragmentDirections.
                     actionChatDisplayFragmentToNavigationChats());
+            Toast.makeText(getContext(), "You left " + chatName, Toast.LENGTH_LONG).show();
         });
 
         builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
