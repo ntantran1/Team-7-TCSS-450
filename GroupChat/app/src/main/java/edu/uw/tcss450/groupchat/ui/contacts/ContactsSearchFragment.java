@@ -21,7 +21,9 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for searching contacts tab.
+ *
+ * @version December 2020
  */
 public class ContactsSearchFragment extends Fragment {
 

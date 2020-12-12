@@ -97,9 +97,9 @@ public class ChatRoomFragment extends Fragment {
 
         FragmentChatRoomBinding binding = FragmentChatRoomBinding.bind(getView());
 
+        // define the action for the interface class
         binding.edittextChatbox.setKeyBoardInputCallbackListener((inputContentInfo, flags, opts) -> {
             // use image here
-            //mSendModel.uploadImage(inputContentInfo.getLinkUri().toString());
             mSendModel.sendMessage(args.getRoom().getId(),
                     mUserModel.getJwt(),
                     inputContentInfo.getLinkUri().toString());
@@ -167,6 +167,10 @@ public class ChatRoomFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Show a list of members who are part of a chatroom
+     * via alert dialog
+     */
     private void showMembers() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Chat Members");
@@ -188,6 +192,9 @@ public class ChatRoomFragment extends Fragment {
         });
     }
 
+    /**
+     * Prompt to add contact to a chat via alert dialog
+     */
     private void addUserToChat() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Add from Contacts");
@@ -207,7 +214,7 @@ public class ChatRoomFragment extends Fragment {
                     .getCurrentDestination().getLabel();
             mRoomModel.connectAddToChat(mUserModel.getJwt(), contactId, mRoomModel.getCurrentRoom());
             mMembersModel.addMember(mRoomArgs.getRoom().getId(), contactId);
-            Toast.makeText(getContext(), contactId + " has been added to " + chatName,
+            Toast.makeText(getContext(), contactId + " has been added to " + chatName,	
                     Toast.LENGTH_LONG).show();
         });
 
@@ -217,6 +224,9 @@ public class ChatRoomFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Method deletes the user from chatroom
+     */
     private void leaveRoom() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Leave Room?");

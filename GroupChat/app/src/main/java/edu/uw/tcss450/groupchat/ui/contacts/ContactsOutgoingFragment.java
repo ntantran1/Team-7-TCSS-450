@@ -20,7 +20,9 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsOutgoingViewModel;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for outgoing contact requests tab.
+ *
+ * @version December 2020
  */
 public class ContactsOutgoingFragment extends Fragment {
 

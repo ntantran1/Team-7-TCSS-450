@@ -8,6 +8,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+/**
+ * This view model handles the location information.
+ *
+ * @version December, 2020
+ */
 public class LocationViewModel extends ViewModel {
 
     private MutableLiveData<Location> mLocation;

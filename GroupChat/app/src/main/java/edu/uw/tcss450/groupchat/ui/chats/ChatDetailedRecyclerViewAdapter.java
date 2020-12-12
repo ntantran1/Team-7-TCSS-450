@@ -28,6 +28,13 @@ import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
 import edu.uw.tcss450.groupchat.ui.HomeFragmentDirections;
 
+/**
+ * This class is a Recycler View Adapter for chats
+ * displays a list of chat rooms a user is part of
+ * will display latest message and sender i.e. chat room details.
+ *
+ * @version December 10, 2020
+ */
 public class ChatDetailedRecyclerViewAdapter extends
         RecyclerView.Adapter<ChatDetailedRecyclerViewAdapter.DetailedViewHolder> {
 
@@ -43,6 +50,11 @@ public class ChatDetailedRecyclerViewAdapter extends
 
     private UserInfoViewModel mUserModel;
 
+    /**
+     * Constructor for recyclerview adapter
+     * @param chats maps messages in a room
+     * @param activity
+     */
     public ChatDetailedRecyclerViewAdapter(Map<ChatRoom, ChatMessage> chats, FragmentActivity activity) {
         mRooms = new ArrayList<>();
         mMessages = new ArrayList<>();
@@ -55,6 +67,7 @@ public class ChatDetailedRecyclerViewAdapter extends
         mMessageModel = new ViewModelProvider(activity).get(ChatMessageViewModel.class);
         mUserModel = new ViewModelProvider(activity).get(UserInfoViewModel.class);
     }
+
 
     @NonNull
     @Override
@@ -74,6 +87,9 @@ public class ChatDetailedRecyclerViewAdapter extends
         return mRooms.size();
     }
 
+    /**
+     * ViewHolder for  this class's recyclerview adapter
+     */
     class DetailedViewHolder extends RecyclerView.ViewHolder {
 
         private final View mView;
@@ -93,10 +109,16 @@ public class ChatDetailedRecyclerViewAdapter extends
             binding = FragmentChatDetailedBinding.bind(view);
         }
 
+        /**
+         * Sets how the chat messages are displayed
+         * @param room chat room
+         * @param message messages sent/received
+         */
         void setChat(final ChatRoom room, final ChatMessage message) {
             mRoom = room;
             mMessageModel.getFirstMessages(room.getId(), mUserModel.getJwt());
 
+            //set label text to chatroom name
             binding.labelChatName.setText(room.getName());
             binding.textMessageName.setText(message.getSender());
             if (message.getMessage().length() > 25) {
@@ -107,6 +129,7 @@ public class ChatDetailedRecyclerViewAdapter extends
             binding.textMessageTime.setText(getLocalTime(message.getTimeStamp()));
             binding.imageNotification.setVisibility(View.INVISIBLE);
 
+            //navigate to the selected chat room
             mView.setOnClickListener(view -> {
                 NavController navController = Navigation.findNavController(mView);
 
@@ -115,6 +138,7 @@ public class ChatDetailedRecyclerViewAdapter extends
                         .actionNavigationHomeToChatDisplayFragment(mRoom));
             });
 
+            //keeps track of notifications
             mNewChatModel.addMessageCountObserver(mActivity, notifications -> {
                 int count = 0;
                 if (notifications.containsKey(mRoom.getId())) {
@@ -131,6 +155,11 @@ public class ChatDetailedRecyclerViewAdapter extends
             });
         }
 
+        /**
+         * Method gets and formats time of a message sent/received
+         * @param timeStamp
+         * @return
+         */
         private String getLocalTime(final String timeStamp) {
             SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
             SimpleDateFormat other = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
