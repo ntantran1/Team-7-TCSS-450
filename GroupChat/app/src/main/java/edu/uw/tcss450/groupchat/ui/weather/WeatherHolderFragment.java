@@ -42,7 +42,7 @@ public class WeatherHolderFragment extends Fragment {
         new TabLayoutMediator(binding.tabLayout, binding.viewPager, (tab, position) -> {
             switch (position) {
                 case 1:
-                    tab.setText("Searched");
+                    tab.setText("Search");
                     break;
                 case 2:
                     tab.setText("Map");

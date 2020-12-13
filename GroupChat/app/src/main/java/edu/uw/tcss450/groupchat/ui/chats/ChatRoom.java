@@ -45,7 +45,8 @@ public class ChatRoom implements Serializable, Comparable<ChatRoom> {
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof ChatRoom)) return false;
-        return mId == ((ChatRoom) other).getId();
+        if (mId != ((ChatRoom) other).getId()) return false;
+        return mName.equals(((ChatRoom) other).getName());
     }
 
     @Override

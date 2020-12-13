@@ -39,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:backgroundTint="?attr/colorSurface"
+        android:elevation="1dp"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/ic_chat_add_black_24"

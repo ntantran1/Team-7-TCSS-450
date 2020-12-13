@@ -10,7 +10,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,8 +145,11 @@ public class ContactsRecyclerViewAdapter extends
                     binding.imageChat.setOnClickListener(this::addUserToChat);
                     binding.imageRemove.setOnClickListener(click -> {
                         mContactsModel.connectRemove(jwt, email);
-                        Toast.makeText(mActivity, "Removed " + name,
-                                Toast.LENGTH_LONG).show();
+                        Snackbar snack = Snackbar.make(mView, "Removed " + name + " from contacts",
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
                     });
                     binding.imageAdd.setVisibility(View.INVISIBLE);
                     binding.imageAccept.setVisibility(View.INVISIBLE);
@@ -152,13 +158,19 @@ public class ContactsRecyclerViewAdapter extends
                 case 2:
                     binding.imageAccept.setOnClickListener(click -> {
                         mIncomingModel.connectAccept(jwt, email);
-                        Toast.makeText(mActivity, "Accepted " + name,
-                                Toast.LENGTH_LONG).show();
+                        Snackbar snack = Snackbar.make(mView, "Accepted " + name + "'s request",
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
                     });
                     binding.imageReject.setOnClickListener(click -> {
                         mIncomingModel.connectReject(jwt, email);
-                        Toast.makeText(mActivity, "Rejected " + name,
-                                Toast.LENGTH_LONG).show();
+                        Snackbar snack = Snackbar.make(mView, "Rejected " + name + "'s request",
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
                     });
                     binding.imageAdd.setVisibility(View.INVISIBLE);
                     binding.imageRemove.setVisibility(View.INVISIBLE);
@@ -167,8 +179,11 @@ public class ContactsRecyclerViewAdapter extends
                 case 3:
                     binding.imageRemove.setOnClickListener(click -> {
                         mOutgoingModel.connectCancel(jwt, email);
-                        Toast.makeText(mActivity, "Removed request",
-                                Toast.LENGTH_LONG).show();
+                        Snackbar snack = Snackbar.make(mView, "Removed request to " + name,
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
                     });
                     binding.imageAdd.setVisibility(View.INVISIBLE);
                     binding.imageAccept.setVisibility(View.INVISIBLE);
@@ -178,8 +193,11 @@ public class ContactsRecyclerViewAdapter extends
                 case 4:
                     binding.imageAdd.setOnClickListener(click -> {
                         mSearchModel.connectAdd(jwt, email);
-                        Toast.makeText(mActivity, "Sent request to " + name,
-                                Toast.LENGTH_LONG).show();
+                        Snackbar snack = Snackbar.make(mView, "Sent request to " + name,
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
                     });
                     binding.imageAccept.setVisibility(View.INVISIBLE);
                     binding.imageReject.setVisibility(View.INVISIBLE);
@@ -208,9 +226,11 @@ public class ContactsRecyclerViewAdapter extends
             dialog.setPositiveButton("Add", (dlg, i) -> {
                 int roomId = mChatRoomModel.getRoomFromName(roomNames[selected.get()]);
                 mContactsModel.connectAdd(mUserModel.getJwt(), mContact.getEmail(), roomId);
-                Toast.makeText(mActivity,
-                        mContact.getUsername() + " has been added to " + roomNames[selected.get()],
-                        Toast.LENGTH_LONG).show();
+                Snackbar snack = Snackbar.make(mView, mContact.getUsername() + "has been added to "
+                         + roomNames[selected.get()], Snackbar.LENGTH_LONG);
+                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                snack.show();
                 dlg.dismiss();
             });
 
