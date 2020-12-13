@@ -51,7 +51,7 @@ import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 /**
  * Activity after the user is authenticated, for all the features of the application.
  *
- * @version December 4, 2020
+ * @version December, 2020
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity {
         };
         createLocationRequest();
 
-        binding.navView.getOrCreateBadge(R.id.navigation_chats).setVisible(false);
-        binding.navView.getOrCreateBadge(R.id.navigation_contacts).setVisible(false);
+        binding.navView.removeBadge(R.id.navigation_chats);
+        binding.navView.removeBadge(R.id.navigation_contacts);
 
         chatRoomModel.addCurrentRoomObserver(this, chatId -> mNewChatModel.reset(chatId));
 
@@ -179,8 +179,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //remove badge
                 if (mNewChatModel.getNewChatCount() == 0) {
-                    badge.clearNumber();
-                    badge.setVisible(false);
+                    binding.navView.removeBadge(R.id.navigation_chats);
                 } else {
                     badge.setNumber(mNewChatModel.getNewChatCount());
                     badge.setVisible(true);
@@ -199,8 +198,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //remove badge
                 if (mNewChatModel.getNewMessageCount() == 0) {
-                    badge.clearNumber();
-                    badge.setVisible(false);
+                    binding.navView.removeBadge(R.id.navigation_chats);
                 } else {
                     badge.setNumber(mNewChatModel.getNewMessageCount());
                     badge.setVisible(true);
@@ -218,8 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 badge.setVisible(true);
             } else {
                 //remove badge
-                badge.clearNumber();
-                badge.setVisible(false);
+                binding.navView.removeBadge(R.id.navigation_contacts);
             }
         });
     }

@@ -12,13 +12,17 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -209,19 +213,46 @@ public class ChatRoomFragment extends Fragment {
         builder.setSingleChoiceItems(contactNames, selected.get(), (dlg, i) -> selected.set(i));
 
         builder.setPositiveButton("Add", (dlg, i) -> {
-            String contactId = mContactModel.getContactFromUserName(contactNames[selected.get()]);
-            String chatName = (String) Navigation.findNavController(getView())
-                    .getCurrentDestination().getLabel();
-            mRoomModel.connectAddToChat(mUserModel.getJwt(), contactId, mRoomModel.getCurrentRoom());
-            mMembersModel.addMember(mRoomArgs.getRoom().getId(), contactId);
-            Toast.makeText(getContext(), contactId + " has been added to " + chatName,	
-                    Toast.LENGTH_LONG).show();
+            // do nothing because it's going to be overridden
         });
 
         builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
 
         final AlertDialog dialog = builder.create();
         dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
+            String email = mContactModel.getContactFromUserName(contactNames[selected.get()]);
+            mRoomModel.connectAddToChat(mUserModel.getJwt(), email, mRoomModel.getCurrentRoom());
+
+            mRoomModel.addResponseObserver(getViewLifecycleOwner(), response -> {
+                if (response.length() > 0) {
+                    if (response.has("code")) {
+                        try {
+                            Snackbar snack = Snackbar.make(view,
+                                    response.getJSONObject("data").getString("message"),
+                                    Snackbar.LENGTH_LONG);
+                            snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                    .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                            snack.show();
+                        } catch (JSONException e) {
+                            Log.e("JSON Parse Error", e.getMessage());
+                        }
+                    } else {
+                        mMembersModel.addMember(mRoomArgs.getRoom().getId(), email);
+                        String chatName = (String) Navigation.findNavController(getView())
+                                .getCurrentDestination().getLabel();
+                        Snackbar snack = Snackbar.make(getView(), email + " has been added to "
+                                + chatName, Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
+                    }
+                } else {
+                    Log.d("JSON Response", "No Response");
+                }
+            });
+        });
     }
 
     /**
@@ -238,7 +269,10 @@ public class ChatRoomFragment extends Fragment {
             String chatName = (String) navController.getCurrentDestination().getLabel();
             navController.navigate(ChatRoomFragmentDirections.
                     actionChatDisplayFragmentToNavigationChats());
-            Toast.makeText(getContext(), "You left " + chatName, Toast.LENGTH_LONG).show();
+            Snackbar snack = Snackbar.make(getView(), "You left " + chatName, Snackbar.LENGTH_LONG);
+            snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                    .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            snack.show();
         });
 
         builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());

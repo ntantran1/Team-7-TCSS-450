@@ -6,6 +6,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * The ChatMessage class represents a single chat in a room.
@@ -112,6 +116,14 @@ public final class ChatMessage implements Serializable, Comparable<ChatMessage> 
 
     @Override
     public int compareTo(ChatMessage other) {
-        return mTimeStamp.compareToIgnoreCase(other.getTimeStamp());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+        Date d1 = null, d2 = null;
+        try {
+            d1 = sdf.parse(mTimeStamp);
+            d2 = sdf.parse(other.getTimeStamp());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return d2.compareTo(d1);
     }
 }

@@ -21,12 +21,14 @@ import org.json.JSONObject;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
@@ -56,8 +58,9 @@ public class ChatRoomViewModel extends AndroidViewModel {
     public ChatRoomViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>(new JSONObject());
-        mRooms = new MutableLiveData<>(new ArrayList<>());
-        mRecent = new MutableLiveData<>(new TreeMap<>());
+        mRooms = new MutableLiveData<>();
+        mRecent = new MutableLiveData<>();
+        initRooms();
         mCurrentRoom = new MutableLiveData<>(-1);
     }
 
@@ -357,7 +360,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
     }
 
     private void handleRecent(final JSONObject result) {
-        Map<ChatRoom, ChatMessage> chats = new TreeMap<>();
+        Map<ChatRoom, ChatMessage> chats = new HashMap<>();
         try {
             if (result.has("chats")) {
                 JSONArray rooms = result.getJSONArray("chats");
@@ -381,7 +384,14 @@ public class ChatRoomViewModel extends AndroidViewModel {
             e.printStackTrace();
             Log.e("ERROR", e.getMessage());
         }
-        mRecent.setValue(chats);
+        Map<ChatRoom, ChatMessage> recent = chats.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        mRecent.setValue(recent);
     }
 
     private void handleError(final VolleyError error) {
@@ -405,5 +415,15 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 Log.e("JSON PARSE", "JSON Parse Error in handleError");
             }
         }
+    }
+
+    private void initRooms() {
+        List<ChatRoom> rooms = new ArrayList<>();
+        rooms.add(new ChatRoom(0, "init"));
+        mRooms.setValue(rooms);
+
+        Map<ChatRoom, ChatMessage> recent = new HashMap<>();
+        recent.put(new ChatRoom(0, "init"), new ChatMessage(0, "", "", ""));
+        mRecent.setValue(recent);
     }
 }

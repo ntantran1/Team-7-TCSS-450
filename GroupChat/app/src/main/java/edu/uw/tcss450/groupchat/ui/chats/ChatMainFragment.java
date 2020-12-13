@@ -14,7 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 
@@ -78,9 +79,15 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
                 mModel.connect(mUserModel.getJwt()));
 
         mModel.addRoomsObserver(getViewLifecycleOwner(), rooms -> {
-            rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
-            binding.swipeContainer.setRefreshing(false);
-            binding.chatWait.setVisibility(View.GONE);
+            if (rooms.size() != 1) {
+                rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
+                binding.swipeContainer.setRefreshing(false);
+                binding.chatWait.setVisibility(View.GONE);
+            } else if (!rooms.get(0).equals(new ChatRoom(0, "init"))) {
+                rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
+                binding.swipeContainer.setRefreshing(false);
+                binding.chatWait.setVisibility(View.GONE);
+            }
         });
 
         binding.buttonStartChatRoom.setOnClickListener(this);
@@ -119,8 +126,11 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
                             }
                         } else {
                             mModel.connect(mUserModel.getJwt());
-                            Toast.makeText(getContext(), "You created " + chatName,
-                                    Toast.LENGTH_LONG).show();
+                            Snackbar snack = Snackbar.make(v, "You created "
+                                    + chatName.getText().toString(), Snackbar.LENGTH_LONG);
+                            snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                    .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                            snack.show();
                             dialog.dismiss();
                         }
                     } else {

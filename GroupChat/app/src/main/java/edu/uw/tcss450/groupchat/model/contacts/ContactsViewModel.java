@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
 /**
@@ -43,9 +42,10 @@ public abstract class ContactsViewModel extends AndroidViewModel {
      */
     public ContactsViewModel(@NonNull Application application) {
         super(application);
-        mResponse = new MutableLiveData<>(new JSONObject());
-        mContacts = new MutableLiveData<>(new ArrayList<>());
+        mResponse = new MutableLiveData<>();
+        mContacts = new MutableLiveData<>();
         mContactType = -1;
+        initValues();
     }
 
     /**
@@ -141,5 +141,16 @@ public abstract class ContactsViewModel extends AndroidViewModel {
                 Log.e("JSON PARSE", "JSON Parse Error in handleError");
             }
         }
+    }
+
+    private void initValues() {
+        try {
+            mResponse.setValue(new JSONObject("{\"init\":\"init\"}"));
+        } catch (JSONException e) {
+            Log.d("JSON Error", e.getMessage());
+        }
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(new Contact("", "", "", 0));
+        mContacts.setValue(contacts);
     }
 }

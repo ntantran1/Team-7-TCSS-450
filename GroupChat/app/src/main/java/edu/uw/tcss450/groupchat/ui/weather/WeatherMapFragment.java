@@ -1,6 +1,5 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
-import android.app.AlertDialog;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -21,6 +20,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.snackbar.Snackbar;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherMapBinding;
@@ -73,15 +73,15 @@ public class WeatherMapFragment extends Fragment implements
                 LatLng latLng = mMarker.getPosition();
                 mWeatherModel.connect(latLng.latitude, latLng.longitude);
 
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                dialog.setMessage("Searched Weather updated!");
-                dialog.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
-                dialog.show();
+                Snackbar snack = Snackbar.make(getView(), "Location updated!", Snackbar.LENGTH_LONG);
+                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                snack.show();
             } else {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                dialog.setMessage("No location selected!");
-                dialog.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
-                dialog.show();
+                Snackbar snack = Snackbar.make(getView(), "No location!", Snackbar.LENGTH_LONG);
+                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                snack.show();
             }
         });
 
@@ -92,10 +92,10 @@ public class WeatherMapFragment extends Fragment implements
             Location location = mModel.getCurrentLocation();
             mWeatherModel.connect(location.getLatitude(), location.getLongitude());
 
-            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-            dialog.setMessage("Searched Weather reset!");
-            dialog.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
-            dialog.show();
+            Snackbar snack = Snackbar.make(getView(), "Location reset!", Snackbar.LENGTH_LONG);
+            snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                    .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            snack.show();
         });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used
@@ -116,7 +116,6 @@ public class WeatherMapFragment extends Fragment implements
                 googleMap.setMyLocationEnabled(true);
 
                 final LatLng c = new LatLng(location.getLatitude(), location.getLongitude());
-                // Zoom levels are from 2.0f (zoomed out) to 21.0f (zoomed in)
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(c, 15.0f));
             }
         });
