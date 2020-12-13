@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -122,23 +124,20 @@ public class ChatRoomFragment extends Fragment {
 
         //When the user scrolls to the top of the RV, the swiper list will "refresh"
         //The user is out of messages, go out to the service and get more
-        binding.swipeContainer.setOnRefreshListener(() -> {
-            mChatModel.getNextMessages(args.getRoom().getId(), mUserModel.getJwt());
-        });
+        binding.swipeContainer.setOnRefreshListener(() ->
+                mChatModel.getNextMessages(args.getRoom().getId(), mUserModel.getJwt()));
 
-        mChatModel.addMessageObserver(args.getRoom().getId(), getViewLifecycleOwner(),
-                list -> {
-                    /*
-                     * This solution needs work on the scroll position. As a group,
-                     * you will need to come up with some solution to manage the
-                     * recyclerview scroll position. You also should consider a
-                     * solution for when the keyboard is on the screen.
-                     */
-                    //inform the RV that the underlying list has (possibly) changed
-                    rv.getAdapter().notifyDataSetChanged();
-                    rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
-                    binding.swipeContainer.setRefreshing(false);
-                });
+        mChatModel.addMessageObserver(args.getRoom().getId(), getViewLifecycleOwner(), list -> {
+            int pos = ((LinearLayoutManager) rv.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+            //inform the RV that the underlying list has (possibly) changed
+            rv.getAdapter().notifyDataSetChanged();
+            if (rv.getAdapter().getItemCount() > 15) {
+                rv.scrollToPosition(pos + 15);
+            } else {
+                rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
+            }
+            binding.swipeContainer.setRefreshing(false);
+        });
         //Send button click -> send message via SendViewModel
         binding.buttonChatboxSend.setOnClickListener(button -> {
             mSendModel.sendMessage(args.getRoom().getId(),
