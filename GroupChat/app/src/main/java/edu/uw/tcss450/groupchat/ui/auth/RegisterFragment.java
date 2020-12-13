@@ -40,6 +40,7 @@ public class RegisterFragment extends Fragment {
             .and(checkPwdSpecialChar("@"));
 
     private final PasswordValidator mUsernameValidator = checkPwdLength(1)
+            .and(checkPwdDoNotInclude("+"))
             .and(checkExcludeWhiteSpace());
 
     private final PasswordValidator mPasswordValidator =
@@ -90,28 +91,40 @@ public class RegisterFragment extends Fragment {
         mNameValidator.processResult(
                 mNameValidator.apply(binding.editFirst.getText().toString().trim()),
                 this::validateLast,
-                result -> binding.editFirst.setError("Please enter a first name."));
+                result -> {
+                    binding.editFirst.setError("Please enter a first name.");
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void validateLast() {
         mNameValidator.processResult(
                 mNameValidator.apply(binding.editLast.getText().toString().trim()),
                 this::validateUsername,
-                result -> binding.editLast.setError("Please enter a last name."));
+                result -> {
+                    binding.editLast.setError("Please enter a last name.");
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void validateUsername() {
         mUsernameValidator.processResult(
                 mUsernameValidator.apply(binding.editUsername.getText().toString().trim()),
                 this::validateEmail,
-                result -> binding.editUsername.setError("Please enter a valid Username."));
+                result -> {
+                    binding.editUsername.setError("Please enter a valid Username.");
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void validateEmail() {
         mEmailValidator.processResult(
                 mEmailValidator.apply(binding.editEmail.getText().toString().trim()),
                 this::validatePasswordsMatch,
-                result -> binding.editEmail.setError("Please enter a valid Email address."));
+                result -> {
+                    binding.editEmail.setError("Please enter a valid Email address.");
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void validatePasswordsMatch() {
@@ -122,14 +135,20 @@ public class RegisterFragment extends Fragment {
         mEmailValidator.processResult(
                 matchValidator.apply(binding.editPassword1.getText().toString().trim()),
                 this::validatePassword,
-                result -> binding.editPassword1.setError("Passwords must match."));
+                result -> {
+                    binding.editPassword1.setError("Passwords must match.");
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void validatePassword() {
         mPasswordValidator.processResult(
                 mPasswordValidator.apply(binding.editPassword1.getText().toString()),
                 this::verifyAuthWithServer,
-                result -> binding.editPassword1.setError("Please enter a valid Password."));
+                result -> {
+                    binding.editPassword1.setError("Please enter a valid Password.");
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void verifyAuthWithServer() {

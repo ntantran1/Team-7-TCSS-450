@@ -137,14 +137,13 @@ public class ContactsRecyclerViewAdapter extends
             binding.textEmail.setText(mContact.getEmail());
 
             final String jwt = mUserModel.getJwt();
-            final String email = mContact.getEmail();
             final String name = mContact.getUsername();
 
             switch (mContact.getType()) {
                 case 1:
                     binding.imageChat.setOnClickListener(this::addUserToChat);
                     binding.imageRemove.setOnClickListener(click -> {
-                        mContactsModel.connectRemove(jwt, email);
+                        mContactsModel.connectRemove(jwt, name);
                         Snackbar snack = Snackbar.make(mView, "Removed " + name + " from contacts",
                                 Snackbar.LENGTH_LONG);
                         snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
@@ -157,7 +156,7 @@ public class ContactsRecyclerViewAdapter extends
                     break;
                 case 2:
                     binding.imageAccept.setOnClickListener(click -> {
-                        mIncomingModel.connectAccept(jwt, email);
+                        mIncomingModel.connectAccept(jwt, name);
                         Snackbar snack = Snackbar.make(mView, "Accepted " + name + "'s request",
                                 Snackbar.LENGTH_LONG);
                         snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
@@ -165,7 +164,7 @@ public class ContactsRecyclerViewAdapter extends
                         snack.show();
                     });
                     binding.imageReject.setOnClickListener(click -> {
-                        mIncomingModel.connectReject(jwt, email);
+                        mIncomingModel.connectReject(jwt, name);
                         Snackbar snack = Snackbar.make(mView, "Rejected " + name + "'s request",
                                 Snackbar.LENGTH_LONG);
                         snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
@@ -178,7 +177,7 @@ public class ContactsRecyclerViewAdapter extends
                     break;
                 case 3:
                     binding.imageRemove.setOnClickListener(click -> {
-                        mOutgoingModel.connectCancel(jwt, email);
+                        mOutgoingModel.connectCancel(jwt, name);
                         Snackbar snack = Snackbar.make(mView, "Removed request to " + name,
                                 Snackbar.LENGTH_LONG);
                         snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
@@ -192,7 +191,7 @@ public class ContactsRecyclerViewAdapter extends
                     break;
                 case 4:
                     binding.imageAdd.setOnClickListener(click -> {
-                        mSearchModel.connectAdd(jwt, email);
+                        mSearchModel.connectAdd(jwt, name);
                         Snackbar snack = Snackbar.make(mView, "Sent request to " + name,
                                 Snackbar.LENGTH_LONG);
                         snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
@@ -225,7 +224,7 @@ public class ContactsRecyclerViewAdapter extends
 
             dialog.setPositiveButton("Add", (dlg, i) -> {
                 int roomId = mChatRoomModel.getRoomFromName(roomNames[selected.get()]);
-                mContactsModel.connectAdd(mUserModel.getJwt(), mContact.getEmail(), roomId);
+                mContactsModel.connectAdd(mUserModel.getJwt(), mContact.getUsername(), roomId);
                 Snackbar snack = Snackbar.make(mView, mContact.getUsername() + "has been added to "
                          + roomNames[selected.get()], Snackbar.LENGTH_LONG);
                 snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)

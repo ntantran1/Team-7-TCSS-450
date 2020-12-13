@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.uw.tcss450.groupchat.R;
+import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 
 /**
  * This view model holds a list of the user's contacts.
@@ -64,30 +65,24 @@ public class ContactsMainViewModel extends ContactsViewModel {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 
     /**
      * Makes a request to the web service to add the specified contact to a chat room.
      * @param jwt the user's signed JWT
-     * @param email the email of the contact to add
+     * @param name the username of the user to add
      * @param chatId the chat id of the chat room to add to
      */
-    public void connectAdd(final String jwt, final String email, final int chatId) {
+    public void connectAdd(final String jwt, final String name, final int chatId) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "chats/" + chatId;
-
-        JSONObject body = new JSONObject();
-        try {
-            body.put("email", email);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                + "chats/" + chatId + "/" + name;
 
         Request request = new JsonObjectRequest(
                 Request.Method.PUT,
                 url,
-                body, //user email to add to chat room
+                null,
                 mResponse::setValue,
                 this::handleError) {
 
@@ -106,22 +101,23 @@ public class ContactsMainViewModel extends ContactsViewModel {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 
     /**
      * Makes a request to the web service to remove the specified contact.
      * @param jwt the user's signed JWT
-     * @param email the email of the contact to remove
+     * @param name the username of the contact to remove
      */
-    public void connectRemove(final String jwt, final String email) {
+    public void connectRemove(final String jwt, final String name) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "contacts?email=" + email;
+                + "contacts?name=" + name;
 
         Request request = new JsonObjectRequest(
                 Request.Method.DELETE,
                 url,
-                null, //no body for this delete request
+                null,
                 mResponse::setValue,
                 this::handleError) {
 
@@ -140,6 +136,7 @@ public class ContactsMainViewModel extends ContactsViewModel {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 }
