@@ -147,14 +147,20 @@ public class SignInFragment extends Fragment {
         mEmailValidator.processResult(
                 mEmailValidator.apply(binding.editEmail.getText().toString().trim()),
                 this::validatePassword,
-                result -> binding.editEmail.setError("Please enter a valid Email address."));
+                result -> {
+                    binding.editEmail.setError("Please enter a valid Email address.");
+                    binding.signinWait.setVisibility(View.GONE);
+                });
     }
 
     private void validatePassword() {
         mPassWordValidator.processResult(
                 mPassWordValidator.apply(binding.editPassword.getText().toString()),
                 this::verifyAuthWithServer,
-                result -> binding.editPassword.setError("Please enter a valid Password."));
+                result -> {
+                    binding.editPassword.setError("Please enter a valid Password.");
+                    binding.signinWait.setVisibility(View.GONE);
+                });
     }
 
     private void verifyAuthWithServer() {

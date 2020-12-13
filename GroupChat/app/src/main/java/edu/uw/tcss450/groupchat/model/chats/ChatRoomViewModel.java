@@ -223,7 +223,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
      */
     public void connectCreate(final String jwt, final String name) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "chats?name=";
+                + "chats";
 
         JSONObject body = new JSONObject();
         try {
@@ -261,24 +261,17 @@ public class ChatRoomViewModel extends AndroidViewModel {
      * Makes a request to the web service to add a user to a chat room.
      *
      * @param jwt the user's signed JWT
-     * @param email the email of the user to add
+     * @param name the name of the user to add
      * @param chatId the chat room id to add to
      */
-    public void connectAddToChat(final String jwt, final String email, final int chatId) {
+    public void connectAddToChat(final String jwt, final String name, final int chatId) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "chats/" + chatId;
-
-        JSONObject body = new JSONObject();
-        try {
-            body.put("email", email);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                + "chats/" + chatId + "/" + name;
 
         Request request = new JsonObjectRequest(
                 Request.Method.PUT,
                 url,
-                body, //user email to add to chat room
+                null,
                 mResponse::setValue,
                 this::handleError) {
 
@@ -305,11 +298,10 @@ public class ChatRoomViewModel extends AndroidViewModel {
      *
      * @param jwt the user's signed JWT
      * @param roomId the chat id of the room to leave
-     * @param email the email of the user to leave
      */
-    public void connectLeave(final String jwt, final int roomId, final String email){
+    public void connectLeave(final String jwt, final int roomId){
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "chats/" + roomId + "/" + email;
+                + "chats/" + roomId;
 
         Request request = new JsonObjectRequest(
                 Request.Method.DELETE,

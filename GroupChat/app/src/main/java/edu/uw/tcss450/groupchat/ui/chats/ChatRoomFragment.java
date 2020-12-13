@@ -223,7 +223,8 @@ public class ChatRoomFragment extends Fragment {
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
             String email = mContactModel.getContactFromUserName(contactNames[selected.get()]);
-            mRoomModel.connectAddToChat(mUserModel.getJwt(), email, mRoomModel.getCurrentRoom());
+            mRoomModel.connectAddToChat(mUserModel.getJwt(), contactNames[selected.get()],
+                    mRoomModel.getCurrentRoom());
 
             mRoomModel.addResponseObserver(getViewLifecycleOwner(), response -> {
                 if (response.length() > 0) {
@@ -247,6 +248,7 @@ public class ChatRoomFragment extends Fragment {
                         snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
                                 .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                         snack.show();
+                        dialog.dismiss();
                     }
                 } else {
                     Log.d("JSON Response", "No Response");
@@ -263,8 +265,7 @@ public class ChatRoomFragment extends Fragment {
         builder.setTitle("Leave Room?");
 
         builder.setPositiveButton("Leave", (dlg, i) -> {
-            mRoomModel.connectLeave(mUserModel.getJwt(),
-                    mRoomModel.getCurrentRoom(), mUserModel.getEmail());
+            mRoomModel.connectLeave(mUserModel.getJwt(), mRoomModel.getCurrentRoom());
             NavController navController = Navigation.findNavController(getView());
             String chatName = (String) navController.getCurrentDestination().getLabel();
             navController.navigate(ChatRoomFragmentDirections.

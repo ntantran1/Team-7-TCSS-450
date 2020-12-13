@@ -9,10 +9,14 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import edu.uw.tcss450.groupchat.R;
+import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 
 /**
  * This view model holds a list of the user's incoming contact requests.
@@ -37,7 +41,7 @@ public class ContactsIncomingViewModel extends ContactsViewModel {
         mContactType = 2;
 
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "requests?type=2";
+                + "requests/incoming";
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -61,22 +65,23 @@ public class ContactsIncomingViewModel extends ContactsViewModel {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 
     /**
      * Makes a request to the web service to accept the specified request.
      * @param jwt the user's signed JWT
-     * @param email the email of the request to accept
+     * @param name the username of the request to accept
      */
-    public void connectAccept(final String jwt, final String email) {
+    public void connectAccept(final String jwt, final String name) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "requests?email=" + email;
+                + "requests?name=" + name;
 
         Request request = new JsonObjectRequest(
                 Request.Method.PUT,
                 url,
-                null, //no body for this put request
+                null,
                 mResponse::setValue,
                 this::handleError) {
 
@@ -95,22 +100,23 @@ public class ContactsIncomingViewModel extends ContactsViewModel {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 
     /**
      * Makes a request to the web service to reject the specified request.
      * @param jwt the user's signed JWT
-     * @param email the email of the request to reject
+     * @param name the username of the request to reject
      */
-    public void connectReject(final String jwt, final String email) {
+    public void connectReject(final String jwt, final String name) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "contacts?email=" + email;
+                + "contacts?name=" + name;
 
         Request request = new JsonObjectRequest(
                 Request.Method.DELETE,
                 url,
-                null, //no body for this delete request
+                null,
                 mResponse::setValue,
                 this::handleError) {
 
@@ -129,6 +135,7 @@ public class ContactsIncomingViewModel extends ContactsViewModel {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 }

@@ -206,6 +206,7 @@ public class ChatMessageViewModel extends AndroidViewModel {
                 }
             }
             Collections.sort(list);
+            Collections.reverse(list);
             //inform observers of the change (setValue)
             getOrCreateMapEntry(response.getInt("chatId")).setValue(list);
         }catch (JSONException e) {
