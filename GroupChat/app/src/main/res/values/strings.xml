@@ -45,6 +45,9 @@
     <string name="title_settings">Settings</string>
 
     <string name="keys_prefs_jwt">Shared Prefs JWT</string>
+    <string name="keys_prefs_theme">Shared Prefs Theme</string>
+    <string name="keys_prefs_lat">Shared Prefs Latitude</string>
+    <string name="keys_prefs_lon">Shared Prefs Longitude</string>
     <string name="keys_shared_prefs">My Auth App Shared Prefs</string>
 
     <string name="text_blank">Blank Text</string>

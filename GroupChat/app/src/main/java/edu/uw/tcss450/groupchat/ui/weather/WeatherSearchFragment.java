@@ -1,5 +1,7 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -76,6 +78,24 @@ public class WeatherSearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+
+        if (prefs.contains(getString(R.string.keys_prefs_lat))
+                && prefs.contains(getString(R.string.keys_prefs_lon))) {
+            double lat = prefs.getFloat(getString(R.string.keys_prefs_lat), 0);
+            double lon = prefs.getFloat(getString(R.string.keys_prefs_lon), 0);
+
+            Location location = new Location("");
+            location.setLatitude(lat);
+            location.setLongitude(lon);
+
+            mWeatherModel.connect(lat, lon);
+            mWeatherModel.initialize(location);
+        }
+
         mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
             if (!mWeatherModel.isInitialized()) {
                 mWeatherModel.connect(location.getLatitude(), location.getLongitude());
@@ -125,6 +145,10 @@ public class WeatherSearchFragment extends Fragment {
                         Location location = new Location("");
                         location.setLatitude(coord.getDouble("lat"));
                         location.setLongitude(coord.getDouble("lon"));
+                        prefs.edit().putFloat(getString(R.string.keys_prefs_lat),
+                                (float) coord.getDouble("lat")).apply();
+                        prefs.edit().putFloat(getString(R.string.keys_prefs_lon),
+                                (float) coord.getDouble("lon")).apply();
                         mWeatherModel.setLocation(location);
 
                         binding.textCity.setText(response.getString("name"));

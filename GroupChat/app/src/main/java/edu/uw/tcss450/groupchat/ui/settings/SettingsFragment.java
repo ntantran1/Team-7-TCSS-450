@@ -1,7 +1,11 @@
 package edu.uw.tcss450.groupchat.ui.settings;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -40,19 +44,37 @@ public class SettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentSettingsBinding.inflate(inflater, container, false);
-
-        switch (mUserViewModel.getTheme()) {
-            case R.style.Theme_PurpleGold:
-                binding.settingsColorPg.setChecked(true);
-                break;
-            case R.style.Theme_IndigoGreen:
-                binding.settingsColorIg.setChecked(true);
-                break;
-            case R.style.Theme_GreyOrange:
-                binding.settingsColorGo.setChecked(true);
-                break;
-        }
-
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+
+        if (prefs.contains(getString(R.string.keys_prefs_theme))) {
+            int theme = prefs.getInt(getString(R.string.keys_prefs_theme), -1);
+
+            switch (theme) {
+                case 1:
+                    binding.settingsColorIg.setChecked(true);
+                    mUserViewModel.setTheme(R.style.Theme_IndigoGreen);
+                    break;
+                case 2:
+                    binding.settingsColorGo.setChecked(true);
+                    mUserViewModel.setTheme(R.style.Theme_GreyOrange);
+                    break;
+                default:
+                    binding.settingsColorPg.setChecked(true);
+                    mUserViewModel.setTheme(R.style.Theme_PurpleGold);
+                    break;
+            }
+        } else {
+            binding.settingsColorPg.setChecked(true);
+        }
     }
 }
