@@ -225,7 +225,7 @@ public class ContactsRecyclerViewAdapter extends
             dialog.setPositiveButton("Add", (dlg, i) -> {
                 int roomId = mChatRoomModel.getRoomFromName(roomNames[selected.get()]);
                 mContactsModel.connectAdd(mUserModel.getJwt(), mContact.getUsername(), roomId);
-                Snackbar snack = Snackbar.make(mView, mContact.getUsername() + "has been added to "
+                Snackbar snack = Snackbar.make(mView, mContact.getUsername() + " has been added to "
                          + roomNames[selected.get()], Snackbar.LENGTH_LONG);
                 snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
                         .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);

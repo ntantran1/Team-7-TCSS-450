@@ -97,7 +97,26 @@ public class MainActivity extends AppCompatActivity {
         mUserViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
         ChatRoomViewModel chatRoomModel = new ViewModelProvider(this).get(ChatRoomViewModel.class);
 
-        setTheme(mUserViewModel.getTheme());
+        SharedPreferences prefs =
+                this.getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+
+        if (prefs.contains(getString(R.string.keys_prefs_theme))) {
+            int theme = prefs.getInt(getString(R.string.keys_prefs_theme), -1);
+
+            switch (theme) {
+                case 1:
+                    setTheme(R.style.Theme_IndigoGreen);
+                    break;
+                case 2:
+                    setTheme(R.style.Theme_GreyOrange);
+                    break;
+                default:
+                    setTheme(R.style.Theme_PurpleGold);
+                    break;
+            }
+        }
 
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -391,23 +410,30 @@ public class MainActivity extends AppCompatActivity {
      */
     public void changeColorTheme(View view) {
         boolean checked = ((RadioButton) view).isChecked();
+        SharedPreferences prefs =
+                this.getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
 
         switch (view.getId()) {
             case R.id.settings_color_pg:
                 if (checked && mUserViewModel.getTheme() != R.style.Theme_PurpleGold) {
                     mUserViewModel.setTheme(R.style.Theme_PurpleGold);
+                    prefs.edit().putInt(getString(R.string.keys_prefs_theme), 0).apply();
                     recreate();
                 }
                 break;
             case R.id.settings_color_ig:
                 if (checked && mUserViewModel.getTheme() != R.style.Theme_IndigoGreen) {
                     mUserViewModel.setTheme(R.style.Theme_IndigoGreen);
+                    prefs.edit().putInt(getString(R.string.keys_prefs_theme), 1).apply();
                     recreate();
                 }
                 break;
             case R.id.settings_color_go:
                 if (checked && mUserViewModel.getTheme() != R.style.Theme_GreyOrange) {
                     mUserViewModel.setTheme(R.style.Theme_GreyOrange);
+                    prefs.edit().putInt(getString(R.string.keys_prefs_theme), 2).apply();
                     recreate();
                 }
                 break;
