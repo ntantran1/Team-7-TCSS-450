@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -121,20 +120,25 @@ public class ChatRoomFragment extends Fragment {
                 mChatModel.getMessageListByChatId(args.getRoom().getId()),
                 mUserModel.getEmail()));
 
+        AtomicInteger numMessages = new AtomicInteger(0);
 
         //When the user scrolls to the top of the RV, the swiper list will "refresh"
         //The user is out of messages, go out to the service and get more
-        binding.swipeContainer.setOnRefreshListener(() ->
-                mChatModel.getNextMessages(args.getRoom().getId(), mUserModel.getJwt()));
+        binding.swipeContainer.setOnRefreshListener(() -> {
+            numMessages.set(rv.getAdapter().getItemCount());
+            mChatModel.getNextMessages(args.getRoom().getId(), mUserModel.getJwt());
+        });
 
         mChatModel.addMessageObserver(args.getRoom().getId(), getViewLifecycleOwner(), list -> {
-            int pos = ((LinearLayoutManager) rv.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+            int last = ((LinearLayoutManager) rv.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+            int dif = rv.getAdapter().getItemCount() - numMessages.get();
             //inform the RV that the underlying list has (possibly) changed
             rv.getAdapter().notifyDataSetChanged();
-            if (rv.getAdapter().getItemCount() > 15) {
-                rv.scrollToPosition(pos + 15);
-            } else {
+            if (list.get(list.size() - 1).getSender().equals(mUserModel.getEmail())
+                    || rv.getAdapter().getItemCount() <= 15 || last > 14) {
                 rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
+            } else {
+                rv.scrollToPosition(last + dif);
             }
             binding.swipeContainer.setRefreshing(false);
         });
