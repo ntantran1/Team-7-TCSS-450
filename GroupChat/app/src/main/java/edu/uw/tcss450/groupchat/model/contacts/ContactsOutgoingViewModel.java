@@ -7,10 +7,6 @@ import androidx.annotation.NonNull;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +72,7 @@ public class ContactsOutgoingViewModel extends ContactsViewModel {
      */
     public void connectCancel(final String jwt, final String name) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "contacts?name=" + name;
+                + "requests/cancel?name=" + name;
 
         Request request = new JsonObjectRequest(
                 Request.Method.DELETE,

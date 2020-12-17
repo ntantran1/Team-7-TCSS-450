@@ -1,5 +1,8 @@
 package edu.uw.tcss450.groupchat.ui.contacts;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Object for storing user contact information.
  * @author Dylan Hill
@@ -15,6 +18,10 @@ public class Contact implements Comparable<Contact> {
 
     private int mType;
 
+    public Contact() {
+        // do nothing
+    }
+
     /**
      * Contact class constructor, initializes the contact with the passed arguments.
      * @param username the username of the contact
@@ -26,6 +33,20 @@ public class Contact implements Comparable<Contact> {
         mName = name;
         mEmail = email;
         mType = type;
+    }
+
+    /**
+     * Static factory method to turn a properly formatted JSON String into a Contact object.
+     * @param conAsJson the String to be parsed into a Contact Object.
+     * @return a Contact Object with the details contained in the JSON String.
+     * @throws JSONException when conAsString cannot be parsed into a Contact.
+     */
+    public static Contact createFromJsonString(final String conAsJson) throws JSONException {
+        final JSONObject msg = new JSONObject(conAsJson);
+        return new Contact(msg.getString("username"),
+                msg.getString("name"),
+                msg.getString("email"),
+                0);
     }
 
     /**
@@ -60,9 +81,19 @@ public class Contact implements Comparable<Contact> {
         return mType;
     }
 
+    public void setUsername(final String username) {
+        mUsername = username;
+    }
+
+    public void setName(final String name) {
+        mName = name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Contact)) return false;
+        if (mUsername.equals(((Contact) o).getName())) return true;
+        if (mName.equals(((Contact) o).getUsername())) return true;
         if (!mUsername.equals(((Contact) o).getUsername())) return false;
         if (!mEmail.equals(((Contact) o).getEmail())) return false;
         return mName.equals(((Contact) o).getName());
@@ -70,6 +101,7 @@ public class Contact implements Comparable<Contact> {
 
     @Override
     public int compareTo(Contact other) {
-        return mUsername.compareToIgnoreCase(other.getUsername());
+        if (mType == other.getType()) return mUsername.compareToIgnoreCase(other.getUsername());
+        return Integer.compare(mType, other.getType());
     }
 }

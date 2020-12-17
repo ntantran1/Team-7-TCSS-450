@@ -62,15 +62,12 @@ public class ContactsIncomingFragment extends Fragment {
                 mModel.connect(mUserModel.getJwt()));
 
         mModel.addContactsObserver(getViewLifecycleOwner(), incoming -> {
-            if (incoming.size() != 1) {
-                ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(incoming);
-                binding.incomingSwipeContainer.setRefreshing(false);
-                binding.contactsIncomingWait.setVisibility(View.GONE);
-            } else if (!incoming.get(0).equals(new Contact("", "", "", 0))) {
-                ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(incoming);
-                binding.incomingSwipeContainer.setRefreshing(false);
-                binding.contactsIncomingWait.setVisibility(View.GONE);
-            }
+            Contact blank = new Contact("", "", "", 0);
+            if (incoming.contains(blank)) incoming.remove(blank);
+
+            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(incoming);
+            binding.incomingSwipeContainer.setRefreshing(false);
+            binding.contactsIncomingWait.setVisibility(View.GONE);
         });
     }
 }

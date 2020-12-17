@@ -33,6 +33,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
+
 import edu.uw.tcss450.groupchat.databinding.ActivityMainBinding;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
@@ -47,6 +49,7 @@ import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
 import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
 import edu.uw.tcss450.groupchat.services.PushReceiver;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
+import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
 /**
  * Activity after the user is authenticated, for all the features of the application.
@@ -137,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             manager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
             if (destination.getId() == R.id.navigation_contacts) {
-                mNewContactModel.reset();
+                mNewContactModel.reset("contacts");
             } else if (destination.getId() == R.id.navigation_chats) {
                 mNewChatModel.resetChat();
             }
@@ -225,16 +228,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mNewContactModel.addContactCountObserver(this, count -> {
+        mNewContactModel.addContactCountObserver("contacts", this, count -> {
             BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
             badge.setMaxCharacterCount(2);
 
-            if(count > 0) {
-                //new contacts
-                badge.setNumber(count);
+            if (count > 0 || mNewContactModel.getNotificationCount() > 0) {
+                badge.setNumber(mNewContactModel.getNotificationCount());
                 badge.setVisible(true);
             } else {
-                //remove badge
+                binding.navView.removeBadge(R.id.navigation_contacts);
+            }
+        });
+
+        mNewContactModel.addContactCountObserver("incoming", this, count -> {
+            BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
+            badge.setMaxCharacterCount(2);
+
+            if (count > 0 || mNewContactModel.getNotificationCount() > 0) {
+                badge.setNumber(mNewContactModel.getNotificationCount());
+                badge.setVisible(true);
+            } else {
+                binding.navView.removeBadge(R.id.navigation_contacts);
+            }
+        });
+
+        mNewContactModel.addContactCountObserver("outgoing", this, count -> {
+            BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
+            badge.setMaxCharacterCount(2);
+
+            if (count > 0 || mNewContactModel.getNotificationCount() > 0) {
+                badge.setNumber(mNewContactModel.getNotificationCount());
+                badge.setVisible(true);
+            } else {
                 binding.navView.removeBadge(R.id.navigation_contacts);
             }
         });
@@ -483,12 +508,50 @@ public class MainActivity extends AppCompatActivity {
                 //inform view model holding chatroom messages of the new ones
                 mChatModel.addMessage(intent.getIntExtra("chatid", -1), cm);
                 mRoomModel.connectRecent(mUserViewModel.getJwt());
-            } else if (intent.hasExtra("contact")) {
-
-                if (nd.getId() != R.id.navigation_contacts) {
-                    mNewContactModel.increment();
+            } else if (intent.hasExtra("con")) {
+                String request = intent.getStringExtra("request");
+                Contact contact = null;
+                if (intent.hasExtra("contact")) {
+                    try {
+                        contact = Contact.createFromJsonString(intent.getStringExtra("contact"));
+                        contact.setName(contact.getUsername());
+                    } catch (JSONException e) {
+                        Log.e("JSON Error", e.getMessage());
+                    }
                 }
 
+                switch (request) {
+                    case "contacts":
+                        contact.setUsername("Contact removed");
+                        mContactsModel.removeContact(contact);
+                        mContactsModel.addContact(contact);
+                        if (nd.getId() != R.id.navigation_contacts
+                                || !mNewContactModel.getSelectedTab().equals("contacts")) {
+                            mNewContactModel.increment("contacts");
+                        }
+                        break;
+                    case "incoming":
+                        if (contact != null) {
+                            contact.setUsername("Request canceled");
+                            mIncomingModel.removeContact(contact);
+                            mIncomingModel.addContact(contact);
+                        }
+                        if (nd.getId() != R.id.navigation_contacts
+                                || !mNewContactModel.getSelectedTab().equals("incoming")) {
+                            mNewContactModel.increment("incoming");
+                        }
+                        break;
+                    case "accepted":
+                    case "rejected":
+                        contact.setUsername("Request " + request);
+                        mOutgoingModel.removeContact(contact);
+                        mOutgoingModel.addContact(contact);
+                        if (nd.getId() != R.id.navigation_contacts
+                                || !mNewContactModel.getSelectedTab().equals("outgoing")) {
+                            mNewContactModel.increment("outgoing");
+                        }
+                        break;
+                }
                 mContactsModel.connect(mUserViewModel.getJwt());
                 mIncomingModel.connect(mUserViewModel.getJwt());
                 mOutgoingModel.connect(mUserViewModel.getJwt());
