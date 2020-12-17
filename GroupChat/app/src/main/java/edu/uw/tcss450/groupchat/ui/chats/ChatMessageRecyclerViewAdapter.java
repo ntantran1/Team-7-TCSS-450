@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import edu.uw.tcss450.groupchat.MainActivity;
 import edu.uw.tcss450.groupchat.R;
 
 
@@ -87,6 +90,7 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
             // if message is an image
             // this method could use some refactoring
             if (ChatMessage.isImage(msg)) {
+                viewHolderSent.sentMessage.setVisibility(View.GONE);
                 // get the size
                 final int[] width = {-1};
                 final int[] height = {-1};
@@ -109,17 +113,22 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                 // display
                 if (msg.endsWith("gif"))
                     Glide.with(viewHolderSent.sentImage.getContext()).asGif().load(msg)
-                            .apply(new RequestOptions().override(width[0]*5/3, height[0]*5/3)
-                            ).into(viewHolderSent.sentImage);
+                            .apply(new RequestOptions()
+                                    .override(width[0]*5/3, height[0]*5/3))
+                            .placeholder(R.drawable.ic_image_placeholder)
+                            .into(viewHolderSent.sentImage);
                 else
                     Glide.with(viewHolderSent.sentImage.getContext()).load(msg)
                             .apply(new RequestOptions().override(width[0], height[0]))
+                            .placeholder(R.drawable.ic_image_placeholder)
                             .into(viewHolderSent.sentImage);
 
+                viewHolderSent.sentImage.setTooltipText(msg);
+            } else {
+                viewHolderSent.sentMessage.setText(msg);
+                viewHolderSent.sentMessage.setVisibility(View.VISIBLE);
             }
-            viewHolderSent.sentMessage.setText(msg);
-
-            viewHolderSent.sentMessage.setText(mMessages.get(position).getMessage());
+            //viewHolderSent.sentMessage.setText(mMessages.get(position).getMessage());
             viewHolderSent.sentTime.setText(timeStamp);
         } else {
             //received
@@ -129,6 +138,10 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
             String msg = mMessages.get(position).getMessage().trim();
             // if message is an image
             if (ChatMessage.isImage(msg)) {
+                viewHolderReceived.receivedMessage.setVisibility(View.GONE);
+                setLeftToRightConstraint(viewHolderReceived.itemView,
+                        R.id.text_message_time, R.id.image_message_box);
+
                 // get the size
                 final int[] width = {-1};
                 final int[] height = {-1};
@@ -153,14 +166,21 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                     Glide.with(viewHolderReceived.receivedMessage.getContext()).asGif().load(msg)
                             .apply(new RequestOptions()
                                     .override(width[0]*5/3, height[0]*5/3))
+                            .placeholder(R.drawable.ic_image_placeholder)
                             .into(viewHolderReceived.receivedImage);
                 else
                     Glide.with(viewHolderReceived.receivedMessage.getContext()).load(msg)
                             .apply(new RequestOptions().override(width[0], height[0]))
+                            .placeholder(R.drawable.ic_image_placeholder)
                             .into(viewHolderReceived.receivedImage);
-            }
-            viewHolderReceived.receivedMessage.setText(msg);
 
+                viewHolderReceived.receivedImage.setTooltipText(msg);
+            } else {
+                viewHolderReceived.receivedMessage.setText(msg);
+                setLeftToRightConstraint(viewHolderReceived.itemView,
+                        R.id.text_message_time, R.id.text_message_body);
+                viewHolderReceived.receivedMessage.setVisibility(View.VISIBLE);
+            }
             viewHolderReceived.senderName.setText(mMessages.get(position).getSender());
             viewHolderReceived.receivedTime.setText(timeStamp);
         }
@@ -196,6 +216,14 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
             e.printStackTrace();
         }
         return time;
+    }
+
+    private void setLeftToRightConstraint(View view, int startElement, int endElement) {
+        ConstraintLayout constraintLayout = (ConstraintLayout) view;
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(constraintLayout);
+        constraintSet.connect(startElement, ConstraintSet.LEFT, endElement, ConstraintSet.RIGHT,0);
+        constraintSet.applyTo(constraintLayout);
     }
 
     /**
