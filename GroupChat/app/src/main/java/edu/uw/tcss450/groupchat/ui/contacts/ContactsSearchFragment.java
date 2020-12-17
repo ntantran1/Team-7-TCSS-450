@@ -79,15 +79,12 @@ public class ContactsSearchFragment extends Fragment {
         });
 
         mModel.addContactsObserver(getViewLifecycleOwner(), searched -> {
-            if (searched.size() != 1) {
-                ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(searched);
-                binding.searchSwipeContainer.setRefreshing(false);
-                binding.contactsSearchWait.setVisibility(View.GONE);
-            } else if (!searched.get(0).equals(new Contact("", "", "", 0))) {
-                ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(searched);
-                binding.searchSwipeContainer.setRefreshing(false);
-                binding.contactsSearchWait.setVisibility(View.GONE);
-            }
+            Contact blank = new Contact("", "", "", -1);
+            if (searched.contains(blank)) searched.remove(blank);
+
+            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(searched);
+            binding.searchSwipeContainer.setRefreshing(false);
+            binding.contactsSearchWait.setVisibility(View.GONE);
         });
     }
 }

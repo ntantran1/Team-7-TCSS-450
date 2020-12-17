@@ -1,22 +1,27 @@
 package edu.uw.tcss450.groupchat.model.contacts;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
+import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
 /**
  * This view model holds a list of the searched potential contacts.
@@ -139,5 +144,32 @@ public class ContactsSearchViewModel extends ContactsViewModel {
         //Instantiate the RequestQueue and add the request to the queue
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);
+    }
+
+    @Override
+    protected void handleSuccess(final JSONObject result) {
+        List<Contact> sorted = new ArrayList<>();
+        try {
+            if (result.has("contacts")) {
+                JSONArray contacts = result.getJSONArray("contacts");
+
+                for (int i = 0; i < contacts.length(); i++) {
+                    JSONObject jsonContact = contacts.getJSONObject(i);
+                    Contact contact = new Contact(jsonContact.getString("username"),
+                            jsonContact.getString("name"),
+                            jsonContact.getString("email"),
+                            mContactType);
+                    sorted.add(contact);
+                }
+            } else {
+                Log.e("ERROR", "No contacts array");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR", e.getMessage());
+        }
+        //sort the list of contacts alphabetically
+        Collections.sort(sorted);
+        mContacts.setValue(sorted);
     }
 }

@@ -52,7 +52,7 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(mMessages.get(position).getSender().equals(mEmail)){
+        if(mMessages.get(position).getSender().equals(mEmail)) {
             //this is message from user (sent)
             return 0;
         }
@@ -65,20 +65,20 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view;
 
-        if(viewType == 0){
+        if (viewType == 0) {
             view = layoutInflater.inflate(R.layout.fragment_chat_sent, parent, false);
             return new ViewHolderSent(view);
+        } else {
+            view = layoutInflater.inflate(R.layout.fragment_chat_received, parent, false);
+            return new ViewHolderReceived(view);
         }
-
-        view = layoutInflater.inflate(R.layout.fragment_chat_received, parent, false);
-        return new ViewHolderReceived(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         String timeStamp = getLocalTime(mMessages.get(position).getTimeStamp());
 
-        if(mMessages.get(position).getSender().equals(mEmail)){
+        if(mMessages.get(position).getSender().equals(mEmail)) {
             //sent
             ViewHolderSent viewHolderSent = (ViewHolderSent) holder;
 

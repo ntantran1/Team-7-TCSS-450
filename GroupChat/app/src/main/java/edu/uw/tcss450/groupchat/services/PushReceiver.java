@@ -114,8 +114,11 @@ public class PushReceiver extends BroadcastReceiver {
                 Log.d("PUSHY", "Contact received in foreground: " + text);
 
                 Intent i = new Intent(RECEIVED_NEW_MESSAGE);
-                i.putExtra("contact", text);
-                i.putExtras(intent.getExtras());
+                i.putExtra("con", text);
+                i.putExtra("request", intent.getStringExtra("request"));
+                if (intent.hasExtra("contact")) {
+                    i.putExtra("contact", intent.getStringExtra("contact"));
+                }
 
                 context.sendBroadcast(i);
             } else {
