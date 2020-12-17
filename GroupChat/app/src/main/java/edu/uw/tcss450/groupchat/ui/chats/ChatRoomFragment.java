@@ -134,7 +134,9 @@ public class ChatRoomFragment extends Fragment {
             int dif = rv.getAdapter().getItemCount() - numMessages.get();
             //inform the RV that the underlying list has (possibly) changed
             rv.getAdapter().notifyDataSetChanged();
-            if (list.get(list.size() - 1).getSender().equals(mUserModel.getEmail())
+            if (list.size() == 0) {
+                rv.scrollToPosition(0);
+            } else if (list.get(list.size() - 1).getSender().equals(mUserModel.getEmail())
                     || rv.getAdapter().getItemCount() <= 15 || last > 14) {
                 rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
             } else {
