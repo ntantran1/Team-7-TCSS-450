@@ -84,14 +84,14 @@ public class WeatherMainFragment extends Fragment {
             binding.weatherWait.setVisibility(View.VISIBLE);
         });
 
+        AtomicBoolean celsius = new AtomicBoolean(false);
+
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
             if (response.length() > 0) {
                 if (response.has("code")) {
                     Log.d("Weather", "Invalid location");
                 } else {
                     try {
-                        AtomicBoolean celsius = new AtomicBoolean(false);
-
                         JSONObject main = response.getJSONObject("main");
                         JSONObject coord = response.getJSONObject("coord");
                         JSONObject wind = response.getJSONObject("wind");
@@ -121,6 +121,8 @@ public class WeatherMainFragment extends Fragment {
                                     binding.buttonFahrenheit.setTextColor(Color.GRAY);
                                     binding.buttonCelsius.setTextColor(Color.BLACK);
                                     celsius.set(true);
+                                    mDailyModel.connect(coord.getDouble("lat"),
+                                            coord.getDouble("lon"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                     Log.e("JSON Parse Error", e.getMessage());
@@ -136,6 +138,8 @@ public class WeatherMainFragment extends Fragment {
                                     binding.buttonFahrenheit.setTextColor(Color.BLACK);
                                     binding.buttonCelsius.setTextColor(Color.GRAY);
                                     celsius.set(false);
+                                    mDailyModel.connect(coord.getDouble("lat"),
+                                            coord.getDouble("lon"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                     Log.e("JSON Parse Error", e.getMessage());
@@ -159,7 +163,7 @@ public class WeatherMainFragment extends Fragment {
                     try {
                         JSONArray daily = response.getJSONArray("daily");
                         JSONArray hourly = response.getJSONArray("hourly");
-                        getDaily(daily);
+                        getDaily(daily, celsius.get());
                         getHourly(hourly);
                         binding.layoutWait.setVisibility(View.GONE);
                         binding.weatherWait.setVisibility(View.GONE);
@@ -173,15 +177,23 @@ public class WeatherMainFragment extends Fragment {
         });
     }
 
-    private void getDaily(JSONArray daily) throws JSONException {
+    private void getDaily(JSONArray daily, boolean celsius) throws JSONException {
         for (int i = 1; i < 6; i++) {
             JSONObject day = (JSONObject) daily.get(i);
             JSONObject temp = day.getJSONObject("temp");
             JSONArray weather = day.getJSONArray("weather");
             JSONObject info = (JSONObject) weather.get(0);
 
-            String max = String.valueOf((int) temp.getDouble("max"));
-            String min = String.valueOf((int) temp.getDouble("min"));
+            String max, min, temps;
+            if (celsius) {
+                max = String.valueOf((int) (temp.getDouble("max") - 32) * 5 / 9);
+                min = String.valueOf((int) (temp.getDouble("min") - 32) * 5 / 9);
+                temps = max + "°C / " + min + "°C";
+            } else {
+                max = String.valueOf((int) temp.getDouble("max"));
+                min = String.valueOf((int) temp.getDouble("min"));
+                temps = max + "°F / " + min + "°F";
+            }
             Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
             int year = calendar.get(Calendar.YEAR);
             int dayYear = calendar.get(Calendar.DAY_OF_YEAR) + i;
@@ -189,27 +201,27 @@ public class WeatherMainFragment extends Fragment {
             switch (i) {
                 case 1:
                     setImage(info, binding.imageOne);
-                    binding.textWeatherOne.setText(max + "°F / " + min + "°F");
+                    binding.textWeatherOne.setText(temps);
                     binding.textDayOne.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
                     break;
                 case 2:
                     setImage(info, binding.imageTwo);
-                    binding.textWeatherTwo.setText(max + "°F / " + min + "°F");
+                    binding.textWeatherTwo.setText(temps);
                     binding.textDayTwo.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
                     break;
                 case 3:
                     setImage(info, binding.imageThree);
-                    binding.textWeatherThree.setText(max + "°F / " + min + "°F");
+                    binding.textWeatherThree.setText(temps);
                     binding.textDayThree.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
                     break;
                 case 4:
                     setImage(info, binding.imageFour);
-                    binding.textWeatherFour.setText(max + "°F / " + min + "°F");
+                    binding.textWeatherFour.setText(temps);
                     binding.textDayFour.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
                     break;
                 case 5:
                     setImage(info, binding.imageFive);
-                    binding.textWeatherFive.setText(max + "°F / " + min + "°F");
+                    binding.textWeatherFive.setText(temps);
                     binding.textDayFive.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
                     break;
                 default:
@@ -243,6 +255,16 @@ public class WeatherMainFragment extends Fragment {
                     LinearLayoutManager.HORIZONTAL, false));
             recyclerView.setAdapter(new WeatherRecyclerViewAdapter(mHourly));
         }
+    }
+
+    private String getCelsius(final String fahrenheit) {
+        String[] temp = fahrenheit.split(" ");
+        String high = fahrenheit.substring(0, 2);
+        String low = fahrenheit.substring(7, 9);
+        System.out.println(high + " " + low);
+        int max = (int) (Integer.parseInt(high) - 32.0) * 5 / 9;
+        int min = (int) (Integer.parseInt(low) - 32.0) * 5 / 9;
+        return max + "°C / " + min + "°C";
     }
 
     /**

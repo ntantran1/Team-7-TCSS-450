@@ -389,12 +389,16 @@ public class MainActivity extends AppCompatActivity {
                         Context.MODE_PRIVATE);
 
         prefs.edit().remove(getString(R.string.keys_prefs_jwt)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_theme)).apply();
 
-        PushyTokenViewModel model = new ViewModelProvider(this)
-                .get(PushyTokenViewModel.class);
+        PushyTokenViewModel model = new ViewModelProvider(this).get(PushyTokenViewModel.class);
 
         //when we hear back from the web service, quit
-        model.addResponseObserver(this, result -> finishAndRemoveTask());
+        model.addResponseObserver(this, result -> {
+            Navigation.findNavController(this, R.id.nav_host_fragment)
+                    .navigate(R.id.navigation_auth);
+            finish();
+        });
 
         model.deleteTokenFromWebservice(
                 new ViewModelProvider(this)
