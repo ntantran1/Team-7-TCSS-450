@@ -25,6 +25,9 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -105,9 +108,15 @@ public class ChatRoomFragment extends Fragment {
         // define the action for the interface class
         binding.edittextChatbox.setKeyBoardInputCallbackListener((inputContentInfo, flags, opts) -> {
             // use image here
-            mSendModel.sendMessage(args.getRoom().getId(),
-                    mUserModel.getJwt(),
-                    inputContentInfo.getLinkUri().toString());
+            try {
+                InputStream iStream = getContext().getContentResolver().openInputStream(inputContentInfo.getContentUri());
+                byte[] inputData = getBytes(iStream);
+                mSendModel.uploadImage(inputData, args.getRoom().getId(), mUserModel.getJwt());
+
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+
         });
 
         //SetRefreshing shows the internal Swiper view progress bar. Show this until messages load
@@ -285,5 +294,17 @@ public class ChatRoomFragment extends Fragment {
 
         final AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
     }
 }
