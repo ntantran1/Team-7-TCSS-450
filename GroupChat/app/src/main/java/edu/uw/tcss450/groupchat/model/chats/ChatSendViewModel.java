@@ -108,25 +108,17 @@ public class ChatSendViewModel extends AndroidViewModel {
         String url = "https://api.imgur.com/3/upload";
 
         //custom volley request
-        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, url,
-        new Response.Listener<NetworkResponse>() {
-            @Override
-            public void onResponse(NetworkResponse response) {
-                try {
-                    JSONObject obj = new JSONObject(new String(response.data));
-                    String imageURL = obj.getJSONObject("data").getString("link");
-                    sendMessage(chatId, jwt, imageURL);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        },
-        new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("IMAGE UPLOAD", error.toString());
-            }
-        }) {
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(
+                Request.Method.POST, url, response -> {
+                    try {
+                        JSONObject obj = new JSONObject(new String(response.data));
+                        String imageURL = obj.getJSONObject("data").getString("link");
+                        sendMessage(chatId, jwt, imageURL);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> Log.e("IMAGE UPLOAD", error.toString())) {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
