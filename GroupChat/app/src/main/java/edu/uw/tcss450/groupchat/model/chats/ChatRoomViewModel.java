@@ -24,10 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.uw.tcss450.groupchat.R;
@@ -50,6 +52,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
 
     private MutableLiveData<Integer> mCurrentRoom;
 
+    private MutableLiveData<HashMap<Integer, HashSet<String>>> mTypingCount;
+
     /**
      * Main default constructor the this ViewModel.
      *
@@ -62,6 +66,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mRecent = new MutableLiveData<>();
         initRooms();
         mCurrentRoom = new MutableLiveData<>(-1);
+        mTypingCount = new MutableLiveData<>(new HashMap<>());
     }
 
     /**
@@ -417,5 +422,19 @@ public class ChatRoomViewModel extends AndroidViewModel {
         Map<ChatRoom, ChatMessage> recent = new HashMap<>();
         recent.put(new ChatRoom(0, "init"), new ChatMessage(0, "", "", ""));
         mRecent.setValue(recent);
+    }
+
+    public Set<String> addTyper(String user, int chatId) {
+        if (!mTypingCount.getValue().containsKey(chatId))
+            mTypingCount.getValue().put(chatId, new HashSet<>(Collections.singleton(user)));
+        else
+            mTypingCount.getValue().get(chatId).add(user);
+        return mTypingCount.getValue().get(chatId);
+    }
+
+    public Set<String> removeTyper(String user, int chatId) {
+        if (mTypingCount.getValue().containsKey(chatId))
+            mTypingCount.getValue().get(chatId).remove(user);
+        return mTypingCount.getValue().get(chatId);
     }
 }

@@ -19,7 +19,10 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -73,6 +76,12 @@ public class ChatRoomFragment extends Fragment {
     private ChatMembersViewModel mMembersModel;
 
     private ChatRoomFragmentArgs mRoomArgs;
+
+    private final int TYPING_IDLE_DELAY = 3000;
+
+    private long lastEdit = 0;
+
+    private Handler handler = new Handler();
 
     /**
      * Empty default constructor.
@@ -142,6 +151,39 @@ public class ChatRoomFragment extends Fragment {
             mSendModel.sendMessage(args.getRoom().getId(), mUserModel.getJwt(),
                     inputContentInfo.getLinkUri().toString());
 
+        });
+
+        // listener for checking keyboard idle
+        Runnable finishChecker = () -> {
+            if (System.currentTimeMillis() > (lastEdit + TYPING_IDLE_DELAY - 500)) {
+                mSendModel.sendTypingStatus(args.getRoom().getId(), mUserModel.getJwt(), "stopped");
+            }
+        };
+
+        // on typing
+        binding.edittextChatbox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handler.removeCallbacks(finishChecker);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // send to the backend that user is typing
+                // combat with auto trigger on opening chat
+                if (!binding.edittextChatbox.getText().toString().isEmpty()) {
+                    mSendModel.sendTypingStatus(args.getRoom().getId(), mUserModel.getJwt(), "typing");
+
+                }
+
+                // have to put it out here in case of user fast delete everything
+                lastEdit = System.currentTimeMillis();
+                handler.postDelayed(finishChecker, TYPING_IDLE_DELAY);
+            }
         });
 
         //SetRefreshing shows the internal Swiper view progress bar. Show this until messages load
