@@ -11,9 +11,7 @@ import androidx.lifecycle.Observer;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -27,6 +25,7 @@ import java.util.Objects;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
+import edu.uw.tcss450.groupchat.io.VolleyMultipartRequest;
 
 /**
  * View Model for a single chat room.
@@ -128,7 +127,7 @@ public class ChatSendViewModel extends AndroidViewModel {
             }
 
             @Override
-            protected Map<String, DataPart> getByteData() {
+            public Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
                 long imagename = System.currentTimeMillis();
                 params.put("image", new DataPart("" + imagename, data));
