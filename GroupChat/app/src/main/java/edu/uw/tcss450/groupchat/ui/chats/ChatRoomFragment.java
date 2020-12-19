@@ -1,11 +1,17 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -13,6 +19,10 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,12 +52,16 @@ import edu.uw.tcss450.groupchat.model.chats.ChatSendViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
 import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Fragment Displays chat messages
  *
  * @version November 19 2020
  */
 public class ChatRoomFragment extends Fragment {
+
+    private static final int MY_PERMISSIONS_STORAGE = 3124;
 
     private UserInfoViewModel mUserModel;
 
@@ -63,11 +77,36 @@ public class ChatRoomFragment extends Fragment {
 
     private ChatRoomFragmentArgs mRoomArgs;
 
+    private final int TYPING_IDLE_DELAY = 3000;
+
+    private long lastEdit = 0;
+
+    private Handler handler = new Handler();
+
     /**
      * Empty default constructor.
      */
     public ChatRoomFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_STORAGE:
+            {
+                // if request is cancelled, the result arrays are empty
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission granted, do the tasks needed
+                    accessStorage();
+                } else {
+                    // permission denied, disable the functionality that depends on this
+                    Log.d("PERMISSION DENIED", "Nothing to see or do here.");
+
+                }
+            }
+        }
     }
 
     @Override
@@ -107,16 +146,44 @@ public class ChatRoomFragment extends Fragment {
 
         // define the action for the interface class
         binding.edittextChatbox.setKeyBoardInputCallbackListener((inputContentInfo, flags, opts) -> {
-            // use image here
-            try {
-                InputStream iStream = getContext().getContentResolver().openInputStream(inputContentInfo.getContentUri());
-                byte[] inputData = getBytes(iStream);
-                mSendModel.uploadImage(inputData, args.getRoom().getId(), mUserModel.getJwt());
+            // use image here, this is for sending template stickers and gifs
 
-            } catch (IOException e) {
-                System.out.println(e);
+            mSendModel.sendMessage(args.getRoom().getId(), mUserModel.getJwt(),
+                    inputContentInfo.getLinkUri().toString());
+
+        });
+
+        // listener for checking keyboard idle
+        Runnable finishChecker = () -> {
+            if (System.currentTimeMillis() > (lastEdit + TYPING_IDLE_DELAY - 500)) {
+                mSendModel.sendTypingStatus(args.getRoom().getId(), mUserModel.getJwt(), "stopped");
+            }
+        };
+
+        // on typing
+        binding.edittextChatbox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handler.removeCallbacks(finishChecker);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // send to the backend that user is typing
+                // combat with auto trigger on opening chat
+                if (!binding.edittextChatbox.getText().toString().isEmpty()) {
+                    mSendModel.sendTypingStatus(args.getRoom().getId(), mUserModel.getJwt(), "typing");
+
+                }
+
+                // have to put it out here in case of user fast delete everything
+                lastEdit = System.currentTimeMillis();
+                handler.postDelayed(finishChecker, TYPING_IDLE_DELAY);
+            }
         });
 
         //SetRefreshing shows the internal Swiper view progress bar. Show this until messages load
@@ -153,12 +220,28 @@ public class ChatRoomFragment extends Fragment {
             }
             binding.swipeContainer.setRefreshing(false);
         });
+
         //Send button click -> send message via SendViewModel
         binding.buttonChatboxSend.setOnClickListener(button -> {
             mSendModel.sendMessage(args.getRoom().getId(),
                     mUserModel.getJwt(),
                     binding.edittextChatbox.getText().toString());
         });
+
+        binding.buttonChatboxAdd.setOnClickListener(button -> {
+            // add images from phone here
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this.getActivity(),
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_STORAGE);
+            } else {
+                // the user has already allowed the use storage, start the storage access
+                accessStorage();
+            }
+        });
+
         //when we get response back from server, clear edit text
         mSendModel.addResponseObserver(getViewLifecycleOwner(), response -> {
             binding.edittextChatbox.setText("");
@@ -183,6 +266,31 @@ public class ChatRoomFragment extends Fragment {
         else if(item.getItemId() == R.id.action_chat_add) addUserToChat();
         else if(item.getItemId() == R.id.action_chat_leave) leaveRoom();
         return super.onOptionsItemSelected(item);
+    }
+
+    private void accessStorage() {
+        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, 100);
+    }
+
+    /**
+     * For handle selected image.
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+
+            Uri imageUri = data.getData();
+            try {
+                InputStream iStream = getContext().getContentResolver().openInputStream(imageUri);
+                byte[] inputData = getBytes(iStream);
+                mSendModel.uploadImage(inputData, mRoomArgs.getRoom().getId(), mUserModel.getJwt());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

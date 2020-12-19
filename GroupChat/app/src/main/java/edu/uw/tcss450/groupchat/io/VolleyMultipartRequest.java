@@ -1,4 +1,4 @@
-package edu.uw.tcss450.groupchat.model.chats;
+package edu.uw.tcss450.groupchat.io;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -78,12 +78,12 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @return Map data part label with data byte
      * @throws AuthFailureError
      */
-    protected Map<String, DataPart> getByteData() throws AuthFailureError {
+    public Map<String, DataPart> getByteData() throws AuthFailureError {
         return null;
     }
 
     @Override
-    protected Response<NetworkResponse> parseNetworkResponse(NetworkResponse response) {
+    public Response<NetworkResponse> parseNetworkResponse(NetworkResponse response) {
         try {
             return Response.success(
                     response,
@@ -94,7 +94,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
     }
 
     @Override
-    protected void deliverResponse(NetworkResponse response) {
+    public void deliverResponse(NetworkResponse response) {
         mListener.onResponse(response);
     }
 
@@ -185,7 +185,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
         dataOutputStream.writeBytes(lineEnd);
     }
 
-    class DataPart {
+    public class DataPart {
         private String fileName;
         private byte[] content;
         private String type;
@@ -193,7 +193,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
         public DataPart() {
         }
 
-        DataPart(String name, byte[] data) {
+        public DataPart(String name, byte[] data) {
             fileName = name;
             content = data;
         }

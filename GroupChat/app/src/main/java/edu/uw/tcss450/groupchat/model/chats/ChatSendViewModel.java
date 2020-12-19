@@ -11,9 +11,7 @@ import androidx.lifecycle.Observer;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -27,6 +25,7 @@ import java.util.Objects;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
+import edu.uw.tcss450.groupchat.io.VolleyMultipartRequest;
 
 /**
  * View Model for a single chat room.
@@ -128,7 +127,7 @@ public class ChatSendViewModel extends AndroidViewModel {
             }
 
             @Override
-            protected Map<String, DataPart> getByteData() {
+            public Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
                 long imagename = System.currentTimeMillis();
                 params.put("image", new DataPart("" + imagename, data));
@@ -139,6 +138,43 @@ public class ChatSendViewModel extends AndroidViewModel {
         //adding the request to volley
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(volleyMultipartRequest);
+    }
+
+    public void sendTypingStatus(final int chatId, final String jwt, String status) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chats/typing/";
+
+        JSONObject body = new JSONObject();
+        try {
+            body.put("chatId", chatId);
+            body.put("status", status);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Request request = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                body, //push token found in the JSONObject body
+                e -> {}, // we get a response but do nothing with it
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // add headers <key,value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 
     private void handleError(final VolleyError error) {

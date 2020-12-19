@@ -1,6 +1,7 @@
 package edu.uw.tcss450.groupchat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -34,6 +36,8 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
+
+import java.util.Set;
 
 import edu.uw.tcss450.groupchat.databinding.ActivityMainBinding;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
@@ -490,6 +494,10 @@ public class MainActivity extends AppCompatActivity {
         private ContactsSearchViewModel mSearchModel =
                 new ViewModelProvider(MainActivity.this).get(ContactsSearchViewModel.class);
 
+        private UserInfoViewModel mUserModel =
+                new ViewModelProvider(MainActivity.this).get(UserInfoViewModel.class);
+
+        @SuppressLint("SetTextI18n")
         @Override
         public void onReceive(Context context, Intent intent) {
             NavController nc = Navigation.findNavController(MainActivity.this,
@@ -562,6 +570,35 @@ public class MainActivity extends AppCompatActivity {
                     mNewChatModel.incrementChat();
                 }
                 mRoomModel.connect(mUserViewModel.getJwt());
+            } else if (intent.hasExtra("typeStatus")) {
+                int chatId = intent.getIntExtra("chatid", 0);
+                String email = intent.getStringExtra("email");
+                String typingStatus = intent.getStringExtra("typeStatus");
+                String username = intent.getStringExtra("username");
+
+                if (!email.equals(mUserModel.getEmail()) && chatId == mRoomModel.getCurrentRoom()) {
+                    Set<String> current;
+                    if (typingStatus.equals("typing")) {
+                        current = mRoomModel.addTyper(username, chatId);
+                    }
+                    else {
+                        current = mRoomModel.removeTyper(username, chatId);
+                    }
+                    System.out.println(current);
+
+                    if (current != null) {
+                        String announcement = current.toString()
+                                .replace("[", "").replace("]", "");
+                        if (current.size() > 2)
+                            announcement = "Multiple people are typing...";
+                        else if (current.size() > 1)
+                            announcement += " are typing";
+                        else if (current.size() > 0)
+                            announcement += " is typing";
+
+                        ((TextView) findViewById(R.id.textview_status)).setText(announcement);
+                    }
+                }
             }
         }
     }
