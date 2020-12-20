@@ -584,8 +584,8 @@ public class MainActivity extends AppCompatActivity {
                     else {
                         current = mRoomModel.removeTyper(username, chatId);
                     }
-                    System.out.println(current);
 
+                    TextView message = findViewById(R.id.text_status);
                     if (current != null) {
                         String announcement = current.toString()
                                 .replace("[", "").replace("]", "");
@@ -596,8 +596,12 @@ public class MainActivity extends AppCompatActivity {
                         else if (current.size() > 0)
                             announcement += " is typing";
 
-                        TextView message = findViewById(R.id.text_status);
                         if (message != null) message.setText(announcement);
+
+                        if (announcement.isEmpty()) message.setVisibility(View.GONE);
+                        else message.setVisibility(View.VISIBLE);
+                    } else {
+                        message.setVisibility(View.GONE);
                     }
                 }
             }
