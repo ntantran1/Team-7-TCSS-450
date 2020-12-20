@@ -216,11 +216,10 @@ public class ChatRoomFragment extends Fragment {
             rv.getAdapter().notifyDataSetChanged();
             if (list.size() == 0) {
                 rv.scrollToPosition(0);
-            } else if (list.get(list.size() - 1).getSender().equals(mUserModel.getEmail())
-                    || rv.getAdapter().getItemCount() <= 15 || last > 14) {
-                rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
-            } else {
+            } else if (dif > 0 && last < 14) {
                 rv.scrollToPosition(last + dif);
+            } else {
+                rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
             }
             binding.swipeContainer.setRefreshing(false);
         });
