@@ -14,7 +14,6 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +29,12 @@ import java.util.Objects;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.ui.weather.SavedLocation;
 
+/**
+ * This view model holds lists of SavedLocation objects for interacting with the user's favorited
+ * and searched locations.
+ *
+ * @version December 19, 2020
+ */
 public class SavedLocationsViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
@@ -38,6 +43,10 @@ public class SavedLocationsViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<SavedLocation>> mFavorites;
 
+    /**
+     * Default constructor for this view model.
+     * @param application reference to the current application
+     */
     public SavedLocationsViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>(new JSONObject());
@@ -45,20 +54,39 @@ public class SavedLocationsViewModel extends AndroidViewModel {
         mFavorites = new MutableLiveData<>(new ArrayList<>());
     }
 
+    /**
+     * Adds an observer to the response object.
+     * @param owner the fragment's LifecycleOwner
+     * @param observer an observer to observe
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Adds an observer to the saved and searched locations.
+     * @param owner the fragment's LifecycleOwner
+     * @param observer an observer to observe
+     */
     public void addLocationsObserver(@NonNull LifecycleOwner owner,
                                      @NonNull Observer<? super List<SavedLocation>> observer) {
         mLocations.observe(owner, observer);
     }
 
+    /**
+     * Returns whether or not the passed location is a favorite of the user.
+     * @param location location to check for
+     * @return true if the location is a favorite one
+     */
     public boolean isFavorite(final SavedLocation location) {
         return mFavorites.getValue().contains(location);
     }
 
+    /**
+     * Adds a new location to the list of saved and searched locations.
+     * @param location location to be added
+     */
     public void addLocation(final SavedLocation location) {
         if (!mLocations.getValue().contains(location)) {
             mLocations.getValue().add(new SavedLocation(location));
@@ -66,6 +94,10 @@ public class SavedLocationsViewModel extends AndroidViewModel {
         mLocations.setValue(mLocations.getValue());
     }
 
+    /**
+     * Makes a request to the web service to get the list of the user's favorite locations.
+     * @param jwt the user's signed JWT
+     */
     public void connect(final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "locations";
@@ -95,6 +127,13 @@ public class SavedLocationsViewModel extends AndroidViewModel {
         Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
+    /**
+     * Makes a request to the web service to save a location as one of the user's favorites.
+     * @param jwt the user's signed JWT
+     * @param name the nickname of the location
+     * @param lat the latitude of the location
+     * @param lon the longitude of the location
+     */
     public void connectSaveLocation(final String jwt,
                                     final String name,
                                     final double lat,
@@ -136,6 +175,12 @@ public class SavedLocationsViewModel extends AndroidViewModel {
         Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
+    /**
+     * Makes a request to the web service to remove a location from the user's favorites.
+     * @param jwt teh user's signed JWT
+     * @param lat the latitude of the location
+     * @param lon the longitude of the location
+     */
     public void connectRemoveLocation(final String jwt, final double lat, final double lon) {
         mFavorites.getValue().remove(new SavedLocation("", lat, lon));
 

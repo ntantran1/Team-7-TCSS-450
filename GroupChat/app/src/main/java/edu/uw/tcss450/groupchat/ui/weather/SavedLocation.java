@@ -1,5 +1,10 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
+/**
+ * The SavedLocation object represents a location in the form of a name, latitude, and longitude.
+ *
+ * @version December 19, 2020
+ */
 public class SavedLocation {
 
     private String mName;
@@ -8,30 +13,56 @@ public class SavedLocation {
 
     private Double mLongitude;
 
+    /**
+     * Creates a new SavedLocation object with the given arguments.
+     * @param name the name of the location
+     * @param lat the latitude of the location
+     * @param lon the longitude of the location
+     */
     public SavedLocation(String name, double lat, double lon) {
         mName = name;
         mLatitude = lat;
         mLongitude = lon;
     }
 
+    /**
+     * Creates a new SavedLocation object from the given location.
+     * @param location the location to create
+     */
     public SavedLocation(SavedLocation location) {
         mName = location.getName();
         mLatitude = location.getLatitude();
         mLongitude = location.getLongitude();
     }
 
+    /**
+     * Returns the name of this object.
+     * @return the name of this location
+     */
     public String getName() {
         return mName;
     }
 
+    /**
+     * Returns the latitude of this object.
+     * @return the latitude of this location
+     */
     public double getLatitude() {
         return Double.valueOf(mLatitude);
     }
 
+    /**
+     * Returns the longitude of this object.
+     * @return the longitude of this location
+     */
     public double getLongitude() {
         return Double.valueOf(mLongitude);
     }
 
+    /**
+     * Updates the name of this object.
+     * @param name the new name of this location
+     */
     public void setName(final String name) {
         mName = name;
     }

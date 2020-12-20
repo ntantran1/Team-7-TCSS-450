@@ -36,7 +36,6 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherMapBinding;
 import edu.uw.tcss450.groupchat.model.weather.CurrentLocationViewModel;
 import edu.uw.tcss450.groupchat.model.weather.SavedLocationsViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
 
 /**
  * Fragment for Google Maps service of weather.
@@ -45,8 +44,6 @@ import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
  */
 public class WeatherMapFragment extends Fragment implements
         OnMapReadyCallback, GoogleMap.OnMapClickListener {
-
-//    private WeatherSearchViewModel mWeatherModel;
 
     private SavedLocationsViewModel mLocationsModel;
 
@@ -66,7 +63,6 @@ public class WeatherMapFragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherSearchViewModel.class);
         mLocationsModel = new ViewModelProvider(getActivity()).get(SavedLocationsViewModel.class);
         setHasOptionsMenu(true);
     }
@@ -200,9 +196,6 @@ public class WeatherMapFragment extends Fragment implements
             Log.d("WEATHER", mMarker.getPosition().toString());
 
             LatLng latLng = mMarker.getPosition();
-//            mWeatherModel.setLocation(new SavedLocation(
-//                    mMarker.getTitle(), latLng.latitude, latLng.longitude));
-//            mWeatherModel.connect(latLng.latitude, latLng.longitude);
 
             builder.setMessage("You are about to get weather for:\n" + mMarker.getTitle());
 

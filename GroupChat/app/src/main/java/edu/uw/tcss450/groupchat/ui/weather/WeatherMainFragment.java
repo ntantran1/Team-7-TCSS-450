@@ -1,16 +1,12 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
 import android.graphics.Color;
-import android.graphics.drawable.Icon;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -30,15 +26,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -252,7 +245,8 @@ public class WeatherMainFragment extends Fragment {
                 } else {
                     binding.weatherWait.setVisibility(View.GONE);
                     try {
-                        if (response.getString("message").equals("Location saved successfully!")) {
+                        if (response.getString("message")
+                                .equals("Location saved successfully!")) {
                             mFavorited.setIcon(R.drawable.ic_weather_star_filled_24dp);
                         } else {
                             mFavorited.setIcon(R.drawable.ic_weather_star_empty_24dp);
@@ -281,7 +275,7 @@ public class WeatherMainFragment extends Fragment {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
 
-            mWeatherModel.addLocationObserver(WeatherMainFragment.this.getViewLifecycleOwner(), saved -> {
+            mWeatherModel.addLocationObserver(getViewLifecycleOwner(), saved -> {
                 int pos = adapter.getPosition(saved);
                 spinner.setSelection(pos);
             });

@@ -12,7 +12,6 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.math.BigDecimal;
 
@@ -42,6 +41,11 @@ public class WeatherSearchViewModel extends WeatherViewModel {
         mLocation = new MutableLiveData<>();
     }
 
+    /**
+     * Add an observer to the saved location object.
+     * @param owner the fragment's LifecycleOwner
+     * @param observer an observer to observe
+     */
     public void addLocationObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super SavedLocation> observer) {
         mLocation.observe(owner, observer);
@@ -71,6 +75,10 @@ public class WeatherSearchViewModel extends WeatherViewModel {
         mCurrent = new SavedLocation(name, location.getLatitude(), location.getLongitude());
     }
 
+    /**
+     * Returns the saved current location.
+     * @return the current location
+     */
     public SavedLocation getCurrent() {
         return new SavedLocation(mCurrent);
     }
@@ -83,6 +91,10 @@ public class WeatherSearchViewModel extends WeatherViewModel {
         return new SavedLocation(mLocation.getValue());
     }
 
+    /**
+     * Updates the saved current location.
+     * @param location the actual current location
+     */
     public void setCurrent(final Location location) {
         BigDecimal lat = BigDecimal.valueOf(location.getLatitude());
         BigDecimal lon = BigDecimal.valueOf(location.getLongitude());
