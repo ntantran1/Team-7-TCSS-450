@@ -4,13 +4,20 @@ import android.app.Application;
 import android.location.Location;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.math.BigDecimal;
 
 import edu.uw.tcss450.groupchat.R;
+import edu.uw.tcss450.groupchat.ui.weather.SavedLocation;
 
 /**
  * This view model handles the response from the web service for getting weather information
@@ -20,7 +27,9 @@ import edu.uw.tcss450.groupchat.R;
  */
 public class WeatherSearchViewModel extends WeatherViewModel {
 
-    private Location mLocation;
+    private SavedLocation mCurrent;
+
+    private MutableLiveData<SavedLocation> mLocation;
 
     private boolean mInit = false;
 
@@ -30,6 +39,12 @@ public class WeatherSearchViewModel extends WeatherViewModel {
      */
     public WeatherSearchViewModel(@NonNull Application application) {
         super(application);
+        mLocation = new MutableLiveData<>();
+    }
+
+    public void addLocationObserver(@NonNull LifecycleOwner owner,
+                                    @NonNull Observer<? super SavedLocation> observer) {
+        mLocation.observe(owner, observer);
     }
 
     /**
@@ -41,32 +56,48 @@ public class WeatherSearchViewModel extends WeatherViewModel {
     }
 
     /**
-     * Initializes the view model with the given location.
-     * @param location the location to initialize with
+     * Initializes the view model with the given SavedLocation object.
+     * @param location the SavedLocation to initialize with
      */
-    public void initialize(final Location location) {
+    public void initialize(final SavedLocation location) {
         mInit = true;
-        mLocation = location;
+        mLocation.setValue(new SavedLocation(location));
+
+        BigDecimal lat = BigDecimal.valueOf(location.getLatitude());
+        BigDecimal lon = BigDecimal.valueOf(location.getLongitude());
+        lat = lat.setScale(2, BigDecimal.ROUND_HALF_UP);
+        lon = lon.setScale(2, BigDecimal.ROUND_HALF_UP);
+        String name = "Current Location (" + lat + ", " + lon + ")";
+        mCurrent = new SavedLocation(name, location.getLatitude(), location.getLongitude());
+    }
+
+    public SavedLocation getCurrent() {
+        return new SavedLocation(mCurrent);
     }
 
     /**
      * Returns the saved weather location.
      * @return the saved location
      */
-    public Location getLocation() {
-        return new Location(mLocation);
+    public SavedLocation getLocation() {
+        return new SavedLocation(mLocation.getValue());
+    }
+
+    public void setCurrent(final Location location) {
+        BigDecimal lat = BigDecimal.valueOf(location.getLatitude());
+        BigDecimal lon = BigDecimal.valueOf(location.getLongitude());
+        lat = lat.setScale(2, BigDecimal.ROUND_HALF_UP);
+        lon = lon.setScale(2, BigDecimal.ROUND_HALF_UP);
+        String name = "Current Location (" + lat + ", " + lon + ")";
+        mCurrent = new SavedLocation(name, location.getLatitude(), location.getLongitude());
     }
 
     /**
-     * Sets the location for this view model to the passed location.
-     * @param location the location to set
+     * Sets the SavedLocation object for this view model.
+     * @param location the SavedLocation to set
      */
-    public void setLocation(final Location location) {
-        if (mLocation == null
-                || location.getLatitude() != mLocation.getLatitude()
-                || location.getLongitude() != mLocation.getLongitude()) {
-            mLocation = location;
-        }
+    public void setLocation(final SavedLocation location) {
+        mLocation.setValue(new SavedLocation(location));
     }
 
     /**
@@ -77,30 +108,6 @@ public class WeatherSearchViewModel extends WeatherViewModel {
     public void connect(final double lat, final double lon) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "weather?lat=" + lat + "&lon=" + lon;
-
-        Request request = new JsonObjectRequest(
-                Request.Method.GET,
-                url,
-                null, //no body for this get request
-                mResponse::setValue,
-                this::handleError);
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                10_000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        //Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
-    }
-
-    /**
-     * Makes a request to the web service to get weather information at the given location.
-     * @param zip the zip code to get weather of
-     */
-    public void connectZip(final String zip) {
-        String url = getApplication().getResources().getString(R.string.base_url)
-                + "weather?zip=" + zip;
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,

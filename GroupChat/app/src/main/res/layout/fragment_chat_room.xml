@@ -107,7 +107,7 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
-        android:id="@+id/textview_status"
+        android:id="@+id/text_status"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

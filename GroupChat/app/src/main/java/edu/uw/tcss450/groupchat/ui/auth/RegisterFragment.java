@@ -129,21 +129,7 @@ public class RegisterFragment extends Fragment {
                     binding.registerWait.setVisibility(View.GONE);
                 });
     }
-    /*
-    private void validatePasswordsMatch() {
-        PasswordValidator matchValidator =
-                checkClientPredicate(
-                        pwd -> pwd.equals(binding.editPassword2.getText().toString().trim()));
 
-        mEmailValidator.processResult(
-                matchValidator.apply(binding.editPassword1.getText().toString().trim()),
-                this::verifyAuthWithServer,
-                result -> {
-                    binding.editPassword1.setError("Passwords must match.");
-                    binding.registerWait.setVisibility(View.GONE);
-                });
-    }
-*/
     private void validatePassword() {
         mPasswordValidator.processResult(
                 mPasswordValidator.apply(binding.editPassword1.getText().toString()),

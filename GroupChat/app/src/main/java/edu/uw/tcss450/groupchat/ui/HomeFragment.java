@@ -26,7 +26,7 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentHomeBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
-import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
+import edu.uw.tcss450.groupchat.model.weather.CurrentLocationViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentViewModel;
 import edu.uw.tcss450.groupchat.ui.chats.ChatDetailedRecyclerViewAdapter;
 import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
@@ -42,7 +42,7 @@ public class HomeFragment extends Fragment {
 
     private WeatherCurrentViewModel mWeatherModel;
 
-    private LocationViewModel mLocationModel;
+    private CurrentLocationViewModel mLocationModel;
 
     private ChatRoomViewModel mRoomModel;
 
@@ -52,7 +52,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherCurrentViewModel.class);
-        mLocationModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
+        mLocationModel = new ViewModelProvider(getActivity()).get(CurrentLocationViewModel.class);
         mRoomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
         mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
 

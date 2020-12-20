@@ -1,17 +1,25 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
-import android.location.Location;
+import android.app.AlertDialog;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,11 +28,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.snackbar.Snackbar;
+
+import java.io.IOException;
+import java.util.List;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherMapBinding;
-import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
+import edu.uw.tcss450.groupchat.model.weather.CurrentLocationViewModel;
+import edu.uw.tcss450.groupchat.model.weather.SavedLocationsViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
 
 /**
@@ -35,19 +46,29 @@ import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
 public class WeatherMapFragment extends Fragment implements
         OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
-    private WeatherSearchViewModel mWeatherModel;
+//    private WeatherSearchViewModel mWeatherModel;
 
-    private LocationViewModel mModel;
+    private SavedLocationsViewModel mLocationsModel;
 
     private GoogleMap mMap;
 
     private Marker mMarker;
+
+    private MenuItem mSearch;
 
     /**
      * Default public constructor.
      */
     public WeatherMapFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+//        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherSearchViewModel.class);
+        mLocationsModel = new ViewModelProvider(getActivity()).get(SavedLocationsViewModel.class);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -64,39 +85,7 @@ public class WeatherMapFragment extends Fragment implements
 
         FragmentWeatherMapBinding binding = FragmentWeatherMapBinding.bind(getView());
 
-        mModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
-
-        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherSearchViewModel.class);
-
-        binding.buttonWeather.setOnClickListener(button -> {
-            if (mMarker != null) {
-                LatLng latLng = mMarker.getPosition();
-                mWeatherModel.connect(latLng.latitude, latLng.longitude);
-
-                Snackbar snack = Snackbar.make(getView(), "Location updated!", Snackbar.LENGTH_LONG);
-                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                snack.show();
-            } else {
-                Snackbar snack = Snackbar.make(getView(), "No location!", Snackbar.LENGTH_LONG);
-                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                snack.show();
-            }
-        });
-
-        binding.buttonReset.setOnClickListener(button -> {
-            if (mMarker != null) {
-                mMarker.remove();
-            }
-            Location location = mModel.getCurrentLocation();
-            mWeatherModel.connect(location.getLatitude(), location.getLongitude());
-
-            Snackbar snack = Snackbar.make(getView(), "Location reset!", Snackbar.LENGTH_LONG);
-            snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                    .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            snack.show();
-        });
+        binding.buttonAddLocation.setOnClickListener(this::getWeather);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used
         SupportMapFragment mapFragment =
@@ -106,10 +95,58 @@ public class WeatherMapFragment extends Fragment implements
     }
 
     @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        mSearch = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) mSearch.getActionView();
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                final Geocoder geocoder = new Geocoder(getContext());
+                List<Address> results = null;
+                try {
+                    results = geocoder.getFromLocationName(query, 1);
+                } catch (IOException e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage("Invalid Zip Code");
+                    builder.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
+
+                    final AlertDialog dialog = builder.show();
+                    TextView message = dialog.findViewById(android.R.id.message);
+                    message.setGravity(Gravity.CENTER);
+                    dialog.show();
+                }
+                Address loc = results.get(0);
+                final LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
+
+                if (mMarker != null) mMarker.remove();
+                mMarker = mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(results.get(0).getAddressLine(0)));
+                mMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                                latLng, mMap.getCameraPosition().zoom));
+                mMarker.showInfoWindow();
+
+                searchView.setIconified(true);
+                mSearch.collapseActionView();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        mSearch.setVisible(true);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        LocationViewModel model = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
+        CurrentLocationViewModel model = new ViewModelProvider(getActivity()).get(CurrentLocationViewModel.class);
         model.addLocationObserver(getViewLifecycleOwner(), location -> {
             if (location != null) {
                 googleMap.getUiSettings().setZoomControlsEnabled(true);
@@ -127,16 +164,67 @@ public class WeatherMapFragment extends Fragment implements
     public void onMapClick(LatLng latLng) {
         Log.d("LAT/LONG", latLng.toString());
 
-        if (mMarker != null) {
-            mMarker.remove();
+        final Geocoder geocoder = new Geocoder(getContext());
+        List<Address> results = null;
+        try {
+            results = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+        } catch (IOException e) {
+            Log.e("ERROR", "Geocoder error on location");
+            e.printStackTrace();
         }
+        String title = results.get(0).getAddressLine(0);
+
+        if (mMarker != null) mMarker.remove();
 
         mMarker = mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .title("New Marker"));
+                .title(title));
 
         mMap.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                         latLng, mMap.getCameraPosition().zoom));
+
+        mMarker.showInfoWindow();
+    }
+
+    private void getWeather(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        if (mMarker == null) {
+            Log.d("WEATHER", "No location selected on map");
+
+            builder.setMessage("You have not selected a location!");
+
+            builder.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
+        } else {
+            Log.d("WEATHER", mMarker.getPosition().toString());
+
+            LatLng latLng = mMarker.getPosition();
+//            mWeatherModel.setLocation(new SavedLocation(
+//                    mMarker.getTitle(), latLng.latitude, latLng.longitude));
+//            mWeatherModel.connect(latLng.latitude, latLng.longitude);
+
+            builder.setMessage("You are about to get weather for:\n" + mMarker.getTitle());
+
+            builder.setPositiveButton("OK", (dlg, i) -> {
+                ((SearchView) mSearch.getActionView()).setIconified(true);
+                mSearch.collapseActionView();
+                mLocationsModel.addLocation(new SavedLocation(
+                        mMarker.getTitle(), latLng.latitude, latLng.longitude));
+                WeatherMapFragmentDirections.ActionWeatherMapFragmentToNavigationWeather directions =
+                        WeatherMapFragmentDirections.actionWeatherMapFragmentToNavigationWeather();
+                directions.setLocationName(mMarker.getTitle());
+                directions.setLocation(mMarker.getPosition());
+                Navigation.findNavController(getView()).navigate(directions);
+                dlg.dismiss();
+            });
+
+            builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+        }
+
+        final AlertDialog dialog = builder.show();
+        TextView message = dialog.findViewById(android.R.id.message);
+        message.setGravity(Gravity.CENTER);
+        dialog.show();
     }
 }

@@ -50,7 +50,7 @@ import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsOutgoingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
-import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
+import edu.uw.tcss450.groupchat.model.weather.CurrentLocationViewModel;
 import edu.uw.tcss450.groupchat.services.PushReceiver;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 import edu.uw.tcss450.groupchat.ui.contacts.Contact;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationCallback mLocationCallback;
 
-    private LocationViewModel mLocationModel;
+    private CurrentLocationViewModel mLocationModel;
 
     private ChatNotificationsViewModel mNewChatModel;
 
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("LOCATION UPDATE", location.toString());
                     if (mLocationModel == null) {
                         mLocationModel = new ViewModelProvider(MainActivity.this)
-                                .get(LocationViewModel.class);
+                                .get(CurrentLocationViewModel.class);
                     }
                     mLocationModel.setLocation(location);
                 }
@@ -299,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -361,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("LOCATION", location.toString());
                             if (mLocationModel == null) {
                                 mLocationModel = new ViewModelProvider(MainActivity.this)
-                                        .get(LocationViewModel.class);
+                                        .get(CurrentLocationViewModel.class);
                             }
                             mLocationModel.setLocation(location);
                         }
@@ -596,7 +596,8 @@ public class MainActivity extends AppCompatActivity {
                         else if (current.size() > 0)
                             announcement += " is typing";
 
-                        ((TextView) findViewById(R.id.textview_status)).setText(announcement);
+                        TextView message = findViewById(R.id.text_status);
+                        if (message != null) message.setText(announcement);
                     }
                 }
             }

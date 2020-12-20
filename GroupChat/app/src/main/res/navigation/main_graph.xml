@@ -30,9 +30,22 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_weather"
-        android:name="edu.uw.tcss450.groupchat.ui.weather.WeatherHolderFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.weather.WeatherMainFragment"
         android:label="@string/title_weather"
-        tools:layout="@layout/fragment_weather_holder" />
+        tools:layout="@layout/fragment_weather_main" >
+        <action
+            android:id="@+id/action_navigation_weather_to_weatherMapFragment"
+            app:destination="@id/weatherMapFragment" />
+        <argument
+            android:name="locationName"
+            app:argType="string"
+            android:defaultValue="default" />
+        <argument
+            android:name="location"
+            app:argType="com.google.android.gms.maps.model.LatLng"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
     <fragment
         android:id="@+id/chatDisplayFragment"
         android:name="edu.uw.tcss450.groupchat.ui.chats.ChatRoomFragment"
@@ -60,4 +73,13 @@
         android:name="edu.uw.tcss450.groupchat.AuthActivity"
         android:label="activity_auth"
         tools:layout="@layout/activity_auth" />
+    <fragment
+        android:id="@+id/weatherMapFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.weather.WeatherMapFragment"
+        android:label="@string/title_weather"
+        tools:layout="@layout/fragment_weather_map" >
+        <action
+            android:id="@+id/action_weatherMapFragment_to_navigation_weather"
+            app:destination="@id/navigation_weather" />
+    </fragment>
 </navigation>

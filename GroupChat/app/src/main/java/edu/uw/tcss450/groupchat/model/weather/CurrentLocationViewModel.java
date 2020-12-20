@@ -13,11 +13,11 @@ import androidx.lifecycle.ViewModel;
  *
  * @version December, 2020
  */
-public class LocationViewModel extends ViewModel {
+public class CurrentLocationViewModel extends ViewModel {
 
     private MutableLiveData<Location> mLocation;
 
-    public LocationViewModel() {
+    public CurrentLocationViewModel() {
         mLocation = new MutableLiveData<>();
     }
 
