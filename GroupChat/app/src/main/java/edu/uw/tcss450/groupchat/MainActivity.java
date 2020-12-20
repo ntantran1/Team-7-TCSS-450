@@ -596,11 +596,12 @@ public class MainActivity extends AppCompatActivity {
                         else if (current.size() > 0)
                             announcement += " is typing";
 
-                        if (message != null) message.setText(announcement);
-
-                        if (announcement.isEmpty()) message.setVisibility(View.GONE);
-                        else message.setVisibility(View.VISIBLE);
-                    } else {
+                        if (message != null) {
+                            message.setText(announcement);
+                            if (announcement.isEmpty()) message.setVisibility(View.GONE);
+                            else message.setVisibility(View.VISIBLE);
+                        }
+                    } else if (message != null) {
                         message.setVisibility(View.GONE);
                     }
                 }
