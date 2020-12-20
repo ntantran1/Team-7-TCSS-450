@@ -14,7 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 
@@ -26,7 +27,8 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 
 /**
- * Fragment for Home Page of the application.
+ * Fragment for Home Page of the chats.
+ * Displays list of chat rooms a user is member of.
  *
  * @version November 5
  */
@@ -38,6 +40,7 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
 
     private FragmentChatMainBinding binding;
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +51,7 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
 
         mModel.connect(mUserModel.getJwt());
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -75,13 +79,20 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
                 mModel.connect(mUserModel.getJwt()));
 
         mModel.addRoomsObserver(getViewLifecycleOwner(), rooms -> {
-            rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
-            binding.swipeContainer.setRefreshing(false);
-            binding.chatWait.setVisibility(View.GONE);
+            if (rooms.size() != 1) {
+                rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
+                binding.swipeContainer.setRefreshing(false);
+                binding.chatWait.setVisibility(View.GONE);
+            } else if (!rooms.get(0).equals(new ChatRoom(0, "init"))) {
+                rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
+                binding.swipeContainer.setRefreshing(false);
+                binding.chatWait.setVisibility(View.GONE);
+            }
         });
 
         binding.buttonStartChatRoom.setOnClickListener(this);
     }
+
 
     @Override
     public void onClick(View v) {
@@ -115,8 +126,11 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
                             }
                         } else {
                             mModel.connect(mUserModel.getJwt());
-                            Toast.makeText(getContext(), "You created " + chatName,
-                                    Toast.LENGTH_LONG).show();
+                            Snackbar snack = Snackbar.make(v, "You created "
+                                    + chatName.getText().toString(), Snackbar.LENGTH_LONG);
+                            snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                    .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                            snack.show();
                             dialog.dismiss();
                         }
                     } else {

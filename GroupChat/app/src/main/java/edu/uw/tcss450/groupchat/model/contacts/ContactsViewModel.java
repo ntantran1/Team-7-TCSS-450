@@ -21,42 +21,66 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
+/**
+ * This abstract view model is the parent for the actual contacts view models.
+ *
+ * @version December, 2020
+ */
 public abstract class ContactsViewModel extends AndroidViewModel {
 
-    private MutableLiveData<List<Contact>> mContacts;
+    protected MutableLiveData<List<Contact>> mContacts;
 
     protected MutableLiveData<JSONObject> mResponse;
 
     protected int mContactType;
 
+    /**
+     * Default constructor for this view model.
+     * @param application reference to the current application
+     */
     public ContactsViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>();
-        mResponse.setValue(new JSONObject());
         mContacts = new MutableLiveData<>();
-        mContacts.setValue(new ArrayList<>());
         mContactType = -1;
+        initValues();
     }
 
+    /**
+     * Add an observer to the response object.
+     * @param owner the fragment's LifecycleOwner
+     * @param observer an observer to observe
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Add an observer to the list of contacts.
+     * @param owner the fragment's LifecycleOwner
+     * @param observer an observer to observe
+     */
     public void addContactsObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super List<Contact>> observer) {
         mContacts.observe(owner, observer);
     }
 
-    public abstract void connect(final String jwt);
-
+    /**
+     * Returns the list of the user's contacts.
+     * @return the list of contacts
+     */
     public List<Contact> getContacts(){
         return mContacts.getValue();
     }
 
+    /**
+     * Returns the email of a contact from the passed username.
+     * @param name the username of the contact
+     * @return the email of the contact
+     */
     public String getContactFromUserName(final String name) {
         for (Contact contact : mContacts.getValue()) {
             if (name.equals(contact.getUsername())) {
@@ -66,8 +90,25 @@ public abstract class ContactsViewModel extends AndroidViewModel {
         return "-1";
     }
 
+    public void addContact(final Contact contact) {
+        if (!mContacts.getValue().contains(contact)) {
+            mContacts.getValue().add(0, contact);
+        }
+        mContacts.setValue(mContacts.getValue());
+    }
+
+    public void removeContact(final Contact contact) {
+        mContacts.getValue().remove(contact);
+        mContacts.setValue(mContacts.getValue());
+    }
+
+    /**
+     * Makes a request to the web service to get the list of the user's contacts.
+     * @param jwt the user's signed JWT
+     */
+    public abstract void connect(final String jwt);
+
     protected void handleSuccess(final JSONObject result) {
-        List<Contact> sorted = new ArrayList<>();
         try {
             if (result.has("contacts")) {
                 JSONArray contacts = result.getJSONArray("contacts");
@@ -78,7 +119,10 @@ public abstract class ContactsViewModel extends AndroidViewModel {
                             jsonContact.getString("name"),
                             jsonContact.getString("email"),
                             mContactType);
-                    sorted.add(contact);
+                    if (mContacts.getValue().contains(contact)) {
+                        mContacts.getValue().remove(contact);
+                    }
+                    mContacts.getValue().add(contact);
                 }
             } else {
                 Log.e("ERROR", "No contacts array");
@@ -88,8 +132,8 @@ public abstract class ContactsViewModel extends AndroidViewModel {
             Log.e("ERROR", e.getMessage());
         }
         //sort the list of contacts alphabetically
-        Collections.sort(sorted);
-        mContacts.setValue(sorted);
+        Collections.sort(mContacts.getValue());
+        mContacts.setValue(mContacts.getValue());
     }
 
     protected void handleError(final VolleyError error) {
@@ -111,5 +155,16 @@ public abstract class ContactsViewModel extends AndroidViewModel {
                 Log.e("JSON PARSE", "JSON Parse Error in handleError");
             }
         }
+    }
+
+    private void initValues() {
+        try {
+            mResponse.setValue(new JSONObject("{\"init\":\"init\"}"));
+        } catch (JSONException e) {
+            Log.d("JSON Error", e.getMessage());
+        }
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(new Contact("", "", "", -1));
+        mContacts.setValue(contacts);
     }
 }

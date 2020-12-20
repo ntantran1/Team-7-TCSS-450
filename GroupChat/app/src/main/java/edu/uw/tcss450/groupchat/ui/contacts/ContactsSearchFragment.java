@@ -21,7 +21,9 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for searching contacts tab.
+ *
+ * @version December 2020
  */
 public class ContactsSearchFragment extends Fragment {
 
@@ -76,8 +78,11 @@ public class ContactsSearchFragment extends Fragment {
             }
         });
 
-        mModel.addContactsObserver(getViewLifecycleOwner(), searchList -> {
-            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(searchList);
+        mModel.addContactsObserver(getViewLifecycleOwner(), searched -> {
+            Contact blank = new Contact("", "", "", -1);
+            if (searched.contains(blank)) searched.remove(blank);
+
+            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(searched);
             binding.searchSwipeContainer.setRefreshing(false);
             binding.contactsSearchWait.setVisibility(View.GONE);
         });

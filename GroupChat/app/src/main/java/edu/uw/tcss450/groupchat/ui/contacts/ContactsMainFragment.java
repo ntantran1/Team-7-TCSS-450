@@ -61,8 +61,11 @@ public class ContactsMainFragment extends Fragment {
         binding.swipeContainer.setOnRefreshListener(() ->
                 mModel.connect(mUserModel.getJwt()));
 
-        mModel.addContactsObserver(getViewLifecycleOwner(), contactList -> {
-            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(contactList);
+        mModel.addContactsObserver(getViewLifecycleOwner(), contacts -> {
+            Contact blank = new Contact("", "", "", 0);
+            if (contacts.contains(blank)) contacts.remove(blank);
+
+            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(contacts);
             binding.swipeContainer.setRefreshing(false);
             binding.contactsMainWait.setVisibility(View.GONE);
         });

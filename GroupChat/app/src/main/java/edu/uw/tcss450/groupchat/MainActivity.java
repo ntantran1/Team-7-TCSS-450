@@ -1,6 +1,7 @@
 package edu.uw.tcss450.groupchat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -33,6 +35,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
+
+import java.util.Set;
+
 import edu.uw.tcss450.groupchat.databinding.ActivityMainBinding;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
@@ -44,21 +50,22 @@ import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsOutgoingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
-import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
+import edu.uw.tcss450.groupchat.model.weather.CurrentLocationViewModel;
 import edu.uw.tcss450.groupchat.services.PushReceiver;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
+import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
 /**
  * Activity after the user is authenticated, for all the features of the application.
  *
- * @version December 4, 2020
+ * @version December, 2020
  */
 public class MainActivity extends AppCompatActivity {
 
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 60000;
 
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+            UPDATE_INTERVAL_IN_MILLISECONDS / 5;
 
     private static final int MY_PERMISSIONS_LOCATIONS = 8414;
 
@@ -68,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationCallback mLocationCallback;
 
-    private LocationViewModel mLocationModel;
+    private CurrentLocationViewModel mLocationModel;
 
     private ChatNotificationsViewModel mNewChatModel;
 
@@ -97,7 +104,26 @@ public class MainActivity extends AppCompatActivity {
         mUserViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
         ChatRoomViewModel chatRoomModel = new ViewModelProvider(this).get(ChatRoomViewModel.class);
 
-        setTheme(mUserViewModel.getTheme());
+        SharedPreferences prefs =
+                this.getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+
+        if (prefs.contains(getString(R.string.keys_prefs_theme))) {
+            int theme = prefs.getInt(getString(R.string.keys_prefs_theme), -1);
+
+            switch (theme) {
+                case 1:
+                    setTheme(R.style.Theme_IndigoGreen);
+                    break;
+                case 2:
+                    setTheme(R.style.Theme_GreyOrange);
+                    break;
+                default:
+                    setTheme(R.style.Theme_PurpleGold);
+                    break;
+            }
+        }
 
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -118,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             manager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
             if (destination.getId() == R.id.navigation_contacts) {
-                mNewContactModel.reset();
+                mNewContactModel.reset("contacts");
             } else if (destination.getId() == R.id.navigation_chats) {
                 mNewChatModel.resetChat();
             }
@@ -134,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_LOCATIONS);
+                            MY_PERMISSIONS_LOCATIONS);
         } else {
             // the user has already allowed the use of Locations. Get the current location.
             requestLocation();
@@ -150,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("LOCATION UPDATE", location.toString());
                     if (mLocationModel == null) {
                         mLocationModel = new ViewModelProvider(MainActivity.this)
-                                .get(LocationViewModel.class);
+                                .get(CurrentLocationViewModel.class);
                     }
                     mLocationModel.setLocation(location);
                 }
@@ -158,16 +184,8 @@ public class MainActivity extends AppCompatActivity {
         };
         createLocationRequest();
 
-        mUserViewModel.addThemeObserver(this, theme -> {
-            BadgeDrawable contactBadge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
-            contactBadge.setMaxCharacterCount(2);
-
-            BadgeDrawable chatBadge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
-            chatBadge.setMaxCharacterCount(2);
-
-            contactBadge.setVisible(contactBadge.getNumber() != 0);
-            chatBadge.setVisible(chatBadge.getNumber() != 0);
-        });
+        binding.navView.removeBadge(R.id.navigation_chats);
+        binding.navView.removeBadge(R.id.navigation_contacts);
 
         chatRoomModel.addCurrentRoomObserver(this, chatId -> mNewChatModel.reset(chatId));
 
@@ -187,8 +205,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //remove badge
                 if (mNewChatModel.getNewChatCount() == 0) {
-                    badge.clearNumber();
-                    badge.setVisible(false);
+                    binding.navView.removeBadge(R.id.navigation_chats);
                 } else {
                     badge.setNumber(mNewChatModel.getNewChatCount());
                     badge.setVisible(true);
@@ -207,8 +224,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //remove badge
                 if (mNewChatModel.getNewMessageCount() == 0) {
-                    badge.clearNumber();
-                    badge.setVisible(false);
+                    binding.navView.removeBadge(R.id.navigation_chats);
                 } else {
                     badge.setNumber(mNewChatModel.getNewMessageCount());
                     badge.setVisible(true);
@@ -216,18 +232,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mNewContactModel.addContactCountObserver(this, count -> {
+        mNewContactModel.addContactCountObserver("contacts", this, count -> {
             BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
             badge.setMaxCharacterCount(2);
 
-            if(count > 0) {
-                //new contacts
-                badge.setNumber(count);
+            if (count > 0 || mNewContactModel.getNotificationCount() > 0) {
+                badge.setNumber(mNewContactModel.getNotificationCount());
                 badge.setVisible(true);
             } else {
-                //remove badge
-                badge.clearNumber();
-                badge.setVisible(false);
+                binding.navView.removeBadge(R.id.navigation_contacts);
+            }
+        });
+
+        mNewContactModel.addContactCountObserver("incoming", this, count -> {
+            BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
+            badge.setMaxCharacterCount(2);
+
+            if (count > 0 || mNewContactModel.getNotificationCount() > 0) {
+                badge.setNumber(mNewContactModel.getNotificationCount());
+                badge.setVisible(true);
+            } else {
+                binding.navView.removeBadge(R.id.navigation_contacts);
+            }
+        });
+
+        mNewContactModel.addContactCountObserver("outgoing", this, count -> {
+            BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_contacts);
+            badge.setMaxCharacterCount(2);
+
+            if (count > 0 || mNewContactModel.getNotificationCount() > 0) {
+                badge.setNumber(mNewContactModel.getNotificationCount());
+                badge.setVisible(true);
+            } else {
+                binding.navView.removeBadge(R.id.navigation_contacts);
             }
         });
     }
@@ -262,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -324,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("LOCATION", location.toString());
                             if (mLocationModel == null) {
                                 mLocationModel = new ViewModelProvider(MainActivity.this)
-                                        .get(LocationViewModel.class);
+                                        .get(CurrentLocationViewModel.class);
                             }
                             mLocationModel.setLocation(location);
                         }
@@ -356,13 +393,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
+                == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED) {
 
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback,
-                    null /* Looper */);
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
         }
     }
 
@@ -383,12 +418,16 @@ public class MainActivity extends AppCompatActivity {
                         Context.MODE_PRIVATE);
 
         prefs.edit().remove(getString(R.string.keys_prefs_jwt)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_theme)).apply();
 
-        PushyTokenViewModel model = new ViewModelProvider(this)
-                .get(PushyTokenViewModel.class);
+        PushyTokenViewModel model = new ViewModelProvider(this).get(PushyTokenViewModel.class);
 
         //when we hear back from the web service, quit
-        model.addResponseObserver(this, result -> finishAndRemoveTask());
+        model.addResponseObserver(this, result -> {
+            Navigation.findNavController(this, R.id.nav_host_fragment)
+                    .navigate(R.id.navigation_auth);
+            finish();
+        });
 
         model.deleteTokenFromWebservice(
                 new ViewModelProvider(this)
@@ -396,25 +435,36 @@ public class MainActivity extends AppCompatActivity {
                         .getJwt());
     }
 
+    /**
+     * Changes the color theme of the app.
+     * @param view the theme to change to
+     */
     public void changeColorTheme(View view) {
         boolean checked = ((RadioButton) view).isChecked();
+        SharedPreferences prefs =
+                this.getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
 
         switch (view.getId()) {
             case R.id.settings_color_pg:
                 if (checked && mUserViewModel.getTheme() != R.style.Theme_PurpleGold) {
                     mUserViewModel.setTheme(R.style.Theme_PurpleGold);
+                    prefs.edit().putInt(getString(R.string.keys_prefs_theme), 0).apply();
                     recreate();
                 }
                 break;
             case R.id.settings_color_ig:
                 if (checked && mUserViewModel.getTheme() != R.style.Theme_IndigoGreen) {
                     mUserViewModel.setTheme(R.style.Theme_IndigoGreen);
+                    prefs.edit().putInt(getString(R.string.keys_prefs_theme), 1).apply();
                     recreate();
                 }
                 break;
             case R.id.settings_color_go:
                 if (checked && mUserViewModel.getTheme() != R.style.Theme_GreyOrange) {
                     mUserViewModel.setTheme(R.style.Theme_GreyOrange);
+                    prefs.edit().putInt(getString(R.string.keys_prefs_theme), 2).apply();
                     recreate();
                 }
                 break;
@@ -444,6 +494,10 @@ public class MainActivity extends AppCompatActivity {
         private ContactsSearchViewModel mSearchModel =
                 new ViewModelProvider(MainActivity.this).get(ContactsSearchViewModel.class);
 
+        private UserInfoViewModel mUserModel =
+                new ViewModelProvider(MainActivity.this).get(UserInfoViewModel.class);
+
+        @SuppressLint("SetTextI18n")
         @Override
         public void onReceive(Context context, Intent intent) {
             NavController nc = Navigation.findNavController(MainActivity.this,
@@ -462,12 +516,50 @@ public class MainActivity extends AppCompatActivity {
                 //inform view model holding chatroom messages of the new ones
                 mChatModel.addMessage(intent.getIntExtra("chatid", -1), cm);
                 mRoomModel.connectRecent(mUserViewModel.getJwt());
-            } else if (intent.hasExtra("contact")) {
-
-                if (nd.getId() != R.id.navigation_contacts) {
-                    mNewContactModel.increment();
+            } else if (intent.hasExtra("con")) {
+                String request = intent.getStringExtra("request");
+                Contact contact = null;
+                if (intent.hasExtra("contact")) {
+                    try {
+                        contact = Contact.createFromJsonString(intent.getStringExtra("contact"));
+                        contact.setName(contact.getUsername());
+                    } catch (JSONException e) {
+                        Log.e("JSON Error", e.getMessage());
+                    }
                 }
 
+                switch (request) {
+                    case "contacts":
+                        contact.setUsername("Contact removed");
+                        mContactsModel.removeContact(contact);
+                        mContactsModel.addContact(contact);
+                        if (nd.getId() != R.id.navigation_contacts
+                                || !mNewContactModel.getSelectedTab().equals("contacts")) {
+                            mNewContactModel.increment("contacts");
+                        }
+                        break;
+                    case "incoming":
+                        if (contact != null) {
+                            contact.setUsername("Request canceled");
+                            mIncomingModel.removeContact(contact);
+                            mIncomingModel.addContact(contact);
+                        }
+                        if (nd.getId() != R.id.navigation_contacts
+                                || !mNewContactModel.getSelectedTab().equals("incoming")) {
+                            mNewContactModel.increment("incoming");
+                        }
+                        break;
+                    case "accepted":
+                    case "rejected":
+                        contact.setUsername("Request " + request);
+                        mOutgoingModel.removeContact(contact);
+                        mOutgoingModel.addContact(contact);
+                        if (nd.getId() != R.id.navigation_contacts
+                                || !mNewContactModel.getSelectedTab().equals("outgoing")) {
+                            mNewContactModel.increment("outgoing");
+                        }
+                        break;
+                }
                 mContactsModel.connect(mUserViewModel.getJwt());
                 mIncomingModel.connect(mUserViewModel.getJwt());
                 mOutgoingModel.connect(mUserViewModel.getJwt());
@@ -478,6 +570,41 @@ public class MainActivity extends AppCompatActivity {
                     mNewChatModel.incrementChat();
                 }
                 mRoomModel.connect(mUserViewModel.getJwt());
+            } else if (intent.hasExtra("typeStatus")) {
+                int chatId = intent.getIntExtra("chatid", 0);
+                String email = intent.getStringExtra("email");
+                String typingStatus = intent.getStringExtra("typeStatus");
+                String username = intent.getStringExtra("username");
+
+                if (!email.equals(mUserModel.getEmail()) && chatId == mRoomModel.getCurrentRoom()) {
+                    Set<String> current;
+                    if (typingStatus.equals("typing")) {
+                        current = mRoomModel.addTyper(username, chatId);
+                    }
+                    else {
+                        current = mRoomModel.removeTyper(username, chatId);
+                    }
+
+                    TextView message = findViewById(R.id.text_status);
+                    if (current != null) {
+                        String announcement = current.toString()
+                                .replace("[", "").replace("]", "");
+                        if (current.size() > 2)
+                            announcement = "Multiple people are typing...";
+                        else if (current.size() > 1)
+                            announcement += " are typing";
+                        else if (current.size() > 0)
+                            announcement += " is typing";
+
+                        if (message != null) {
+                            message.setText(announcement);
+                            if (announcement.isEmpty()) message.setVisibility(View.GONE);
+                            else message.setVisibility(View.VISIBLE);
+                        }
+                    } else if (message != null) {
+                        message.setVisibility(View.GONE);
+                    }
+                }
             }
         }
     }

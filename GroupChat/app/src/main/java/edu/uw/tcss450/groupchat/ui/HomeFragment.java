@@ -26,9 +26,10 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentHomeBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
-import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
+import edu.uw.tcss450.groupchat.model.weather.CurrentLocationViewModel;
 import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentViewModel;
 import edu.uw.tcss450.groupchat.ui.chats.ChatDetailedRecyclerViewAdapter;
+import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 
 /**
  * Fragment for Home page.
@@ -41,7 +42,7 @@ public class HomeFragment extends Fragment {
 
     private WeatherCurrentViewModel mWeatherModel;
 
-    private LocationViewModel mLocationModel;
+    private CurrentLocationViewModel mLocationModel;
 
     private ChatRoomViewModel mRoomModel;
 
@@ -51,7 +52,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherCurrentViewModel.class);
-        mLocationModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
+        mLocationModel = new ViewModelProvider(getActivity()).get(CurrentLocationViewModel.class);
         mRoomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
         mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
 
@@ -76,8 +77,10 @@ public class HomeFragment extends Fragment {
         final RecyclerView rv = binding.listRootHome;
         rv.setAdapter(new ChatDetailedRecyclerViewAdapter(new HashMap<>(), getActivity()));
 
-        mLocationModel.addLocationObserver(getViewLifecycleOwner(), location ->
-                mWeatherModel.connect(location.getLatitude(), location.getLongitude()));
+        mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
+            mWeatherModel.connect(location.getLatitude(), location.getLongitude());
+            binding.homeWait.setVisibility(View.VISIBLE);
+        });
 
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
             if (response.length() > 0) {
@@ -93,6 +96,8 @@ public class HomeFragment extends Fragment {
                         binding.textCondition.setText(info.getString("main"));
                         setImage(info, binding.imageCondition);
                         binding.textDegree.setText((int) main.getDouble("temp") + " °F");
+
+                        binding.homeWait.setVisibility(View.GONE);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e("JSON Parse Error", e.getMessage());
@@ -103,8 +108,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        mRoomModel.addRecentObserver(getViewLifecycleOwner(), chats ->
-                rv.setAdapter(new ChatDetailedRecyclerViewAdapter(chats, getActivity())));
+        mRoomModel.addRecentObserver(getViewLifecycleOwner(), chats -> {
+            if (chats.size() != 1) {
+                rv.setAdapter(new ChatDetailedRecyclerViewAdapter(chats, getActivity()));
+            } else if (!chats.keySet().toArray()[0].equals(new ChatRoom(0, "init"))) {
+                rv.setAdapter(new ChatDetailedRecyclerViewAdapter(chats, getActivity()));
+            }
+        });
     }
 
     @Override

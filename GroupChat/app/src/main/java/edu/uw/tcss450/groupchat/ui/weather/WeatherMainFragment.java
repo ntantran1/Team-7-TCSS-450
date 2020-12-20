@@ -1,26 +1,37 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
 import android.graphics.Color;
-import android.location.Location;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,31 +44,43 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentWeatherMainBinding;
-import edu.uw.tcss450.groupchat.model.weather.LocationViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentDailyViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentViewModel;
+import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
+import edu.uw.tcss450.groupchat.model.weather.CurrentLocationViewModel;
+import edu.uw.tcss450.groupchat.model.weather.SavedLocationsViewModel;
+import edu.uw.tcss450.groupchat.model.weather.WeatherSearchDailyViewModel;
+import edu.uw.tcss450.groupchat.model.weather.WeatherSearchViewModel;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for main page of weather.
+ *
+ * @version December 2020
  */
 public class WeatherMainFragment extends Fragment {
 
-    private LocationViewModel mLocationModel;
+    private CurrentLocationViewModel mLocationModel;
 
-    private WeatherCurrentViewModel mWeatherModel;
+    private SavedLocationsViewModel mSavesModel;
 
-    private WeatherCurrentDailyViewModel mDailyModel;
+    private WeatherSearchViewModel mWeatherModel;
 
-    private List<WeatherHourly> mHourly;
+    private WeatherSearchDailyViewModel mDailyModel;
+
+    private UserInfoViewModel mUserModel;
 
     private FragmentWeatherMainBinding binding;
 
+    private MenuItem mFavorited;
+
     @Override
-    public void onCreate(@Nullable  Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocationModel = new ViewModelProvider(getActivity()).get(LocationViewModel.class);
-        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherCurrentViewModel.class);
-        mDailyModel = new ViewModelProvider(getActivity()).get(WeatherCurrentDailyViewModel.class);
+        ViewModelProvider provider = new ViewModelProvider(getActivity());
+        mLocationModel = provider.get(CurrentLocationViewModel.class);
+        mSavesModel = provider.get(SavedLocationsViewModel.class);
+        mWeatherModel = provider.get(WeatherSearchViewModel.class);
+        mDailyModel = provider.get(WeatherSearchDailyViewModel.class);
+        mUserModel = provider.get(UserInfoViewModel.class);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -73,14 +96,42 @@ public class WeatherMainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mLocationModel.addLocationObserver(getViewLifecycleOwner(), location ->
-                mWeatherModel.connect(location.getLatitude(), location.getLongitude()));
+        WeatherMainFragmentArgs args = WeatherMainFragmentArgs.fromBundle(getArguments());
+        if (args.getLocation() != null) {
+            LatLng latLng = args.getLocation();
+            mWeatherModel.setLocation(new SavedLocation(
+                    args.getLocationName(), latLng.latitude, latLng.longitude));
+        }
 
         binding.buttonRefresh.setOnClickListener(button -> {
-            Location location = mLocationModel.getCurrentLocation();
+            SavedLocation location = mWeatherModel.getLocation();
             mWeatherModel.connect(location.getLatitude(), location.getLongitude());
             binding.weatherWait.setVisibility(View.VISIBLE);
         });
+
+        mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
+            Geocoder geocoder = new Geocoder(getContext());
+            List<Address> results = null;
+            try {
+                results = geocoder.getFromLocation(
+                        location.getLatitude(), location.getLongitude(), 1);
+            } catch (IOException e) {
+                Log.e("ERROR", "Geocoder error on location");
+                e.printStackTrace();
+            }
+            String name = results.get(0).getAddressLine(0);
+
+            if (!mWeatherModel.isInitialized()) {
+                mWeatherModel.initialize(new SavedLocation(
+                        name, location.getLatitude(), location.getLongitude()));
+                mWeatherModel.connect(location.getLatitude(), location.getLongitude());
+                mSavesModel.connect(mUserModel.getJwt());
+            } else {
+                mWeatherModel.setCurrent(location);
+            }
+        });
+
+        AtomicBoolean celsius = new AtomicBoolean(false);
 
         mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
             if (response.length() > 0) {
@@ -88,8 +139,6 @@ public class WeatherMainFragment extends Fragment {
                     Log.d("Weather", "Invalid location");
                 } else {
                     try {
-                        AtomicBoolean celsius = new AtomicBoolean(false);
-
                         JSONObject main = response.getJSONObject("main");
                         JSONObject coord = response.getJSONObject("coord");
                         JSONObject wind = response.getJSONObject("wind");
@@ -119,6 +168,8 @@ public class WeatherMainFragment extends Fragment {
                                     binding.buttonFahrenheit.setTextColor(Color.GRAY);
                                     binding.buttonCelsius.setTextColor(Color.BLACK);
                                     celsius.set(true);
+                                    mDailyModel.connect(coord.getDouble("lat"),
+                                            coord.getDouble("lon"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                     Log.e("JSON Parse Error", e.getMessage());
@@ -134,6 +185,8 @@ public class WeatherMainFragment extends Fragment {
                                     binding.buttonFahrenheit.setTextColor(Color.BLACK);
                                     binding.buttonCelsius.setTextColor(Color.GRAY);
                                     celsius.set(false);
+                                    mDailyModel.connect(coord.getDouble("lat"),
+                                            coord.getDouble("lon"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                     Log.e("JSON Parse Error", e.getMessage());
@@ -157,9 +210,8 @@ public class WeatherMainFragment extends Fragment {
                     try {
                         JSONArray daily = response.getJSONArray("daily");
                         JSONArray hourly = response.getJSONArray("hourly");
-                        getDaily(daily);
+                        getDaily(daily, celsius.get());
                         getHourly(hourly);
-                        binding.layoutWait.setVisibility(View.GONE);
                         binding.weatherWait.setVisibility(View.GONE);
                     } catch (JSONException e) {
                         Log.e("JSON Parse Error", e.getMessage());
@@ -171,15 +223,133 @@ public class WeatherMainFragment extends Fragment {
         });
     }
 
-    private void getDaily(JSONArray daily) throws JSONException {
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        MenuItem spinnerItem = menu.findItem(R.id.action_spinner);
+        spinnerItem.setVisible(true);
+        Spinner spinner = (Spinner) spinnerItem.getActionView();
+
+        mFavorited = menu.findItem(R.id.action_favorite);
+        mFavorited.setVisible(true);
+
+        mSavesModel.addResponseObserver(getViewLifecycleOwner(), response -> {
+            if (response.length() > 0) {
+                if (response.has("code")) {
+                    binding.weatherWait.setVisibility(View.GONE);
+                    try {
+                        Log.e("Web Service Error",
+                                response.getJSONObject("data").getString("message"));
+                    } catch (JSONException e) {
+                        Log.e("JSON Parse Error", e.getMessage());
+                    }
+                } else {
+                    binding.weatherWait.setVisibility(View.GONE);
+                    try {
+                        if (response.getString("message")
+                                .equals("Location saved successfully!")) {
+                            mFavorited.setIcon(R.drawable.ic_weather_star_filled_24dp);
+                        } else {
+                            mFavorited.setIcon(R.drawable.ic_weather_star_empty_24dp);
+                        }
+                    } catch (JSONException e) {
+                        Log.e("JSON Parse Error", e.getMessage());
+                    }
+                    mSavesModel.connect(mUserModel.getJwt());
+                }
+            } else {
+                Log.d("JSON Response", "No Response");
+            }
+        });
+
+        mSavesModel.addLocationsObserver(getViewLifecycleOwner(), locations -> {
+            SavedLocation location = mWeatherModel.getLocation();
+
+            List<SavedLocation> items = new ArrayList<>();
+            items.add(mWeatherModel.getCurrent());
+            items.addAll(locations);
+            if (!items.contains(location)) items.add(location);
+            items.add(new SavedLocation("Get new location...", 0, 0));
+
+            ArrayAdapter<SavedLocation> adapter = new ArrayAdapter<>(getContext(),
+                    android.R.layout.simple_spinner_item, items);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+
+            mWeatherModel.addLocationObserver(getViewLifecycleOwner(), saved -> {
+                int pos = adapter.getPosition(saved);
+                spinner.setSelection(pos);
+            });
+
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    TextView text = (TextView) parent.getChildAt(0);
+                    if (text != null) text.setTextColor(Color.WHITE);
+
+                    SavedLocation newLocation = new SavedLocation((SavedLocation) parent.getSelectedItem());
+                    if (position == parent.getCount() - 1) {
+                        Navigation.findNavController(getView())
+                                .navigate(WeatherMainFragmentDirections
+                                        .actionNavigationWeatherToWeatherMapFragment());
+                        spinnerItem.collapseActionView();
+                        return;
+                    } else if (position == 0) {
+                        Geocoder geocoder = new Geocoder(getContext());
+                        List<Address> results = null;
+                        try {
+                            results = geocoder.getFromLocation(
+                                    newLocation.getLatitude(), newLocation.getLongitude(), 1);
+                        } catch (IOException e) {
+                            Log.e("ERROR", "Geocoder error on location");
+                            e.printStackTrace();
+                        }
+                        if (results != null) {
+                            newLocation.setName(results.get(0).getAddressLine(0));
+                        }
+                    }
+                    mWeatherModel.setLocation(newLocation);
+                    mWeatherModel.connect(newLocation.getLatitude(), newLocation.getLongitude());
+                    if (mSavesModel.isFavorite(newLocation)) {
+                        mFavorited.setIcon(R.drawable.ic_weather_star_filled_24dp);
+                    } else {
+                        mFavorited.setIcon(R.drawable.ic_weather_star_empty_24dp);
+                    }
+                    binding.weatherWait.setVisibility(View.VISIBLE);
+                    spinnerItem.collapseActionView();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    // do nothing
+                }
+            });
+        });
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_favorite) favoriteLocation();
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void getDaily(JSONArray daily, boolean celsius) throws JSONException {
         for (int i = 1; i < 6; i++) {
             JSONObject day = (JSONObject) daily.get(i);
             JSONObject temp = day.getJSONObject("temp");
             JSONArray weather = day.getJSONArray("weather");
             JSONObject info = (JSONObject) weather.get(0);
 
-            String max = String.valueOf((int) temp.getDouble("max"));
-            String min = String.valueOf((int) temp.getDouble("min"));
+            String max, min, temps;
+            if (celsius) {
+                max = String.valueOf((int) (temp.getDouble("max") - 32) * 5 / 9);
+                min = String.valueOf((int) (temp.getDouble("min") - 32) * 5 / 9);
+                temps = max + "°C / " + min + "°C";
+            } else {
+                max = String.valueOf((int) temp.getDouble("max"));
+                min = String.valueOf((int) temp.getDouble("min"));
+                temps = max + "°F / " + min + "°F";
+            }
             Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
             int year = calendar.get(Calendar.YEAR);
             int dayYear = calendar.get(Calendar.DAY_OF_YEAR) + i;
@@ -187,28 +357,33 @@ public class WeatherMainFragment extends Fragment {
             switch (i) {
                 case 1:
                     setImage(info, binding.imageOne);
-                    binding.textWeatherOne.setText(max + "°F / " + min + "°F");
-                    binding.textDayOne.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
+                    binding.textWeatherOne.setText(temps);
+                    binding.textDayOne.setText(LocalDate.ofYearDay(year, dayYear)
+                            .getDayOfWeek().name());
                     break;
                 case 2:
                     setImage(info, binding.imageTwo);
-                    binding.textWeatherTwo.setText(max + "°F / " + min + "°F");
-                    binding.textDayTwo.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
+                    binding.textWeatherTwo.setText(temps);
+                    binding.textDayTwo.setText(LocalDate.ofYearDay(year, dayYear)
+                            .getDayOfWeek().name());
                     break;
                 case 3:
                     setImage(info, binding.imageThree);
-                    binding.textWeatherThree.setText(max + "°F / " + min + "°F");
-                    binding.textDayThree.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
+                    binding.textWeatherThree.setText(temps);
+                    binding.textDayThree.setText(LocalDate.ofYearDay(year, dayYear)
+                            .getDayOfWeek().name());
                     break;
                 case 4:
                     setImage(info, binding.imageFour);
-                    binding.textWeatherFour.setText(max + "°F / " + min + "°F");
-                    binding.textDayFour.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
+                    binding.textWeatherFour.setText(temps);
+                    binding.textDayFour.setText(LocalDate.ofYearDay(year, dayYear)
+                            .getDayOfWeek().name());
                     break;
                 case 5:
                     setImage(info, binding.imageFive);
-                    binding.textWeatherFive.setText(max + "°F / " + min + "°F");
-                    binding.textDayFive.setText(LocalDate.ofYearDay(year, dayYear).getDayOfWeek().name());
+                    binding.textWeatherFive.setText(temps);
+                    binding.textDayFive.setText(LocalDate.ofYearDay(year, dayYear)
+                            .getDayOfWeek().name());
                     break;
                 default:
                     Log.d("DAILY WEATHER ERROR", "Could not set daily weather");
@@ -218,7 +393,7 @@ public class WeatherMainFragment extends Fragment {
     }
 
     private void getHourly(JSONArray hourly) throws JSONException {
-        mHourly = new ArrayList<>();
+        List<WeatherHourly> mHourly = new ArrayList<>();
         for (int i = 1; i < 25; i++) {
             JSONObject hour = (JSONObject) hourly.get(i);
             JSONArray weather = hour.getJSONArray("weather");
@@ -236,11 +411,24 @@ public class WeatherMainFragment extends Fragment {
         }
 
         RecyclerView recyclerView = binding.hourlyView;
-        if (recyclerView instanceof RecyclerView) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(),
-                    LinearLayoutManager.HORIZONTAL, false));
-            recyclerView.setAdapter(new WeatherRecyclerViewAdapter(mHourly));
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(),
+                LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setAdapter(new WeatherRecyclerViewAdapter(mHourly));
+    }
+
+    private void favoriteLocation() {
+        SavedLocation location = mWeatherModel.getLocation();
+        if (mSavesModel.isFavorite(location)) {
+            mSavesModel.connectRemoveLocation(mUserModel.getJwt(),
+                    location.getLatitude(),
+                    location.getLongitude());
+        } else {
+            mSavesModel.connectSaveLocation(mUserModel.getJwt(),
+                    location.getName(),
+                    location.getLatitude(),
+                    location.getLongitude());
         }
+        binding.weatherWait.setVisibility(View.VISIBLE);
     }
 
     /**

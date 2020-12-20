@@ -40,15 +40,16 @@ public class RegisterFragment extends Fragment {
             .and(checkPwdSpecialChar("@"));
 
     private final PasswordValidator mUsernameValidator = checkPwdLength(1)
+            .and(checkPwdDoNotInclude("+"))
             .and(checkExcludeWhiteSpace());
 
     private final PasswordValidator mPasswordValidator =
-            checkClientPredicate(pwd -> pwd.equals(binding.editPassword2.getText().toString()))
-                    .and(checkPwdLength(7))
+                    checkPwdLength(7)
+                    .and(checkPwdDigit())
                     .and(checkPwdSpecialChar())
                     .and(checkExcludeWhiteSpace())
-                    .and(checkPwdDigit())
-                    .and(checkPwdLowerCase().or(checkPwdUpperCase()));
+                    .and(checkPwdLowerCase().or(checkPwdUpperCase()))
+                    .and(checkClientPredicate(pwd -> pwd.equals(binding.editPassword2.getText().toString())));
 
     /**
      * Default constructor.
@@ -90,46 +91,57 @@ public class RegisterFragment extends Fragment {
         mNameValidator.processResult(
                 mNameValidator.apply(binding.editFirst.getText().toString().trim()),
                 this::validateLast,
-                result -> binding.editFirst.setError("Please enter a first name."));
+                result -> {
+                    String msg = "First name " + getValidationErrorMsg(result, 1, "");
+                    binding.editFirst.setError(msg);
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void validateLast() {
         mNameValidator.processResult(
                 mNameValidator.apply(binding.editLast.getText().toString().trim()),
                 this::validateUsername,
-                result -> binding.editLast.setError("Please enter a last name."));
+                result -> {
+                    String msg = "Last name " + getValidationErrorMsg(result, 1, "");
+                    binding.editLast.setError(msg);
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void validateUsername() {
         mUsernameValidator.processResult(
                 mUsernameValidator.apply(binding.editUsername.getText().toString().trim()),
                 this::validateEmail,
-                result -> binding.editUsername.setError("Please enter a valid Username."));
+                result -> {
+                    String msg = "Username " + getValidationErrorMsg(result, 1, "+");
+                    binding.editUsername.setError(msg);
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void validateEmail() {
         mEmailValidator.processResult(
                 mEmailValidator.apply(binding.editEmail.getText().toString().trim()),
-                this::validatePasswordsMatch,
-                result -> binding.editEmail.setError("Please enter a valid Email address."));
-    }
-
-    private void validatePasswordsMatch() {
-        PasswordValidator matchValidator =
-                checkClientPredicate(
-                        pwd -> pwd.equals(binding.editPassword2.getText().toString().trim()));
-
-        mEmailValidator.processResult(
-                matchValidator.apply(binding.editPassword1.getText().toString().trim()),
                 this::validatePassword,
-                result -> binding.editPassword1.setError("Passwords must match."));
+                result -> {
+                    binding.editEmail.setError("Please enter a valid Email address.");
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void validatePassword() {
         mPasswordValidator.processResult(
                 mPasswordValidator.apply(binding.editPassword1.getText().toString()),
                 this::verifyAuthWithServer,
-                result -> binding.editPassword1.setError("Please enter a valid Password."));
+                result -> {
+                    String msg = "Password " + getValidationErrorMsg(result, 7, "");
+                    if (result == ValidationResult.PWD_CLIENT_ERROR)
+                        binding.editPassword2.setError(msg);
+                    else
+                        binding.editPassword1.setError(msg);
+                    binding.registerWait.setVisibility(View.GONE);
+                });
     }
 
     private void verifyAuthWithServer() {
@@ -179,5 +191,33 @@ public class RegisterFragment extends Fragment {
         } else {
             Log.d("JSON Response", "No Response");
         }
+    }
+
+    private String getValidationErrorMsg(ValidationResult error, int requiredLength, String excludeChar) {
+        String result = "";
+        switch (error) {
+            case PWD_MISSING_DIGIT:
+                result = "must include a digit";
+                break;
+            case PWD_INVALID_LENGTH:
+                result = "length must be greater than " + requiredLength;
+                break;
+            case PWD_MISSING_LOWER:
+                result = "must include alphabetical character";
+                break;
+            case PWD_MISSING_SPECIAL:
+                result = "must include a special character";
+                break;
+            case PWD_INCLUDES_WHITESPACE:
+                result = "must not include any whitespace";
+                break;
+            case PWD_INCLUDES_EXCLUDED:
+                result = "must not include characters: " + excludeChar;
+                break;
+            default:
+                result = "must match.";
+                break;
+        }
+        return result;
     }
 }

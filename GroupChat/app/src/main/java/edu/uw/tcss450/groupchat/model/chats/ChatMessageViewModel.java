@@ -126,7 +126,7 @@ public class ChatMessageViewModel extends AndroidViewModel {
      *
      * Subsequent calls to this method receive earlier and earlier messages.
      *
-     * @param chatId the chatroom id to request messages of
+     * @param chatId the chat room id to request messages of
      * @param jwt the users signed JWT
      */
     public void getNextMessages(final int chatId, final String jwt) {
@@ -206,6 +206,7 @@ public class ChatMessageViewModel extends AndroidViewModel {
                 }
             }
             Collections.sort(list);
+            Collections.reverse(list);
             //inform observers of the change (setValue)
             getOrCreateMapEntry(response.getInt("chatId")).setValue(list);
         }catch (JSONException e) {

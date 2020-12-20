@@ -20,7 +20,9 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for incoming contact requests tab.
+ *
+ * @version December 2020
  */
 public class ContactsIncomingFragment extends Fragment {
 
@@ -59,8 +61,11 @@ public class ContactsIncomingFragment extends Fragment {
         binding.incomingSwipeContainer.setOnRefreshListener(() ->
                 mModel.connect(mUserModel.getJwt()));
 
-        mModel.addContactsObserver(getViewLifecycleOwner(), incomingList -> {
-            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(incomingList);
+        mModel.addContactsObserver(getViewLifecycleOwner(), incoming -> {
+            Contact blank = new Contact("", "", "", 0);
+            if (incoming.contains(blank)) incoming.remove(blank);
+
+            ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(incoming);
             binding.incomingSwipeContainer.setRefreshing(false);
             binding.contactsIncomingWait.setVisibility(View.GONE);
         });

@@ -5,12 +5,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +92,7 @@ public class ContactsRecyclerViewAdapter extends
     }
 
     public void setList(final List<Contact> items) {
-        this.mContacts = items;
+        mContacts = items;
         notifyDataSetChanged();
     }
 
@@ -133,58 +134,82 @@ public class ContactsRecyclerViewAdapter extends
             binding.textName.setText(mContact.getName());
             binding.textEmail.setText(mContact.getEmail());
 
+            binding.imageAdd.setVisibility(View.INVISIBLE);
+            binding.imageRemove.setVisibility(View.INVISIBLE);
+            binding.imageChat.setVisibility(View.INVISIBLE);
+            binding.imageAccept.setVisibility(View.INVISIBLE);
+            binding.imageReject.setVisibility(View.INVISIBLE);
+            binding.imageClear.setVisibility(View.INVISIBLE);
+
             final String jwt = mUserModel.getJwt();
-            final String email = mContact.getEmail();
             final String name = mContact.getUsername();
 
             switch (mContact.getType()) {
-                case 1:
-                    binding.imageChat.setOnClickListener(this::addUserToChat);
-                    binding.imageRemove.setOnClickListener(click -> {
-                        mContactsModel.connectRemove(jwt, email);
-                        Toast.makeText(mActivity, "Removed " + name,
-                                Toast.LENGTH_LONG).show();
+                case 0:
+                    binding.imageClear.setVisibility(View.VISIBLE);
+                    binding.imageClear.setOnClickListener(click -> {
+                        mContacts.remove(mContact);
+                        notifyDataSetChanged();
                     });
-                    binding.imageAdd.setVisibility(View.INVISIBLE);
-                    binding.imageAccept.setVisibility(View.INVISIBLE);
-                    binding.imageReject.setVisibility(View.INVISIBLE);
+                    break;
+                case 1:
+                    binding.imageChat.setVisibility(View.VISIBLE);
+                    binding.imageChat.setOnClickListener(this::addUserToChat);
+                    binding.imageRemove.setVisibility(View.VISIBLE);
+                    binding.imageRemove.setOnClickListener(click -> {
+                        mContactsModel.connectRemove(jwt, name);
+                        mContactsModel.removeContact(mContact);
+                        Snackbar snack = Snackbar.make(mView, "Removed " + name + " from contacts",
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
+                    });
                     break;
                 case 2:
+                    binding.imageAccept.setVisibility(View.VISIBLE);
                     binding.imageAccept.setOnClickListener(click -> {
-                        mIncomingModel.connectAccept(jwt, email);
-                        Toast.makeText(mActivity, "Accepted " + name,
-                                Toast.LENGTH_LONG).show();
+                        mIncomingModel.connectAccept(jwt, name);
+                        mIncomingModel.removeContact(mContact);
+                        Snackbar snack = Snackbar.make(mView, "Accepted " + name + "'s request",
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
                     });
+                    binding.imageReject.setVisibility(View.VISIBLE);
                     binding.imageReject.setOnClickListener(click -> {
-                        mIncomingModel.connectReject(jwt, email);
-                        Toast.makeText(mActivity, "Rejected " + name,
-                                Toast.LENGTH_LONG).show();
+                        mIncomingModel.connectReject(jwt, name);
+                        mIncomingModel.removeContact(mContact);
+                        Snackbar snack = Snackbar.make(mView, "Rejected " + name + "'s request",
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
                     });
-                    binding.imageAdd.setVisibility(View.INVISIBLE);
-                    binding.imageRemove.setVisibility(View.INVISIBLE);
-                    binding.imageChat.setVisibility(View.INVISIBLE);
                     break;
                 case 3:
+                    binding.imageRemove.setVisibility(View.VISIBLE);
                     binding.imageRemove.setOnClickListener(click -> {
-                        mOutgoingModel.connectCancel(jwt, email);
-                        Toast.makeText(mActivity, "Removed request",
-                                Toast.LENGTH_LONG).show();
+                        mOutgoingModel.connectCancel(jwt, name);
+                        mOutgoingModel.removeContact(mContact);
+                        Snackbar snack = Snackbar.make(mView, "Removed request to " + name,
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
                     });
-                    binding.imageAdd.setVisibility(View.INVISIBLE);
-                    binding.imageAccept.setVisibility(View.INVISIBLE);
-                    binding.imageReject.setVisibility(View.INVISIBLE);
-                    binding.imageChat.setVisibility(View.INVISIBLE);
                     break;
                 case 4:
+                    binding.imageAdd.setVisibility(View.VISIBLE);
                     binding.imageAdd.setOnClickListener(click -> {
-                        mSearchModel.connectAdd(jwt, email);
-                        Toast.makeText(mActivity, "Sent request to " + name,
-                                Toast.LENGTH_LONG).show();
+                        mSearchModel.connectAdd(jwt, name);
+                        Snackbar snack = Snackbar.make(mView, "Sent request to " + name,
+                                Snackbar.LENGTH_LONG);
+                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.show();
                     });
-                    binding.imageAccept.setVisibility(View.INVISIBLE);
-                    binding.imageReject.setVisibility(View.INVISIBLE);
-                    binding.imageRemove.setVisibility(View.INVISIBLE);
-                    binding.imageChat.setVisibility(View.INVISIBLE);
                     break;
                 default:
                     Log.d("Contact Holder", "OnClickListener not set up properly");
@@ -207,10 +232,12 @@ public class ContactsRecyclerViewAdapter extends
 
             dialog.setPositiveButton("Add", (dlg, i) -> {
                 int roomId = mChatRoomModel.getRoomFromName(roomNames[selected.get()]);
-                mContactsModel.connectAdd(mUserModel.getJwt(), mContact.getEmail(), roomId);
-                Toast.makeText(mActivity,
-                        mContact.getUsername() + " has been added to " + roomNames[selected.get()],
-                        Toast.LENGTH_LONG).show();
+                mContactsModel.connectAdd(mUserModel.getJwt(), mContact.getUsername(), roomId);
+                Snackbar snack = Snackbar.make(mView, mContact.getUsername() + " has been added to "
+                         + roomNames[selected.get()], Snackbar.LENGTH_LONG);
+                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                snack.show();
                 dlg.dismiss();
             });
 

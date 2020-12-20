@@ -1,12 +1,15 @@
 package edu.uw.tcss450.groupchat.services;
 
+import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
 
@@ -14,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.uw.tcss450.groupchat.AuthActivity;
+import edu.uw.tcss450.groupchat.MainActivity;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 import me.pushy.sdk.Pushy;
@@ -41,8 +45,8 @@ public class PushReceiver extends BroadcastReceiver {
         String typeOfMessage = intent.getStringExtra("type");
 
         if (typeOfMessage.equals("msg")) {
-            ChatMessage message = null;
-            int chatId = -1;
+            ChatMessage message;
+            int chatId;
             try{
                 message = ChatMessage.createFromJsonString(intent.getStringExtra("message"));
                 chatId = intent.getIntExtra("chatid", -1);
@@ -114,8 +118,11 @@ public class PushReceiver extends BroadcastReceiver {
                 Log.d("PUSHY", "Contact received in foreground: " + text);
 
                 Intent i = new Intent(RECEIVED_NEW_MESSAGE);
-                i.putExtra("contact", text);
-                i.putExtras(intent.getExtras());
+                i.putExtra("con", text);
+                i.putExtra("request", intent.getStringExtra("request"));
+                if (intent.hasExtra("contact")) {
+                    i.putExtra("contact", intent.getStringExtra("contact"));
+                }
 
                 context.sendBroadcast(i);
             } else {
@@ -188,6 +195,36 @@ public class PushReceiver extends BroadcastReceiver {
                         (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
                 notificationManager.notify(1, builder.build());
+            }
+        } else if (typeOfMessage.equals("typeStatus")) {
+            int chatId;
+            String username;
+            String email;
+            String status;
+            try {
+                JSONObject message = new JSONObject(intent.getStringExtra("message"));
+                chatId = message.getInt("chatid");
+                email = message.getString("email");
+                username = message.getString("user");
+                status = message.getString("status");
+            } catch (JSONException e) {
+                //Web service sent us something unexpected...I can't deal with this.
+                throw new IllegalStateException("Error from Web Service. Contact Dev Support");
+            }
+
+            ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
+            ActivityManager.getMyMemoryState(appProcessInfo);
+
+            if (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE) {
+
+                Intent i = new Intent(RECEIVED_NEW_MESSAGE);
+                i.putExtra("chatid", chatId);
+                i.putExtra("email", email);
+                i.putExtra("username", username);
+                i.putExtra("typeStatus", status);
+                i.putExtras(intent.getExtras());
+
+                context.sendBroadcast(i);
             }
         }
     }

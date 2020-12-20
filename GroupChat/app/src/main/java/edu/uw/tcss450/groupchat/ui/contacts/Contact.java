@@ -1,5 +1,8 @@
 package edu.uw.tcss450.groupchat.ui.contacts;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Object for storing user contact information.
  * @author Dylan Hill
@@ -15,14 +18,8 @@ public class Contact implements Comparable<Contact> {
 
     private int mType;
 
-    /**
-     * Generic constructor, should NEVER be called.
-     */
     public Contact() {
-        mUsername = "Blank";
-        mName = "Blank Name";
-        mEmail = "test@mail.com";
-        mType = 1;
+        // do nothing
     }
 
     /**
@@ -36,6 +33,20 @@ public class Contact implements Comparable<Contact> {
         mName = name;
         mEmail = email;
         mType = type;
+    }
+
+    /**
+     * Static factory method to turn a properly formatted JSON String into a Contact object.
+     * @param conAsJson the String to be parsed into a Contact Object.
+     * @return a Contact Object with the details contained in the JSON String.
+     * @throws JSONException when conAsString cannot be parsed into a Contact.
+     */
+    public static Contact createFromJsonString(final String conAsJson) throws JSONException {
+        final JSONObject msg = new JSONObject(conAsJson);
+        return new Contact(msg.getString("username"),
+                msg.getString("name"),
+                msg.getString("email"),
+                0);
     }
 
     /**
@@ -70,16 +81,32 @@ public class Contact implements Comparable<Contact> {
         return mType;
     }
 
+    public void setUsername(final String username) {
+        mUsername = username;
+    }
+
+    public void setName(final String name) {
+        mName = name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Contact)) return false;
+        if (mUsername.equals(((Contact) o).getName())) return true;
+        if (mName.equals(((Contact) o).getUsername())) return true;
         if (!mUsername.equals(((Contact) o).getUsername())) return false;
         if (!mEmail.equals(((Contact) o).getEmail())) return false;
         return mName.equals(((Contact) o).getName());
     }
 
     @Override
+    public int hashCode() {
+        return mUsername.hashCode() + mName.hashCode() + mEmail.hashCode() + mType;
+    }
+
+    @Override
     public int compareTo(Contact other) {
-        return mUsername.compareToIgnoreCase(other.getUsername());
+        if (mType == other.getType()) return mUsername.compareToIgnoreCase(other.getUsername());
+        return Integer.compare(mType, other.getType());
     }
 }
