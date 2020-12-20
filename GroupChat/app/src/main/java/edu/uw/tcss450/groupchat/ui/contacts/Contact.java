@@ -100,6 +100,11 @@ public class Contact implements Comparable<Contact> {
     }
 
     @Override
+    public int hashCode() {
+        return mUsername.hashCode() + mName.hashCode() + mEmail.hashCode() + mType;
+    }
+
+    @Override
     public int compareTo(Contact other) {
         if (mType == other.getType()) return mUsername.compareToIgnoreCase(other.getUsername());
         return Integer.compare(mType, other.getType());

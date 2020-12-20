@@ -35,6 +35,8 @@
     <string name="hint_new_password">Enter new password</string>
     <string name="hint_new_password_again">Retype new password</string>
     <string name="hint_vertical_bar">|</string>
+    <string name="hint_search">Search</string>
+    <string name="hint_location">Get Weather</string>
 
     <string name="title_home">Home</string>
     <string name="title_contacts">Contacts</string>

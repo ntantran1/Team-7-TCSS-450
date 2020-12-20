@@ -202,7 +202,11 @@ public class ChatRoomFragment extends Fragment {
         //The user is out of messages, go out to the service and get more
         binding.swipeContainer.setOnRefreshListener(() -> {
             numMessages.set(rv.getAdapter().getItemCount());
-            mChatModel.getNextMessages(args.getRoom().getId(), mUserModel.getJwt());
+            if (numMessages.get() > 0) {
+                mChatModel.getNextMessages(args.getRoom().getId(), mUserModel.getJwt());
+            } else {
+                binding.swipeContainer.setRefreshing(false);
+            }
         });
 
         mChatModel.addMessageObserver(args.getRoom().getId(), getViewLifecycleOwner(), list -> {
@@ -326,7 +330,9 @@ public class ChatRoomFragment extends Fragment {
         builder.setTitle("Add from Contacts");
 
         List<String> contacts = new ArrayList<>();
-        for(Contact contact: mContactModel.getContacts()){
+        List<Contact> contactList = mContactModel.getContacts();
+        contactList.remove(new Contact("", "", "", -1));
+        for(Contact contact: mContactModel.getContacts()) {
             contacts.add(contact.getUsername());
         }
         String[] contactNames = contacts.toArray(new String[contacts.size()]);

@@ -50,6 +50,11 @@ public class ChatRoom implements Serializable, Comparable<ChatRoom> {
     }
 
     @Override
+    public int hashCode() {
+        return mId + mName.hashCode();
+    }
+
+    @Override
     public int compareTo(ChatRoom other) {
         return Integer.compare(mId, other.getId());
     }

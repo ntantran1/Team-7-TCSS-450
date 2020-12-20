@@ -39,4 +39,24 @@
         app:showAsAction="always"
         android:visible="false" />
 
+    <item
+        android:id="@+id/action_spinner"
+        app:showAsAction="always"
+        app:actionViewClass="android.widget.Spinner"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/action_favorite"
+        android:icon="@drawable/ic_weather_star_empty_24dp"
+        app:showAsAction="always|collapseActionView"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_weather_search_24dp"
+        app:showAsAction="always|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        android:title="@string/hint_search"
+        android:visible="false" />
+
 </menu>
